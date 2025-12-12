@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@plugin "daisyui";
+@plugin "daisyui" {
+  /* themes: all; */
+}
+
+/* Your custom theme */
+ 
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+/* 
+  --color-base-100: oklch(1.0 0.25 145); Light green background */
+  --color-base-100: oklch(0.99 0.002 247);
+
+}
+
+body {
+  @apply leading-relaxed;
+  
+}

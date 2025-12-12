@@ -1,0 +1,58 @@
+{
+  "name": "@emadomar/mare-js",
+  "author": {
+    "name": "Emad Omar"
+  },
+  "version": "1.0.1",
+  "bin": {},
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon server/mare_server.js",
+    "client": "vite",
+    "build:client": "vite build",
+    "build:server": "echo 'No server build step'",
+    "build": "npm run build:server && npm run build:client",
+    "start": "node .mareJS/mare_server.js"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "ag-grid-react": "^35.0.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "daisyui": "^5.0.46",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.0",
+    "express-rate-limit": "^8.0.1",
+    "express-session": "^1.18.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "hpp": "^0.2.3",
+    "lucide-react": "^0.559.0",
+    "pnpm": "^10.25.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
+    "tailwindcss": "^4.1.11",
+    "theme-change": "^2.5.0",
+    "ws": "^8.18.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.0.1",
+    "eslint": "^9.9.0",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "globals": "^15.9.0",
+    "nodemon": "^3.1.7",
+    "sass": "^1.89.2",
+    "vite": "^5.4.1"
+  },
+  "license": "MIT"
+}
