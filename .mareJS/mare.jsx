@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 
 import App from "../src/_app"; // The top-level layout
+import LoadingSpinner from "../src/components/LoadingSpinner";
 
 // Lazy-load all .jsx files from the /pages directory
 const pages = import.meta.glob("../src/pages/**/*.jsx");
@@ -73,7 +74,7 @@ function ComponentWrapper({ Component, Layouts, path }) {
   const params = match?.params || {};
 
   let content = (
-    <Suspense fallback={<div>Loading page...</div>}>
+    <Suspense fallback={<LoadingSpinner />}>
       <Component {...params} />
     </Suspense>
   );
@@ -117,8 +118,9 @@ const router = createBrowserRouter(routesConfig);
 // -----------------------------------------
 // The NotFound component
 // -----------------------------------------
+import NotFoundPage from '../src/pages/404';
 function NotFound() {
-  return <>404 - Page Not Found</>;
+  return <NotFoundPage />;
 }
 
 // -----------------------------------------
