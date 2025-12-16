@@ -5,6 +5,7 @@ import {
   PanelLeftOpen,
   BarChart3,
   Ticket,
+  ScrollText,
   LayoutGrid,
 } from "lucide-react";
 
@@ -18,28 +19,31 @@ export default function MainLayout({ children }) {
   useEffect(() => {
     // Map routes to page titles
     const getPageTitle = () => {
-
       if (location.pathname === `/`) return "";
       if (location.pathname === `/admin/${adminId}`) return "Home";
       if (location.pathname.startsWith(`/admin/${adminId}/tickets`))
         return "Tickets";
       if (location.pathname === `/admin/${adminId}/analytics`)
         return "Analytics";
+
+      if (location.pathname === `/admin/${adminId}/documents`)
+        return "Documents";
       return;
     };
 
     const pageTitle = getPageTitle();
     document.title = pageTitle
       ? `${pageTitle} - Klenka Chat Bot`
-      : 'Klenka Chat Bot';
+      : "Klenka Chat Bot";
   }, [location.pathname, adminId]);
 
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
       <aside
-        className={`bg-gradient-to-b from-[#1f2937] to-[#111827] transition-all duration-300 flex-shrink-0 ${isSidebarOpen ? "w-full lg:w-80" : "w-0"
-          } overflow-hidden`}
+        className={`bg-gradient-to-b from-[#1f2937] to-[#111827] transition-all duration-300 flex-shrink-0 ${
+          isSidebarOpen ? "w-full lg:w-80" : "w-0"
+        } overflow-hidden`}
       >
         {/* Sidebar Content */}
         <div className="min-h-full w-full lg:w-80 flex flex-col">
@@ -98,6 +102,12 @@ export default function MainLayout({ children }) {
                   label: "Analytics",
                   end: false,
                 },
+                {
+                  to: `/admin/${adminId}/documents`,
+                  icon: ScrollText,
+                  label: "Documents",
+                  end: false,
+                },
               ].map((item) => (
                 <li key={item.to}>
                   <NavLink
@@ -106,9 +116,10 @@ export default function MainLayout({ children }) {
                     className={({ isActive }) =>
                       `w-full flex items-center px-4 py-3 rounded-xl text-2xl transition-all duration-200 
                       justify-center lg:justify-start 
-                      ${isActive
-                        ? "bg-yellow-400 text-gray-900 shadow-md font-medium"
-                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                      ${
+                        isActive
+                          ? "bg-yellow-400 text-gray-900 shadow-md font-medium"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
                       }`
                     }
                   >
