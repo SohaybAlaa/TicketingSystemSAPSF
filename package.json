@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
-    "ag-grid-react": "^35.0.0",
+    "ag-grid-community": "^35.0.0",
+    "ag-grid-react": "35",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
