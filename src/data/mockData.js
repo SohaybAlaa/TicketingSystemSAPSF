@@ -1,3 +1,70 @@
+import {
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Inbox,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+
+export const cards = [
+  {
+    title: "Assigned to Me",
+    value: "4",
+    icon: Inbox,
+    color: "blue",
+    bgColor: "bg-blue-50",
+    iconColor: "text-blue-600",
+    borderColor: "border-blue-200",
+  },
+  {
+    title: "My Team Tickets",
+    value: "5",
+    icon: Users,
+    color: "purple",
+    bgColor: "bg-purple-50",
+    iconColor: "text-purple-600",
+    borderColor: "border-purple-200",
+  },
+  {
+    title: "New Tickets",
+    value: "6",
+    icon: TrendingUp,
+    color: "green",
+    bgColor: "bg-green-50",
+    iconColor: "text-green-600",
+    borderColor: "border-green-200",
+  },
+  {
+    title: "Under Process",
+    value: "7",
+    icon: Clock,
+    color: "yellow",
+    bgColor: "bg-yellow-50",
+    iconColor: "text-yellow-600",
+    borderColor: "border-yellow-200",
+  },
+  {
+    title: "SLA Breached",
+    value: "8",
+    icon: AlertCircle,
+    color: "red",
+    bgColor: "bg-red-50",
+    iconColor: "text-red-600",
+    borderColor: "border-red-200",
+    alert: true,
+  },
+  {
+    title: "Closed (30 days)",
+    value: "9",
+    icon: CheckCircle2,
+    color: "gray",
+    bgColor: "bg-gray-50",
+    iconColor: "text-gray-600",
+    borderColor: "border-gray-200",
+  },
+];
+
 // Team data
 export const TEAMS = [
   {
@@ -1266,7 +1333,7 @@ export const INITIAL_TICKETS = [
     assignedTo: "Emily Rodriguez",
     created: "Dec 15, 2025",
     slaDue: "Dec 17, 01:00 PM",
-  }, 
+  },
 ];
 
 // Analytics Data

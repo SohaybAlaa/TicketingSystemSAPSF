@@ -142,7 +142,7 @@ export default function Analytics() {
                       onClick={() => setTeamFilter("all")}
                       className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                         teamFilter === "all"
-                          ? "bg-yellow-500 text-black hover:bg-yellow-400"
+                          ? "bg-yellow-400 text-black hover:bg-yellow-500"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -154,7 +154,7 @@ export default function Analytics() {
                         onClick={() => setTeamFilter(team.teamId)}
                         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                           teamFilter === team.teamId
-                            ? "bg-yellow-500 text-black hover:bg-yellow-400"
+                            ? "bg-yellow-400 text-black hover:bg-yellow-500"
                             : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
                         }`}
                       >
@@ -174,7 +174,7 @@ export default function Analytics() {
                       onClick={() => setDateFilter("week")}
                       className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                         dateFilter === "week"
-                          ? "bg-yellow-500 text-black hover:bg-yellow-400"
+                          ? "bg-yellow-400 text-black hover:bg-yellow-500"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -184,7 +184,7 @@ export default function Analytics() {
                       onClick={() => setDateFilter("month")}
                       className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                         dateFilter === "month"
-                          ? "bg-yellow-500 text-black hover:bg-yellow-400"
+                          ? "bg-yellow-400 text-black hover:bg-yellow-500"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -194,7 +194,7 @@ export default function Analytics() {
                       onClick={() => setDateFilter("year")}
                       className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                         dateFilter === "year"
-                          ? "bg-yellow-500 text-black hover:bg-yellow-400"
+                          ? "bg-yellow-400 text-black hover:bg-yellow-500"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -204,7 +204,7 @@ export default function Analytics() {
                       onClick={() => setShowCustomPicker(!showCustomPicker)}
                       className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
                         dateFilter === "custom"
-                          ? "bg-yellow-500 text-black hover:bg-yellow-400"
+                          ? "bg-yellow-400 text-black hover:bg-yellow-500"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -287,15 +287,14 @@ export default function Analytics() {
         </div>
 
         {/* Key Metrics */}
-        {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Card */}
-          <div className="group bg-white rounded-lg border border-gray-200 p-6 transition hover:shadow-md">
+          {/* Total Tickets Card */}
+          <div className="group bg-white rounded-lg border border-gray-200 p-6 transition hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-gray-600">Total Tickets</p>
+              <p className="text-lg font-medium text-gray-600">Total Tickets</p>
               <TrendingUp className="w-7 h-7 text-blue-600 transition-transform transition-colors duration-200 group-hover:scale-110 group-hover:text-blue-700" />
             </div>
-            <p className="text-3xl font-semibold text-gray-900 mb-1">
+            <p className="text-3xl font-bold text-gray-900 mb-1">
               {stats.totalTickets}
             </p>
             <p
@@ -310,15 +309,15 @@ export default function Analytics() {
             </p>
           </div>
 
-          {/* Card */}
-          <div className="group bg-white rounded-lg border border-gray-200 p-6 transition hover:shadow-md">
+          {/* Closed Tickets Card */}
+          <div className="group bg-white rounded-lg border border-gray-200 p-6 transition hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-lg font-medium text-gray-600">
                 Closed Tickets
               </p>
               <CheckCircle2 className="w-7 h-7 text-green-600 transition-transform transition-colors duration-200 group-hover:scale-110 group-hover:text-green-700" />
             </div>
-            <p className="text-3xl font-semibold text-gray-900 mb-1">
+            <p className="text-3xl font-bold text-gray-900 mb-1">
               {stats.closedTickets}
             </p>
             <p
@@ -333,15 +332,15 @@ export default function Analytics() {
             </p>
           </div>
 
-          {/* Card */}
-          <div className="group bg-white rounded-lg border border-gray-200 p-6 transition hover:shadow-md">
+          {/* Avg Response Time Card */}
+          <div className="group bg-white rounded-lg border border-gray-200 p-6 transition hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-lg font-medium text-gray-600">
                 Avg Response Time
               </p>
               <TrendingDown className="w-7 h-7 text-green-600 transition-transform transition-colors duration-200 group-hover:scale-110 group-hover:text-green-700" />
             </div>
-            <p className="text-3xl font-semibold text-gray-900 mb-1">
+            <p className="text-3xl font-bold text-gray-900 mb-1">
               {stats.averageResponseTime}h
             </p>
             <p
@@ -355,15 +354,15 @@ export default function Analytics() {
             </p>
           </div>
 
-          {/* Card */}
-          <div className="group bg-white rounded-lg border border-gray-200 p-6 transition hover:shadow-md">
+          {/* SLA Compliance Card */}
+          <div className="group bg-white rounded-lg border border-gray-200 p-6 transition hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-lg font-medium text-gray-600">
                 SLA Compliance
               </p>
               <AlertTriangle className="w-7 h-7 text-yellow-600 transition-transform transition-colors duration-200 group-hover:scale-110 group-hover:text-yellow-700" />
             </div>
-            <p className="text-3xl font-semibold text-gray-900 mb-1">
+            <p className="text-3xl font-bold text-gray-900 mb-1">
               {stats.slaComplianceRate.toFixed(1)}%
             </p>
             <p

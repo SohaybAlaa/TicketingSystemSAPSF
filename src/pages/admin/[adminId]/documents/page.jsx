@@ -581,9 +581,9 @@ const Documents = () => {
               <div
                 key={doc.id}
                 className={`bg-white rounded-lg shadow-sm border-2 p-6 transition-all duration-300
-  hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer
-  ${getCardBorderClass(doc.type)}
-`}
+                               hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer
+                               ${getCardBorderClass(doc.type)}
+                               `}
               >
                 {/* Card header with icon and action buttons */}
                 <div className="flex items-start justify-between mb-4">

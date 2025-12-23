@@ -316,7 +316,7 @@ export default function Tickets() {
             />
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-4 rounded-md shadow"
+              className="flex items-center text-xl gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-4 rounded-md shadow"
             >
               Export
               <Download size={16} />
@@ -343,7 +343,7 @@ export default function Tickets() {
               <button
                 ref={bulkButtonRef}
                 onClick={handleBulkButtonClick}
-                className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-4 rounded-md shadow mr-3"
+                className="flex items-center text-lg gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-4 rounded-md shadow mr-3"
               >
                 Actions ({selectedRows.length})
                 <EllipsisVertical size={16} />
