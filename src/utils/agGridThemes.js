@@ -1,4 +1,3 @@
-// themes.js
 import { themeQuartz, iconSetQuartzBold } from 'ag-grid-community';
 
 export const myTheme = themeQuartz

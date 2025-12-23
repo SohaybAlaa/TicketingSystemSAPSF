@@ -4,7 +4,7 @@ import ActionMenu from "../ui/ActionMenu";
 import AssignToOtherModal from "../modals/AssignToOtherModal";
 import ChangeStatusModal from "../modals/ChangeStatusModal";
 import ChangePriorityModal from "../modals/ChangePriorityModal";
-import DeleteConfirmationModal from "../modals/DeleteConfirmationModal";
+import DeleteConfirmModal from "../modals/DeleteConfirmModal";
 
 /**
  * Action Cell Renderer - Renders action button and handles all modals for a single row
@@ -129,7 +129,7 @@ export default function ActionCellRenderer({
         ticketId={data.ticketId}
       />
 
-      <DeleteConfirmationModal
+      <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}

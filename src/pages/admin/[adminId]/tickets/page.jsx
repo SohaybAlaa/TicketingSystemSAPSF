@@ -1,27 +1,26 @@
 import { AllCommunityModule } from "ag-grid-community";
-import { myTheme } from "./themes";
+import { myTheme } from "../../../../utils/agGridThemes";
 import { AgGridReact } from "ag-grid-react";
 import React, { useState, useRef, useMemo } from "react";
 import { EllipsisVertical, Download } from "lucide-react";
-// Components 
+// Components
 import AlertNotification from "../../../../components/ui/AlertNotification";
 import ActionMenu from "../../../../components/ui/ActionMenu";
-import DeleteConfirmationModal from "../../../../components/modals/DeleteConfirmationModal";
+import DeleteConfirmModal from "../../../../components/modals/DeleteConfirmModal";
 import ChangeStatusModal from "../../../../components/modals/ChangeStatusModal";
 import ChangePriorityModal from "../../../../components/modals/ChangePriorityModal";
 import AssignToOtherModal from "../../../../components/modals/AssignToOtherModal";
-// Data 
+// Data
 import { INITIAL_TICKETS } from "../../../../data/mockData";
-//utilities 
+//utilities
 import { getColumnDefs, defaultColDef } from "../../../../utils/columnDefs";
 
 export default function Tickets() {
-
   //selected rows for bulk actions
   const [selectedRows, setSelectedRows] = useState([]);
 
-  //notification alert on top right
-  const [alert, setAlert] = useState(null);
+  //notification alerts on top right (supports multiple stacked alerts)
+  const [alerts, setAlerts] = useState([]);
 
   //mockup Date for table
   const [rowData, setRowData] = useState(INITIAL_TICKETS);
@@ -36,9 +35,10 @@ export default function Tickets() {
   const [isBulkStatusModalOpen, setIsBulkStatusModalOpen] = useState(false);
   const [isBulkPriorityModalOpen, setIsBulkPriorityModalOpen] = useState(false);
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
-  const [isBulkAssignToOtherModalOpen, setIsBulkAssignToOtherModalOpen] = useState(false);
+  const [isBulkAssignToOtherModalOpen, setIsBulkAssignToOtherModalOpen] =
+    useState(false);
 
-  // Bulk menu button and position 
+  // Bulk menu button and position
   const [isBulkMenuOpen, setIsBulkMenuOpen] = useState(false);
   const bulkButtonRef = useRef(null);
   const [bulkMenuPosition, setBulkMenuPosition] = useState({ top: 0, left: 0 });
@@ -60,8 +60,9 @@ export default function Tickets() {
     if (gridRef.current) {
       const api = gridRef.current.api;
       api.exportDataAsCsv({
-        fileName: `${new Date().toISOString().split("T")[0]
-          } Tickets Of ChatBot.csv`,
+        fileName: `${
+          new Date().toISOString().split("T")[0]
+        } Tickets Of ChatBot.csv`,
       });
     }
   };
@@ -78,7 +79,6 @@ export default function Tickets() {
     setDisplayedRowCount(count);
   };
 
-  
   //total tickets count
   const totalTickets = rowData.length;
 
@@ -86,7 +86,18 @@ export default function Tickets() {
   const adminId = "EmadOmar";
 
   const showAlert = (type, message, title = "") => {
-    setAlert({ type, message, title });
+    const id = Date.now() + Math.random();
+    const newAlert = { id, type, message, title };
+
+    setAlerts((prev) => [...prev, newAlert]);
+
+    setTimeout(() => {
+      removeAlert(id);
+    }, 4000);
+  };
+
+  const removeAlert = (id) => {
+    setAlerts((prev) => prev.filter((alert) => alert.id !== id));
   };
 
   // Single ticket actions
@@ -279,12 +290,10 @@ export default function Tickets() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
-      {/* Global Alert Notification */}
-      <AlertNotification alert={alert} onClose={() => setAlert(null)} />
+      {/* Global Alert Notification - Supports Multiple Stacked Alerts */}
+      <AlertNotification alerts={alerts} onClose={removeAlert} />
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
         {/* Header */}
         <div className="mb-5 flex items-center justify-between">
           <div>
@@ -367,7 +376,7 @@ export default function Tickets() {
                 ticketId={`${selectedRows.length} tickets`}
               />
 
-              <DeleteConfirmationModal
+              <DeleteConfirmModal
                 isOpen={isBulkDeleteModalOpen}
                 onClose={() => setIsBulkDeleteModalOpen(false)}
                 onConfirm={handleBulkDelete}
@@ -388,7 +397,7 @@ export default function Tickets() {
         {/* Table AG GRID */}
         <div
           className="ag-theme-alpine mb-15"
-          style={{ width: "100%", height: "800px" }}
+          style={{ width: "100%", height: "800px", marginBottom: "2rem" }}
         >
           <AgGridReact
             rowSelection={rowSelection} // Controls row selection mode (single / multiple)
@@ -402,7 +411,8 @@ export default function Tickets() {
             pagination={true} // Enables pagination
             paginationPageSize={25} // Number of rows per page
             paginationPageSizeSelector={[10, 25, 50, 100]} // Page size dropdown options
-            gridOptions={{ // Additional grid configuration
+            gridOptions={{
+              // Additional grid configuration
               theme: myTheme, // Custom grid theme
               enableCellTextSelection: true, // Allows text selection in cells
               ensureDomOrder: true, // Keeps DOM order in sync for accessibility
