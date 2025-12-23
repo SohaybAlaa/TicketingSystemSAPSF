@@ -67,7 +67,7 @@ const cards = [
   },
 ];
 export default function Admin() {
-  const adminId = "EmadOmar";
+  const adminId = "Emad Omar";
   const navigate = useNavigate();
 
   return (

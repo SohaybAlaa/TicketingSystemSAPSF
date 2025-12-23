@@ -83,7 +83,7 @@ export default function Tickets() {
   const totalTickets = rowData.length;
 
   // admin id HARDCODED - Mockup
-  const adminId = "EmadOmar";
+  const adminId = "Emad Omar";
 
   const showAlert = (type, message, title = "") => {
     const id = Date.now() + Math.random();

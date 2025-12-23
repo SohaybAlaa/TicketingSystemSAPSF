@@ -340,7 +340,7 @@ const Documents = () => {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           {/* PAGE HEADER */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 HR Policy Documents
@@ -352,16 +352,16 @@ const Documents = () => {
             </div>
 
             {/* Upload button */}
-            <label className="relative cursor-pointer">
+            <label className="relative cursor-pointer w-full sm:w-auto">
               <input
                 type="file"
-                multiple // Allow multiple file selection
-                accept=".pdf,.doc,.docx,.txt" // Restrict file types in file picker
+                multiple
+                accept=".pdf,.doc,.docx,.txt"
                 onChange={handleUpload}
-                className="hidden" // Hide default file input
-                disabled={isUploading} // Disable during upload
+                className="hidden"
+                disabled={isUploading}
               />
-              <div className="flex items-center gap-2 px-6 py-3 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors font-medium shadow-md">
+              <div className="flex items-center justify-center gap-2 px-6 py-3 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors font-medium shadow-md">
                 {isUploading ? "Uploading..." : "Upload Documents"}
                 <Upload className="w-5 h-5" />
               </div>
@@ -480,7 +480,7 @@ const Documents = () => {
                 <input
                   type="text"
                   placeholder="Search by File Name or Upload Date (YYYY-MM-DD)..."
-                  autoFocus="true"
+                  autoFocus={true}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-yellow-400 rounded-lg focus:ring-3 focus:ring-yellow-400 focus:border-transparent outline-none"

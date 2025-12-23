@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import {
   PanelRightOpen,
-  PanelLeftOpen,
+  ChevronRight,
   BarChart3,
   Ticket,
   ScrollText,
@@ -13,11 +13,31 @@ export default function MainLayout({ children }) {
   const location = useLocation();
   const params = useParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const adminId = params.adminId || "EmadOmar";
+  const adminId = params.adminId || "Emad Omar";
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile) setIsSidebarOpen(false);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Close sidebar on mobile when route changes
+  useEffect(() => {
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
+  }, [location.pathname, isMobile]);
 
   useEffect(() => {
-    // Map routes to page titles
     const getPageTitle = () => {
       if (location.pathname === `/`) return "";
       if (location.pathname === `/admin/${adminId}`) return "Home";
@@ -25,10 +45,9 @@ export default function MainLayout({ children }) {
         return "Tickets";
       if (location.pathname === `/admin/${adminId}/analytics`)
         return "Analytics";
-
       if (location.pathname === `/admin/${adminId}/documents`)
         return "Documents";
-      return;
+      return "";
     };
 
     const pageTitle = getPageTitle();
@@ -38,18 +57,38 @@ export default function MainLayout({ children }) {
   }, [location.pathname, adminId]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-50">
+      {/* Mobile Overlay */}
+      {isMobile && isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`bg-gradient-to-b from-[#1f2937] to-[#111827] transition-all duration-300 flex-shrink-0 ${
-          isSidebarOpen ? "w-full lg:w-80" : "w-0"
-        } overflow-hidden`}
+        className={`
+          bg-gradient-to-b from-[#1f2937] to-[#111827] 
+          transition-all duration-300 ease-in-out flex-shrink-0
+          ${isMobile ? "fixed inset-y-0 left-0 z-50 w-full" : "relative"}
+          ${
+            isSidebarOpen
+              ? isMobile
+                ? "translate-x-0"
+                : "w-80"
+              : isMobile
+              ? "-translate-x-full"
+              : "w-0"
+          }
+          overflow-hidden shadow-2xl
+        `}
       >
-        {/* Sidebar Content */}
-        <div className="min-h-full w-full lg:w-80 flex flex-col">
-          {/* Header/Close Button */}
+        {/* Sidebar Content - Fixed width */}
+        <div className={`${isMobile ? "w-full" : "w-80"} h-full flex flex-col`}>
+          {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-700">
-            <div className="w-full lg:w-auto text-center lg:text-left">
+            <div className={isMobile ? "text-center flex-1 ml-22" : ""}>
               <h2 className="text-white text-3xl">HR Support</h2>
               <p className="text-gray-300 text-base">Employee System</p>
             </div>
@@ -64,7 +103,11 @@ export default function MainLayout({ children }) {
 
           {/* User Info */}
           <div className="p-6 border-b border-gray-700">
-            <div className="flex flex-col lg:flex-row items-center gap-3">
+            <div
+              className={`flex items-center gap-3 ${
+                isMobile ? "justify-center" : ""
+              }`}
+            >
               <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-yellow-400/30">
                 <span className="text-gray-900 font-semibold text-2xl">
                   {adminId
@@ -73,14 +116,14 @@ export default function MainLayout({ children }) {
                     .join("")}
                 </span>
               </div>
-              <div className="text-center lg:text-left">
-                <p className="text-white font-medium text-base">{adminId}</p>
-                <p className="text-gray-300 text-sm">HR Admin</p>
+              <div className={isMobile ? "text-center" : ""}>
+                <p className="text-white font-medium text-lg">{adminId}</p>
+                <p className="text-gray-300 text-md">HR Admin</p>
               </div>
             </div>
           </div>
 
-          {/* Nav Links */}
+          {/* Navigation */}
           <nav className="flex-1 p-4">
             <ul className="space-y-2">
               {[
@@ -115,7 +158,7 @@ export default function MainLayout({ children }) {
                     end={item.end}
                     className={({ isActive }) =>
                       `w-full flex items-center px-4 py-3 rounded-xl text-2xl transition-all duration-200 
-                      justify-center lg:justify-start 
+                      ${isMobile ? "justify-center" : ""}
                       ${
                         isActive
                           ? "bg-yellow-400 text-gray-900 shadow-md font-medium"
@@ -132,7 +175,7 @@ export default function MainLayout({ children }) {
           </nav>
 
           {/* Footer */}
-          <div className="p-6 border-t border-gray-700 text-center lg:text-left">
+          <div className="p-6 border-t border-gray-700">
             <p className="text-gray-300 text-sm">v1</p>
             <p className="text-gray-500 text-xs mt-1">
               Klenka - HR Support System <br />© 2025 All rights reserved.
@@ -142,20 +185,30 @@ export default function MainLayout({ children }) {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* HEADER SECTION */}
-        <header className="sticky top-0 z-10 p-3 bg-gray-50 border-b border-gray-200 flex-shrink-0">
-          {!isSidebarOpen && (
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="bg-yellow-400 p-2 rounded-lg text-gray-900 hover:bg-yellow-500 active:bg-yellow-600 shadow-md hover:shadow-lg transition-all duration-200 font-semibold w-fit"
-            >
-              <PanelLeftOpen className="w-6 h-6" />
-            </button>
-          )}
-        </header>
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0 relative">
+        {/* Floating Toggle Button - Fixed on left center */}
+        {!isSidebarOpen && (
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className={`
+              fixed z-50 bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-600 text-gray-900 
+              shadow-lg hover:shadow-xl transition-all duration-200 group
+              ${
+                isMobile
+                  ? "top-[25%] left-0 rounded-r-lg px-1 py-6"
+                  : "left-0 top-1/2 -translate-y-1/2 rounded-r-lg px-1.5 py-8"
+              }
+            `}
+          >
+            <ChevronRight
+              className={`group-hover:translate-x-1 transition-transform ${
+                isMobile ? "w-4 h-4" : "w-5 h-5"
+              }`}
+            />
+          </button>
+        )}
 
-        {/* Main page content  */}
+        {/* Main Content */}
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>
