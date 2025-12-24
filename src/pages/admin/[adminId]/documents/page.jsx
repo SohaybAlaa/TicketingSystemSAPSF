@@ -323,7 +323,7 @@ const Documents = () => {
   const isSearching = searchQuery.trim().length > 0 || filterType !== "all";
 
   return (
-    <div className="min-h-screen  bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50">
       {/* Alert notifications (top of screen) */}
       <AlertNotification alerts={alerts} onClose={removeAlert} />
 
@@ -361,7 +361,7 @@ const Documents = () => {
                 className="hidden"
                 disabled={isUploading}
               />
-              <div className="flex items-center justify-center gap-2 px-6 py-3 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors font-medium shadow-md">
+              <div className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start">
                 {isUploading ? "Uploading..." : "Upload Documents"}
                 <Upload className="w-5 h-5" />
               </div>

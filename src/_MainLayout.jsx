@@ -38,15 +38,21 @@ export default function MainLayout({ children }) {
   }, [location.pathname, isMobile]);
 
   useEffect(() => {
+    const pathname = decodeURIComponent(location.pathname);
+
     const getPageTitle = () => {
-      if (location.pathname === `/`) return "";
-      if (location.pathname === `/admin/${adminId}`) return "Home";
-      if (location.pathname.startsWith(`/admin/${adminId}/tickets`))
-        return "Tickets";
-      if (location.pathname === `/admin/${adminId}/analytics`)
-        return "Analytics";
-      if (location.pathname === `/admin/${adminId}/documents`)
-        return "Documents";
+      if (pathname === `/`) return "";
+      if (pathname === `/admin/${adminId}`) return "Home";
+
+      const ticketPrefix = `/admin/${adminId}/tickets/`;
+      if (pathname.startsWith(ticketPrefix)) {
+        const ticketId = pathname.slice(ticketPrefix.length);
+        return ticketId ? `${ticketId}` : "Tickets";
+      }
+
+      if (pathname === `/admin/${adminId}/tickets`) return "Tickets";
+      if (pathname === `/admin/${adminId}/analytics`) return "Analytics";
+      if (pathname === `/admin/${adminId}/documents`) return "Documents";
       return "";
     };
 

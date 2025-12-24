@@ -131,8 +131,8 @@ export const INITIAL_TICKETS = [
     priority: "HIGH",
     status: "Under Process",
     assignedTo: "Anna Williams",
-    created: "Dec 1, 2025",
-    slaDue: "Dec 2, 10:00 AM",
+    created: "Dec 23, 2025",
+    slaDue: "Dec 25, 10:00 AM",
   },
   {
     ticketId: "TKT-02",
@@ -1657,4 +1657,138 @@ export const getColorForIndex = (index) => {
     "#6366f1",
   ];
   return colors[index % colors.length];
+};
+
+// Mock API for ticket details
+export const mockApi = {
+  getTicket: (ticketId) => {
+    // Find the ticket from INITIAL_TICKETS
+    const ticket = INITIAL_TICKETS.find((t) => t.ticketId === ticketId);
+
+    if (!ticket) return null;
+
+    // Parse the dates from ticket
+    const createdDate = new Date(ticket.created);
+
+    // Fix slaDue parsing - if it doesn't have a year, add 2025
+    let slaDueString = ticket.slaDue;
+    if (!slaDueString.includes("2025") && !slaDueString.includes("2024")) {
+      // Add year 2025 to the date string
+      slaDueString = slaDueString.replace(/^(\w+ \d+)/, "$1, 2025");
+    }
+    const slaDueDate = new Date(slaDueString);
+
+    // Resolution due is typically 1-2 days after response due
+    const resolutionDue = new Date(
+      slaDueDate.getTime() + 2 * 24 * 60 * 60 * 1000
+    );
+
+    // Check if SLA is breached (if current time is past due date)
+    const now = new Date();
+    const responseBreached = now > slaDueDate;
+    const resolutionBreached = now > resolutionDue;
+
+    // Map the ticket data to the detailed format
+    return {
+      ticket_id: ticket.ticketId,
+      title: ticket.title,
+      description: `Detailed description for ${ticket.title}. This is a mockup description.`,
+      status: ticket.status.toUpperCase().replace(/ /g, "_"),
+      priority: ticket.priority,
+      category_name: ticket.category,
+      subcategory_name: null,
+      channel: `${ticket.employee.toLowerCase().replace(/ /g, "")}@klenka.com`,
+      created_at: createdDate.toISOString(),
+      assigned_user_name: ticket.assignedTo,
+      assigned_group_name: "HR Operations",
+      sla_response_due_at: slaDueDate.toISOString(),
+      sla_resolution_due_at: resolutionDue.toISOString(),
+      sla_response_breached: responseBreached,
+      sla_resolution_breached: resolutionBreached,
+      employee: {
+        name: ticket.employee,
+        email: `${ticket.employee.toLowerCase().replace(/ /g, "")}@klenka.com`,
+        department: ticket.department,
+        position: "Senior Software Engineer",
+        location: "New York, NY",
+      },
+    };
+  },
+
+  getStatusHistory: () => {
+    const now = new Date();
+    const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+    const oneDayAgo = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000);
+
+    return [
+      {
+        id: "1",
+        old_status: null,
+        new_status: "NEW",
+        changed_by_name: "System",
+        changed_at: twoDaysAgo.toISOString(),
+        comment: "Ticket created",
+      },
+      {
+        id: "2",
+        old_status: "NEW",
+        new_status: "UNDER_PROCESS",
+        changed_by_name: "Sarah Johnson",
+        changed_at: oneDayAgo.toISOString(),
+        comment: "Investigating the issue",
+      },
+    ];
+  },
+
+  getComments: () => {
+    const now = new Date();
+    const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+    const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+
+    return [
+      {
+        comment_id: "1",
+        author_name: "Employee",
+        author_type: "Employee",
+        text: "This is the initial request for support.",
+        created_at: threeDaysAgo.toISOString(),
+      },
+      {
+        comment_id: "2",
+        author_name: "HR Agent",
+        author_type: "HR",
+        text: "We're looking into this issue. Can you provide more details?",
+        created_at: twoDaysAgo.toISOString(),
+      },
+    ];
+  },
+
+  getInternalNotes: () => {
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000);
+
+    return [
+      {
+        note_id: "1",
+        author_name: "Sarah Johnson",
+        text: "Internal note about the ticket resolution strategy.",
+        created_at: oneDayAgo.toISOString(),
+      },
+    ];
+  },
+
+  getAttachments: () => {
+    const now = new Date();
+    const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+
+    return [
+      {
+        attachment_id: "1",
+        file_name: "document.pdf",
+        file_size: 245678,
+        uploaded_by_name: "Employee",
+        uploaded_at: twoDaysAgo.toISOString(),
+      },
+    ];
+  },
 };

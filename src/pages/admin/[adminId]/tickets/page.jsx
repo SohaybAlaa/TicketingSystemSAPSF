@@ -289,7 +289,7 @@ export default function Tickets() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50">
       {/* Global Alert Notification - Supports Multiple Stacked Alerts */}
       <AlertNotification alerts={alerts} onClose={removeAlert} />
 
@@ -316,7 +316,7 @@ export default function Tickets() {
             />
             <button
               onClick={handleExport}
-              className="flex items-center text-xl gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-4 rounded-md shadow"
+              className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
             >
               Export
               <Download size={16} />
@@ -343,7 +343,7 @@ export default function Tickets() {
               <button
                 ref={bulkButtonRef}
                 onClick={handleBulkButtonClick}
-                className="flex items-center text-lg gap-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-4 rounded-md shadow mr-3"
+                className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
               >
                 Actions ({selectedRows.length})
                 <EllipsisVertical size={16} />

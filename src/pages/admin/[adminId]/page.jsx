@@ -7,7 +7,7 @@ export default function Admin() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-5 flex items-center justify-between">
@@ -59,25 +59,25 @@ export default function Admin() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <button
               onClick={() => navigate(`/admin/${adminId}/tickets`)}
-              className="px-6 py-3 bg-yellow-400 text-gray-900 rounded-xl hover:bg-yellow-500 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
+              className="px-6 py-3 bg-white text-slate-800 border-2 border-slate-200 rounded-xl hover:bg-yellow-400 hover:border-2 hover:border-yellow-400 hover:scale-105 transition-all duration-300 cursor-pointer font-semibold"
             >
               View All Tickets
             </button>
             <button
               onClick={() => navigate(`/admin/${adminId}/tickets`)}
-              className="px-6 py-3 bg-white text-slate-700 border-2 border-slate-200 rounded-xl hover:border-yellow-400 hover:text-gray-900 transition-all duration-200 font-medium"
+              className="px-6 py-3 bg-white text-slate-800 border-2 border-slate-200 rounded-xl hover:bg-yellow-400 hover:border-2 hover:border-yellow-400 hover:scale-105 transition-all duration-300 cursor-pointer font-semibold"
             >
               View SLA Breached
             </button>
             <button
               onClick={() => navigate(`/admin/${adminId}/analytics`)}
-              className="px-6 py-3 bg-white text-slate-700 border-2 border-slate-200 rounded-xl hover:border-yellow-400 hover:text-gray-900 transition-all duration-200 font-medium"
+              className="px-6 py-3 bg-white text-slate-800 border-2 border-slate-200 rounded-xl hover:bg-yellow-400 hover:border-2 hover:border-yellow-400 hover:scale-105 transition-all duration-300 cursor-pointer font-semibold"
             >
               View Analytics
             </button>
             <button
               onClick={() => navigate(`/admin/${adminId}/documents`)}
-              className="px-6 py-3 bg-white text-slate-700 border-2 border-slate-200 rounded-xl hover:border-yellow-400 hover:text-gray-900 transition-all duration-200 font-medium"
+              className="px-6 py-3 bg-white text-slate-800 border-2 border-slate-200 rounded-xl hover:bg-yellow-400 hover:border-2 hover:border-yellow-400 hover:scale-105 transition-all duration-300 cursor-pointer font-semibold"
             >
               View Documents
             </button>
