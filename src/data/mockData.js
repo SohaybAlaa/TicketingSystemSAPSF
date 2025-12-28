@@ -7,6 +7,7 @@ import {
   Users,
 } from "lucide-react";
 
+//mockData at home page
 export const cards = [
   {
     title: "Assigned to Me",
@@ -78,46 +79,6 @@ export const TEAMS = [
     members: ["Anna Williams", "Robert Brown", "Christopher Davis"],
   },
 ];
-
-// Status options
-export const STATUSES = [
-  { value: "New", label: "New", color: "#ede9fe" },
-  { value: "Under Process", label: "Under Process", color: "#dbeafe" },
-  { value: "Pending Employee", label: "Pending Employee", color: "#fffbeb" },
-  {
-    value: "Pending ThirdParty",
-    label: "Pending ThirdParty",
-    color: "#fef3c7",
-  },
-  { value: "Completed", label: "Completed", color: "#d1fae5" },
-  { value: "Closed", label: "Closed", color: "#e5e7eb" },
-];
-
-// Priority options
-export const PRIORITIES = [
-  { value: "CRITICAL", label: "Critical", color: "#fecaca" },
-  { value: "HIGH", label: "High", color: "#fed7aa" },
-  { value: "MEDIUM", label: "Medium", color: "#dbeafe" },
-  { value: "LOW", label: "Low", color: "#d1fae5" },
-];
-
-// Status order for sorting
-export const STATUS_ORDER = {
-  "Pending Employee": 1,
-  "Pending ThirdParty": 2,
-  "Under Process": 3,
-  New: 4,
-  Completed: 5,
-  Closed: 6,
-};
-
-// Priority order for sorting
-export const PRIORITY_ORDER = {
-  CRITICAL: 1,
-  HIGH: 2,
-  MEDIUM: 3,
-  LOW: 4,
-};
 
 // Sample ticket data
 export const INITIAL_TICKETS = [
@@ -1630,33 +1591,6 @@ export const getStatsByTeam = (teamFilter) => {
     default:
       return mockStatsAll;
   }
-};
-
-// Chart colors configuration
-export const CHART_COLORS = {
-  NEW: "#9333ea",
-  "UNDER PROCESS": "#3b82f6",
-  "PENDING EMPLOYEE": "#eab308",
-  "PENDING THIRD PARTY": "#f97316",
-  COMPLETED: "#22c55e",
-  CLOSED: "#6b7280",
-  LOW: "#3b82f6",
-  MEDIUM: "#eab308",
-  HIGH: "#f97316",
-  CRITICAL: "#ef4444",
-};
-
-// Helper function for chart colors
-export const getColorForIndex = (index) => {
-  const colors = [
-    "#3b82f6",
-    "#8b5cf6",
-    "#ec4899",
-    "#f59e0b",
-    "#10b981",
-    "#6366f1",
-  ];
-  return colors[index % colors.length];
 };
 
 // Mock API for ticket details

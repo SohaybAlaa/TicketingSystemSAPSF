@@ -1,3 +1,84 @@
+// Chart colors configuration
+export const CHART_COLORS = {
+  NEW: "#9333ea",
+  "UNDER PROCESS": "#3b82f6",
+  "PENDING EMPLOYEE": "#eab308",
+  "PENDING THIRD PARTY": "#f97316",
+  COMPLETED: "#22c55e",
+  CLOSED: "#6b7280",
+  LOW: "#3b82f6",
+  MEDIUM: "#eab308",
+  HIGH: "#f97316",
+  CRITICAL: "#ef4444",
+};
+
+// Helper function for chart colors
+export const getColorForIndex = (index) => {
+  const colors = [
+    "#3b82f6",
+    "#8b5cf6",
+    "#ec4899",
+    "#f59e0b",
+    "#10b981",
+    "#6366f1",
+  ];
+  return colors[index % colors.length];
+};
+
+// Status options for action menu button in ticket page
+export const STATUSES = [
+  { value: "New", label: "New", color: "#ede9fe" },
+  { value: "Under Process", label: "Under Process", color: "#dbeafe" },
+  { value: "Pending Employee", label: "Pending Employee", color: "#fffbeb" },
+  {
+    value: "Pending ThirdParty",
+    label: "Pending ThirdParty",
+    color: "#fef3c7",
+  },
+  { value: "Completed", label: "Completed", color: "#d1fae5" },
+  { value: "Closed", label: "Closed", color: "#e5e7eb" },
+];
+
+// Priority options
+export const PRIORITIES = [
+  { value: "CRITICAL", label: "Critical", color: "#fecaca" },
+  { value: "HIGH", label: "High", color: "#fed7aa" },
+  { value: "MEDIUM", label: "Medium", color: "#dbeafe" },
+  { value: "LOW", label: "Low", color: "#d1fae5" },
+];
+
+/**
+ * Get color classes for priority badges
+ * @param {string} priority - Priority level (CRITICAL, HIGH, MEDIUM, LOW)
+ * @returns {string} - Tailwind CSS classes
+ */
+export const getPriorityColor = (priority) => {
+  const colors = {
+    LOW: "bg-blue-100 text-blue-800 border-blue-200",
+    MEDIUM: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    HIGH: "bg-orange-100 text-orange-800 border-orange-200",
+    CRITICAL: "bg-red-100 text-red-800 border-red-200",
+  };
+  return colors[priority] || colors.MEDIUM;
+};
+
+/**
+ * Get color classes for status badges
+ * @param {string} status - Status value
+ * @returns {string} - Tailwind CSS classes
+ */
+export const getStatusColor = (status) => {
+  const colors = {
+    NEW: "bg-purple-100 text-purple-800 border-purple-200",
+    UNDER_PROCESS: "bg-blue-100 text-blue-800 border-blue-200",
+    PENDING_EMPLOYEE: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    PENDING_THIRD_PARTY: "bg-orange-100 text-orange-800 border-orange-200",
+    COMPLETED: "bg-green-100 text-green-800 border-green-200",
+    CLOSED: "bg-gray-100 text-gray-800 border-gray-200",
+  };
+  return colors[status] || colors.NEW;
+};
+
 /**
  * Check if a ticket's SLA is overdue (more than 72 hours since creation)
  * @param {string} createdDate - The date the ticket was created

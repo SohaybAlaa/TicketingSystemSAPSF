@@ -1,8 +1,7 @@
-import { STATUS_ORDER, PRIORITY_ORDER } from "../data/mockData";
-import { 
-  getPriorityColorStyles, 
-  getStatusColorStyles, 
-  isSLAOverdue 
+import {
+  getPriorityColorStyles,
+  getStatusColorStyles,
+  isSLAOverdue,
 } from "../utils/helpers";
 import ActionCellRenderer from "../components/grid/ActionCellRenderer";
 
@@ -14,6 +13,25 @@ import ActionCellRenderer from "../components/grid/ActionCellRenderer";
  * @param {function} handleAssignToMe - Callback for assign to me
  * @param {function} handleAssignToOther - Callback for assign to other
  */
+
+// Status order for sorting
+const STATUS_ORDER = {
+  "Pending Employee": 1,
+  "Pending ThirdParty": 2,
+  "Under Process": 3,
+  New: 4,
+  Completed: 5,
+  Closed: 6,
+};
+
+// Priority order for sorting
+const PRIORITY_ORDER = {
+  CRITICAL: 1,
+  HIGH: 2,
+  MEDIUM: 3,
+  LOW: 4,
+};
+
 export const getColumnDefs = (
   handleStatusChange,
   handlePriorityChange,
@@ -33,10 +51,10 @@ export const getColumnDefs = (
     filter: "agTextColumnFilter",
     tooltipField: "title",
   },
-  { 
-    field: "employee", 
-    headerName: "Employee", 
-    filter: "agTextColumnFilter" 
+  {
+    field: "employee",
+    headerName: "Employee",
+    filter: "agTextColumnFilter",
   },
   {
     field: "category",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
-import { PRIORITIES } from "../../data/mockData";
+import { PRIORITIES } from "../../utils/helpers";
 
 /**
  * Change Priority Modal

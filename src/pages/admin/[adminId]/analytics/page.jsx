@@ -22,12 +22,9 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import {
-  TEAMS,
-  getStatsByTeam,
-  CHART_COLORS,
-  getColorForIndex,
-} from "../../../../data/mockData";
+import { TEAMS, getStatsByTeam } from "../../../../data/mockData";
+
+import { CHART_COLORS, getColorForIndex } from "../../../../utils/helpers";
 
 export default function Analytics() {
   const [dateFilter, setDateFilter] = useState("month");

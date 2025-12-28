@@ -23,10 +23,18 @@ const documentsService = {
   // API SERVICE List / Upload / Delete / Download
 
   async fetchDocuments() {
-    const response = await fetch("/api/public/documents/list");
+    const response = await fetch("/api/public/shared/list?listType=document");
     if (!response.ok) throw new Error("Failed to fetch documents");
     const data = await response.json();
-    return data.documents || []; // array of document objects or empty array
+    // Transform the response to match expected format
+    return (data.files || []).map((file) => ({
+      id: file.id,
+      filename: file.filename,
+      name: file.name,
+      size: file.sizeFormatted,
+      uploadedAt: file.uploadedAtFormatted,
+      type: file.type,
+    }));
   },
   async uploadDocument(file) {
     return new Promise((resolve, reject) => {
@@ -34,19 +42,34 @@ const documentsService = {
       reader.onload = async () => {
         try {
           const base64Content = reader.result.split(",")[1];
-          const response = await fetch("/api/public/documents/upload", {
+          const response = await fetch("/api/public/shared/upload", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               filename: file.name,
               content: base64Content,
+              uploadType: "document",
             }),
           });
           const data = await response.json();
           if (!response.ok) {
             throw new Error(data.error || "Upload failed");
           }
-          resolve(data.documents[0]);
+
+          // The shared API returns { success: true, file: {...} }
+          // We need to transform it to match the expected format
+          const uploadedFile = data.file;
+          const transformedDoc = {
+            id: uploadedFile.id,
+            name: uploadedFile.name,
+            filename: uploadedFile.filename,
+            size: uploadedFile.sizeFormatted, // Use formatted size
+            uploadedAt: new Date(uploadedFile.uploadedAt)
+              .toISOString()
+              .split("T")[0], // Format date as YYYY-MM-DD
+            type: uploadedFile.type,
+          };
+          resolve(transformedDoc);
         } catch (error) {
           reject(error);
         }
@@ -64,9 +87,9 @@ const documentsService = {
   },
   async downloadDocument(doc) {
     const response = await fetch(
-      `/api/public/documents/download?filename=${encodeURIComponent(
+      `/api/public/shared/download?filename=${encodeURIComponent(
         doc.filename
-      )}`
+      )}&downloadType=document`
     );
     if (!response.ok) throw new Error("Download failed");
     const blob = await response.blob(); // Convert response to blob (binary data)
