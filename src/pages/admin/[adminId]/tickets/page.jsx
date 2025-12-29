@@ -316,7 +316,7 @@ export default function Tickets() {
             />
             <button
               onClick={handleExport}
-              className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
+              className="flex items-center justify-center gap-2 px-5 py-3 cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
             >
               Export
               <Download size={16} />
@@ -343,7 +343,7 @@ export default function Tickets() {
               <button
                 ref={bulkButtonRef}
                 onClick={handleBulkButtonClick}
-                className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
+                className="flex items-center justify-center gap-2 px-5 py-3 cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
               >
                 Actions ({selectedRows.length})
                 <EllipsisVertical size={16} />
@@ -400,6 +400,7 @@ export default function Tickets() {
           style={{ width: "100%", height: "800px", marginBottom: "2rem" }}
         >
           <AgGridReact
+            getRowStyle={() => ({ cursor: "pointer" })}
             rowSelection={rowSelection} // Controls row selection mode (single / multiple)
             getRowHeight={() => 48} // Sets fixed row height to 48px
             ref={gridRef} // Reference to access AG Grid API

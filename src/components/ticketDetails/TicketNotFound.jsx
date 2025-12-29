@@ -32,7 +32,7 @@ export default function TicketNotFound({ handleBack }) {
               <div className="mt-7 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                 <button
                   onClick={handleBack}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 shadow-lg shadow-yellow-500/20 transform hover:scale-[1.02] active:scale-[0.99] transition"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 shadow-lg shadow-yellow-500/20 transform hover:scale-[1.02] active:scale-[0.99] transition"
                 >
                   Back to List
                   <ArrowLeft className="w-4 h-4" />
@@ -40,7 +40,7 @@ export default function TicketNotFound({ handleBack }) {
 
                 <button
                   onClick={() => window.location.reload()}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition"
                 >
                   Try Again
                   <Repeat className="w-4 h-4" />

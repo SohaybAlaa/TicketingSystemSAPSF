@@ -305,7 +305,7 @@ export default function Tickets({ adminid, ticketid }) {
                     </h1>
                     <button
                       onClick={handleCopyTicketId}
-                      className="group p-2 hover:bg-gray-100 rounded-lg transition-all duration-200 relative"
+                      className="group p-2 cursor-pointer hover:bg-gray-100 rounded-lg transition-all duration-200 relative"
                       title="Copy Ticket ID"
                     >
                       {isCopied ? (
@@ -374,7 +374,7 @@ export default function Tickets({ adminid, ticketid }) {
               {/* Right Side: Update Button */}
               <button
                 onClick={handleBack}
-                className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
+                className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start cursor-pointer"
               >
                 <span>Update Ticket</span>
                 <Repeat className="w-4 h-4" />

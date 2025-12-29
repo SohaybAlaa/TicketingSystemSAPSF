@@ -45,7 +45,7 @@ export default function LeftColumnTabs({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-4 text-lg font-semibold border-b-3 transition-all duration-200 whitespace-nowrap ${
+              className={`px-6 py-4 text-lg font-semibold border-b-3 transition-all duration-200 whitespace-nowrap cursor-pointer ${
                 activeTab === tab.id
                   ? "border-b-yellow-400 text-gray-800 bg-yellow-50"
                   : "border-b-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50"

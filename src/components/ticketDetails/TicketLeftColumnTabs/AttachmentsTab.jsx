@@ -1,4 +1,4 @@
-import { Download, Upload } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import { formatDateTime } from "../../../utils/formatDateTime";
 
 export default function AttachmentsTab({
@@ -75,7 +75,7 @@ export default function AttachmentsTab({
       <button
         onClick={handleUploadClick}
         disabled={isUploading}
-        className="w-full px-6 py-4 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-yellow-400 hover:text-yellow-600 hover:bg-yellow-50 transition-all duration-200 flex items-center justify-center gap-2 font-semibold group disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full cursor-pointer px-6 py-4 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-yellow-400 hover:text-yellow-600 hover:bg-yellow-50 transition-all duration-200 flex items-center justify-center gap-2 font-semibold group disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isUploading ? (
           <>
@@ -84,7 +84,7 @@ export default function AttachmentsTab({
           </>
         ) : (
           <>
-            <Upload className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
+            <Plus className="w-5 h-5 transition-transform duration-300 ease-out group-hover:rotate-90 group-hover:scale-110" />
             Upload Attachment
           </>
         )}

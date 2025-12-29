@@ -310,7 +310,7 @@ const Documents = () => {
             {/* Download button */}
             <button
               onClick={() => handleDownload(params.data)}
-              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors cursor-pointer"
               title="Download"
               type="button"
             >
@@ -319,7 +319,7 @@ const Documents = () => {
             {/* Delete button */}
             <button
               onClick={() => setDeleteModal({ isOpen: true, doc: params.data })}
-              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
               title="Delete"
               type="button"
             >
@@ -516,7 +516,7 @@ const Documents = () => {
                   <select
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
-                    className="appearance-none px-4 py-2.5 pr-10 rounded-xl border border-gray-200 bg-white text-gray-900 shadow-sm transition hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-200 focus:border-gray-500"
+                    className="cursor-pointer appearance-none px-4 py-2.5 pr-10 rounded-xl border border-gray-200 bg-white text-gray-900 shadow-sm transition hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-200 focus:border-gray-500"
                   >
                     <option value="all">All Types</option>
                     <option value="pdf">PDF</option>
@@ -533,7 +533,7 @@ const Documents = () => {
                   <button
                     onClick={() => setViewMode("list")}
                     type="button"
-                    className={`p-2 rounded ${
+                    className={`p-2 rounded cursor-pointer ${
                       viewMode === "list"
                         ? "bg-yellow-200 shadow-sm"
                         : "hover:bg-yellow-100"
@@ -544,7 +544,7 @@ const Documents = () => {
                   <button
                     onClick={() => setViewMode("grid")}
                     type="button"
-                    className={`p-2 rounded ${
+                    className={`p-2 rounded cursor-pointer ${
                       viewMode === "grid"
                         ? "bg-yellow-200 shadow-sm"
                         : "hover:bg-yellow-100"
@@ -585,6 +585,7 @@ const Documents = () => {
           // List view (AG Grid table)
           <div style={{ height: 600, width: "100%" }}>
             <AgGridReact
+              getRowStyle={() => ({ cursor: "pointer" })}
               theme={myTheme}
               rowData={filteredDocs}
               columnDefs={columnDefs}
@@ -604,7 +605,7 @@ const Documents = () => {
               <div
                 key={doc.id}
                 className={`bg-white rounded-lg shadow-sm border-2 p-6 transition-all duration-300
-                               hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer
+                               hover:shadow-lg hover:scale-105 transition-all duration-300
                                ${getCardBorderClass(doc.type)}
                                `}
               >
@@ -615,7 +616,7 @@ const Documents = () => {
                     {/* Download button */}
                     <button
                       onClick={() => handleDownload(doc)}
-                      className="p-1.5 text-green-600 hover:bg-green-50 rounded-full transition-colors"
+                      className="p-1.5 cursor-pointer text-green-600 hover:bg-green-50 rounded-full transition-colors"
                       type="button"
                     >
                       <Download className="w-6 h-6" />
@@ -623,7 +624,7 @@ const Documents = () => {
                     {/* Delete button */}
                     <button
                       onClick={() => setDeleteModal({ isOpen: true, doc })}
-                      className="p-1.5 text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                      className="p-1.5 text-red-600 cursor-pointer hover:bg-red-50 rounded-full transition-colors"
                       type="button"
                     >
                       <Trash2 className="w-6 h-6" />

@@ -103,7 +103,7 @@ export default function MainLayout({ children }) {
               onClick={() => setIsSidebarOpen(false)}
               className="p-4 hover:bg-gray-700 rounded-lg transition-colors flex-shrink-0 ml-2"
             >
-              <PanelRightOpen className="w-8 h-8 text-yellow-400" />
+              <PanelRightOpen className="w-8 h-8 text-yellow-400 cursor-pointer" />
             </button>
           </div>
 
@@ -198,7 +198,7 @@ export default function MainLayout({ children }) {
             onClick={() => setIsSidebarOpen(true)}
             className={`
               fixed z-50 bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-600 text-gray-900 
-              shadow-lg hover:shadow-xl transition-all duration-200 group
+              shadow-lg hover:shadow-xl transition-all duration-200 group cursor-pointer
               ${
                 isMobile
                   ? "top-[25%] left-0 rounded-r-lg px-1 py-6"
@@ -207,7 +207,7 @@ export default function MainLayout({ children }) {
             `}
           >
             <ChevronRight
-              className={`group-hover:translate-x-1 transition-transform ${
+              className={`group-hover:translate-x-1 transition-transform  ${
                 isMobile ? "w-4 h-4" : "w-5 h-5"
               }`}
             />

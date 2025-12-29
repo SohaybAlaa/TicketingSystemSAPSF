@@ -80,7 +80,7 @@ export default function CommunicationTab({
         />
         <button
           onClick={handleSendComment}
-          className="mt-3 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-800 font-semibold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl flex items-center gap-2"
+          className="mt-3 px-6 py-3 cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-800 font-semibold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl flex items-center gap-2"
         >
           <Send className="w-4 h-4" />
           Send Response

@@ -58,7 +58,7 @@ export default function Error404() {
             <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <button
                 onClick={() => window.history.back()}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 shadow-lg shadow-yellow-500/20 transform hover:scale-[1.02] active:scale-[0.99] transition"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 shadow-lg shadow-yellow-500/20 transform hover:scale-[1.02] active:scale-[0.99] transition"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Go Back
@@ -66,7 +66,7 @@ export default function Error404() {
 
               <button
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition"
               >
                 <RefreshCw className="w-4 h-4" />
                 Try Again
@@ -74,7 +74,7 @@ export default function Error404() {
 
               <button
                 onClick={() => (window.location.href = "/")}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition"
               >
                 <Home className="w-4 h-4" />
                 Go Home

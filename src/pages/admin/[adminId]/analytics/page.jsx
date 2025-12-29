@@ -137,7 +137,7 @@ export default function Analytics() {
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => setTeamFilter("all")}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
                         teamFilter === "all"
                           ? "bg-yellow-400 text-black hover:bg-yellow-500"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -149,7 +149,7 @@ export default function Analytics() {
                       <button
                         key={team.teamId}
                         onClick={() => setTeamFilter(team.teamId)}
-                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
                           teamFilter === team.teamId
                             ? "bg-yellow-400 text-black hover:bg-yellow-500"
                             : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -169,7 +169,7 @@ export default function Analytics() {
                   <div className="flex flex-wrap gap-2 relative">
                     <button
                       onClick={() => setDateFilter("week")}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      className={`px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors ${
                         dateFilter === "week"
                           ? "bg-yellow-400 text-black hover:bg-yellow-500"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -179,7 +179,7 @@ export default function Analytics() {
                     </button>
                     <button
                       onClick={() => setDateFilter("month")}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      className={`px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors ${
                         dateFilter === "month"
                           ? "bg-yellow-400 text-black hover:bg-yellow-500"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -189,7 +189,7 @@ export default function Analytics() {
                     </button>
                     <button
                       onClick={() => setDateFilter("year")}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      className={`px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors ${
                         dateFilter === "year"
                           ? "bg-yellow-400 text-black hover:bg-yellow-500"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -199,7 +199,7 @@ export default function Analytics() {
                     </button>
                     <button
                       onClick={() => setShowCustomPicker(!showCustomPicker)}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer flex items-center gap-2 ${
                         dateFilter === "custom"
                           ? "bg-yellow-400 text-black hover:bg-yellow-500"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -248,13 +248,13 @@ export default function Analytics() {
                             <button
                               onClick={handleCustomDateApply}
                               disabled={!customStartDate || !customEndDate}
-                              className="flex-1 px-4 py-2.5 bg-yellow-500 text-black rounded-lg font-medium hover:bg-yellow-400 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                              className="flex-1 px-4 py-2.5 bg-yellow-500 text-black rounded-lg font-medium cursor-pointer hover:bg-yellow-400 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                             >
                               Apply
                             </button>
                             <button
                               onClick={() => setShowCustomPicker(false)}
-                              className="flex-1 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                              className="flex-1 px-4 py-2.5 bg-white border border-gray-300 cursor-pointer text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                             >
                               Cancel
                             </button>
