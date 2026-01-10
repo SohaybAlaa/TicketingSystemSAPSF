@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Send, User } from "lucide-react";
 import { formatDateTime } from "../../../utils/formatDateTime";
 
@@ -7,6 +8,8 @@ export default function CommunicationTab({
   setNewComment,
   handleSendComment,
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-4">
       {comments.map((comment) => (
@@ -59,9 +62,11 @@ export default function CommunicationTab({
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Send className="w-8 h-8 text-gray-400" />
           </div>
-          <p className="text-gray-500 font-medium">No communication yet</p>
+          <p className="text-gray-500 font-medium">
+            {t("ticketDetails.communication.noComments")}
+          </p>
           <p className="text-sm text-gray-400 mt-1">
-            Start the conversation below
+            {t("ticketDetails.communication.startConversation")}
           </p>
         </div>
       )}
@@ -69,12 +74,12 @@ export default function CommunicationTab({
       {/* Add Comment */}
       <div className="mt-6 pt-6 border-t-2 border-gray-200">
         <label className="block text-sm font-semibold text-gray-700 mb-3">
-          Add Response to Employee
+          {t("ticketDetails.communication.addResponse")}
         </label>
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Type your response here..."
+          placeholder={t("ticketDetails.communication.placeholder")}
           rows={4}
           className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-200 resize-none"
         />
@@ -83,7 +88,7 @@ export default function CommunicationTab({
           className="mt-3 px-6 py-3 cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-800 font-semibold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl flex items-center gap-2"
         >
           <Send className="w-4 h-4" />
-          Send Response
+          {t("ticketDetails.communication.sendResponse")}
         </button>
       </div>
     </div>

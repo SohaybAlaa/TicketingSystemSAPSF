@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import { PRIORITIES } from "../../utils/helpers";
 
@@ -17,6 +18,9 @@ export default function ChangePriorityModal({
   onSave,
   ticketId,
 }) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   const [selectedPriority, setSelectedPriority] = useState(currentPriority);
 
   // Update selected priority when currentPriority changes
@@ -33,7 +37,7 @@ export default function ChangePriorityModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Change Priority - ${ticketId}`}
+      title={t("modals.changePriority.title", { ticketId })}
     >
       <div style={{ marginBottom: "24px" }}>
         <label
@@ -43,9 +47,10 @@ export default function ChangePriorityModal({
             fontWeight: "500",
             color: "#374151",
             marginBottom: "8px",
+            textAlign: isRTL ? "right" : "left",
           }}
         >
-          Select Priority
+          {t("modals.changePriority.selectPriority")}
         </label>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {PRIORITIES.map((priority) => (
@@ -63,6 +68,8 @@ export default function ChangePriorityModal({
                   selectedPriority === priority.value ? "#fefce8" : "white",
                 cursor: "pointer",
                 transition: "all 0.15s",
+                flexDirection: "row",
+                justifyContent: "start",
               }}
               onMouseEnter={(e) => {
                 if (selectedPriority !== priority.value) {
@@ -75,18 +82,6 @@ export default function ChangePriorityModal({
                 }
               }}
             >
-              <input
-                type="radio"
-                name="priority"
-                value={priority.value}
-                checked={selectedPriority === priority.value}
-                onChange={(e) => setSelectedPriority(e.target.value)}
-                style={{
-                  marginRight: "12px",
-                  cursor: "pointer",
-                  accentColor: "#facc15",
-                }}
-              />
               <span
                 style={{
                   backgroundColor: priority.color,
@@ -95,10 +90,25 @@ export default function ChangePriorityModal({
                   fontSize: "13px",
                   fontWeight: "600",
                   color: "#374151",
+                  whiteSpace: "nowrap",
+                  marginRight: isRTL ? "0" : "12px",
+                  marginLeft: isRTL ? "12px" : "0",
                 }}
               >
-                {priority.label}
+                {t(`ticketsPage.priorities.${priority.value}`)}
               </span>
+              <input
+                type="radio"
+                name="priority"
+                value={priority.value}
+                checked={selectedPriority === priority.value}
+                onChange={(e) => setSelectedPriority(e.target.value)}
+                style={{
+                  cursor: "pointer",
+                  accentColor: "#facc15",
+                  flexShrink: 0,
+                }}
+              />
             </label>
           ))}
         </div>
@@ -109,6 +119,7 @@ export default function ChangePriorityModal({
           display: "flex",
           gap: "12px",
           justifyContent: "flex-end",
+          flexDirection: isRTL ? "row-reverse" : "row",
         }}
       >
         <button
@@ -131,7 +142,7 @@ export default function ChangePriorityModal({
             e.currentTarget.style.backgroundColor = "white";
           }}
         >
-          Cancel
+          {t("modals.changePriority.cancel")}
         </button>
         <button
           onClick={handleSave}
@@ -153,7 +164,7 @@ export default function ChangePriorityModal({
             e.currentTarget.style.backgroundColor = "#facc15";
           }}
         >
-          Save Changes
+          {t("modals.changePriority.save")}
         </button>
       </div>
     </Modal>

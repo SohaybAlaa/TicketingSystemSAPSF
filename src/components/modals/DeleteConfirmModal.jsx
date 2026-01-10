@@ -1,5 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
 import { Trash2 } from "lucide-react";
 
 /**
@@ -21,6 +22,9 @@ const DeleteConfirmModal = ({
   ticketId,
   count = 1,
 }) => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   if (!isOpen) return null;
 
   const handleConfirm = (e) => {
@@ -51,33 +55,34 @@ const DeleteConfirmModal = ({
   const isTicket = actualType === "ticket";
   const isMultiple = count > 1;
 
+  // Get translated title
   const title = isTicket
     ? isMultiple
-      ? `Delete ${count} Tickets`
-      : "Delete Ticket"
+      ? t("modals.deleteConfirm.deleteTickets", { count })
+      : t("modals.deleteConfirm.deleteTicket")
     : isMultiple
-    ? `Delete ${count} Documents`
-    : "Delete Document";
+    ? t("modals.deleteConfirm.deleteDocuments", { count })
+    : t("modals.deleteConfirm.deleteDocument");
 
-  const subtitle = "This action cannot be undone";
+  const subtitle = t("modals.deleteConfirm.cannotUndo");
 
-  const message = isTicket ? (
-    isMultiple ? (
-      `Are you sure you want to delete these ${count} tickets?`
-    ) : (
-      <>
-        Are you sure you want to delete ticket{" "}
-        <span className="font-semibold">{actualItemName}</span>?
-      </>
-    )
-  ) : isMultiple ? (
-    `Are you sure you want to delete these ${count} documents?`
-  ) : (
-    <>
-      Are you sure you want to delete{" "}
-      <span className="font-semibold">"{actualItemName}"</span>?
-    </>
-  );
+  // Get translated message
+  const getMessageKey = () => {
+    if (isTicket) {
+      return isMultiple
+        ? "modals.deleteConfirm.confirmTickets"
+        : "modals.deleteConfirm.confirmTicket";
+    } else {
+      return isMultiple
+        ? "modals.deleteConfirm.confirmDocuments"
+        : "modals.deleteConfirm.confirmDocument";
+    }
+  };
+
+  const message = t(getMessageKey(), {
+    count,
+    itemName: actualItemName,
+  });
 
   return createPortal(
     <div
@@ -90,18 +95,27 @@ const DeleteConfirmModal = ({
         style={{ zIndex: 50001 }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-6">
-          <div className="flex items-center gap-3 mb-4">
+        <div className="p-6" dir={isRTL ? "rtl" : "ltr"}>
+          <div
+            className={`flex items-center gap-3 mb-4 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
               <Trash2 className="w-6 h-6 text-red-600" />
             </div>
-            <div>
+            <div className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}>
               <h3 className="text-lg font-bold text-gray-900">{title}</h3>
               <p className="text-sm text-gray-600">{subtitle}</p>
             </div>
           </div>
-          <p className="text-gray-700 mb-6">{message}</p>
-          <div className="flex gap-3">
+          <p
+            className={`text-gray-700 mb-6 ${
+              isRTL ? "text-right" : "text-left"
+            }`}
+            dangerouslySetInnerHTML={{ __html: message }}
+          />
+          <div className={`flex gap-3 ${isRTL ? "flex-row-reverse" : ""}`}>
             <button
               onClick={handleClose}
               type="button"
@@ -111,7 +125,7 @@ const DeleteConfirmModal = ({
                 active:translate-y-0 active:shadow-sm
                 focus:outline-none focus:ring-2 focus:ring-gray-400/60 focus:ring-offset-2"
             >
-              Cancel
+              {t("modals.deleteConfirm.cancel")}
             </button>
 
             <button
@@ -123,7 +137,7 @@ const DeleteConfirmModal = ({
                 active:translate-y-0 active:shadow-md
                 focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:ring-offset-2"
             >
-              Delete
+              {t("modals.deleteConfirm.delete")}
             </button>
           </div>
         </div>

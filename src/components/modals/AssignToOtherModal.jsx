@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import { User, Users } from "lucide-react";
 import { TEAMS } from "../../data/mockData";
@@ -16,6 +17,9 @@ export default function AssignToOtherModal({
   onSave,
   ticketId,
 }) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedMember, setSelectedMember] = useState(null);
 
@@ -44,7 +48,7 @@ export default function AssignToOtherModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Assign to Other - ${ticketId}`}
+      title={t("modals.assignToOther.title", { ticketId })}
     >
       <div style={{ marginBottom: "24px" }}>
         {/* Step 1: Team Selection */}
@@ -56,9 +60,10 @@ export default function AssignToOtherModal({
               fontWeight: "500",
               color: "#374151",
               marginBottom: "8px",
+              textAlign: isRTL ? "right" : "left",
             }}
           >
-            Step 1: Select Team
+            {t("modals.assignToOther.step1")}
           </label>
           <div style={{ display: "flex", gap: "12px" }}>
             {TEAMS.map((team) => (
@@ -96,7 +101,7 @@ export default function AssignToOtherModal({
                   size={20}
                   style={{ display: "inline-block", marginBottom: "4px" }}
                 />
-                <div>{team.teamName}</div>
+                <div>{t(`teams.${team.teamId}`)}</div>
                 <div
                   style={{
                     fontSize: "12px",
@@ -104,7 +109,7 @@ export default function AssignToOtherModal({
                     marginTop: "4px",
                   }}
                 >
-                  {team.members.length} members
+                  {team.members.length} {t("modals.assignToOther.members")}
                 </div>
               </button>
             ))}
@@ -135,9 +140,10 @@ export default function AssignToOtherModal({
                 fontWeight: "500",
                 color: "#374151",
                 marginBottom: "8px",
+                textAlign: isRTL ? "right" : "left",
               }}
             >
-              Step 2: Select Team Member
+              {t("modals.assignToOther.step2")}
             </label>
             <div
               style={{ display: "flex", flexDirection: "column", gap: "8px" }}
@@ -157,6 +163,8 @@ export default function AssignToOtherModal({
                       selectedMember === member ? "#fefce8" : "white",
                     cursor: "pointer",
                     transition: "all 0.15s",
+                    flexDirection: "row",
+                    justifyContent: "start",
                   }}
                   onMouseEnter={(e) => {
                     if (selectedMember !== member) {
@@ -169,6 +177,27 @@ export default function AssignToOtherModal({
                     }
                   }}
                 >
+                  <User
+                    size={18}
+                    style={{
+                      marginRight: isRTL ? "0" : "8px",
+                      marginLeft: isRTL ? "8px" : "0",
+                      color: "#6b7280",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      color: "#374151",
+                      whiteSpace: "nowrap",
+                      marginRight: isRTL ? "0" : "12px",
+                      marginLeft: isRTL ? "12px" : "0",
+                    }}
+                  >
+                    {t(`teamMembers.${member}`, member)}
+                  </span>
                   <input
                     type="radio"
                     name="member"
@@ -176,25 +205,12 @@ export default function AssignToOtherModal({
                     checked={selectedMember === member}
                     onChange={(e) => setSelectedMember(e.target.value)}
                     style={{
-                      marginRight: "12px",
                       cursor: "pointer",
                       accentColor: "#facc15",
                       outline: "none",
+                      flexShrink: 0,
                     }}
                   />
-                  <User
-                    size={18}
-                    style={{ marginRight: "8px", color: "#6b7280" }}
-                  />
-                  <span
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: "500",
-                      color: "#374151",
-                    }}
-                  >
-                    {member}
-                  </span>
                 </label>
               ))}
             </div>
@@ -207,6 +223,7 @@ export default function AssignToOtherModal({
           display: "flex",
           gap: "12px",
           justifyContent: "flex-end",
+          flexDirection: isRTL ? "row-reverse" : "row",
         }}
       >
         <button
@@ -229,7 +246,7 @@ export default function AssignToOtherModal({
             e.currentTarget.style.backgroundColor = "white";
           }}
         >
-          Cancel
+          {t("modals.assignToOther.cancel")}
         </button>
         <button
           onClick={handleSave}
@@ -256,7 +273,7 @@ export default function AssignToOtherModal({
             }
           }}
         >
-          Assign
+          {t("modals.assignToOther.assign")}
         </button>
       </div>
     </Modal>

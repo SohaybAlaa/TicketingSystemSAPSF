@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
   Ticket,
@@ -24,6 +25,8 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function Tickets({ adminid, ticketid }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
   // UI States
   const [alerts, setAlerts] = useState([]);
   const [isCopied, setIsCopied] = useState(false);
@@ -39,18 +42,22 @@ export default function Tickets({ adminid, ticketid }) {
   const [newNote, setNewNote] = useState("");
   const [localStatus, setLocalStatus] = useState("");
   const [localPriority, setLocalPriority] = useState("");
+
   // DATA FETCHING
   const ticket = mockApi.getTicket(ticketid);
   const statusHistory = mockApi.getStatusHistory(ticketid);
   const apiComments = mockApi.getComments(ticketid);
   const apiInternalNotes = mockApi.getInternalNotes(ticketid);
+
   // Combine API and Local Data
   const comments = [...apiComments, ...localComments];
   const internalNotes = [...apiInternalNotes, ...localNotes];
+
   // Fetch attachments on component mount
   useEffect(() => {
     fetchAttachments();
   }, [ticketid]);
+
   // Sync local status/priority with ticket data
   useEffect(() => {
     setLocalStatus(ticket?.status || "");
@@ -69,7 +76,7 @@ export default function Tickets({ adminid, ticketid }) {
       setActualAttachments(data.files || []);
     } catch (error) {
       console.error("Error fetching attachments:", error);
-      showAlert("error", "Failed to load attachments");
+      showAlert("error", t("ticketDetails.alerts.attachmentsFailed"));
     } finally {
       setIsLoadingAttachments(false);
     }
@@ -107,11 +114,11 @@ export default function Tickets({ adminid, ticketid }) {
     try {
       await navigator.clipboard.writeText(ticket.ticket_id);
       setIsCopied(true);
-      showAlert("success", "Ticket ID copied to clipboard");
+      showAlert("success", t("ticketDetails.alerts.ticketIdCopied"));
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
       console.error("Failed to copy:", error);
-      showAlert("error", "Failed to copy ticket ID");
+      showAlert("error", t("ticketDetails.alerts.copyFailed"));
     }
   };
 
@@ -120,14 +127,21 @@ export default function Tickets({ adminid, ticketid }) {
     closeDropdown();
     showAlert(
       "success",
-      `Status updated locally to: ${newStatus.replace("_", " ")}`
+      t("ticketDetails.alerts.statusUpdated", {
+        status: t(`ticketDetails.statuses.${newStatus}`),
+      })
     );
   };
 
   const handlePriorityChange = (newPriority) => {
     setLocalPriority(newPriority);
     closeDropdown();
-    showAlert("success", `Priority updated locally to: ${newPriority}`);
+    showAlert(
+      "success",
+      t("ticketDetails.alerts.priorityUpdated", {
+        priority: t(`ticketDetails.priorities.${newPriority}`),
+      })
+    );
   };
 
   // COMMENT HANDLERS
@@ -143,7 +157,7 @@ export default function Tickets({ adminid, ticketid }) {
       };
       setLocalComments((prev) => [...prev, newCommentObj]);
       setNewComment("");
-      showAlert("success", "Response sent successfully");
+      showAlert("success", t("ticketDetails.alerts.responseSent"));
     }
   };
 
@@ -159,7 +173,7 @@ export default function Tickets({ adminid, ticketid }) {
       };
       setLocalNotes((prev) => [...prev, newNoteObj]);
       setNewNote("");
-      showAlert("success", "Internal note added successfully");
+      showAlert("success", t("ticketDetails.alerts.noteAdded"));
     }
   };
 
@@ -179,9 +193,10 @@ export default function Tickets({ adminid, ticketid }) {
       if (!VALID_FILE_TYPES.includes(fileType)) {
         showAlert(
           "error",
-          `Invalid file type: ${
-            file.name
-          }. Allowed types: ${VALID_FILE_TYPES.join(", ")}`
+          t("ticketDetails.alerts.invalidFileType", {
+            filename: file.name,
+            types: VALID_FILE_TYPES.join(", "),
+          })
         );
         continue;
       }
@@ -190,10 +205,10 @@ export default function Tickets({ adminid, ticketid }) {
       if (file.size > MAX_FILE_SIZE) {
         showAlert(
           "error",
-          `File too large: ${file.name}. Maximum size is ${(
-            MAX_FILE_SIZE /
-            (1024 * 1024)
-          ).toFixed(0)}MB`
+          t("ticketDetails.alerts.fileTooLarge", {
+            filename: file.name,
+            maxSize: (MAX_FILE_SIZE / (1024 * 1024)).toFixed(0),
+          })
         );
         continue;
       }
@@ -226,10 +241,16 @@ export default function Tickets({ adminid, ticketid }) {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Upload failed");
 
-        showAlert("success", `Successfully uploaded: ${file.name}`);
+        showAlert(
+          "success",
+          t("ticketDetails.alerts.uploadSuccess", { filename: file.name })
+        );
       } catch (error) {
         console.error("Upload error:", error);
-        showAlert("error", error.message || `Failed to upload: ${file.name}`);
+        showAlert(
+          "error",
+          t("ticketDetails.alerts.uploadFailed", { filename: file.name })
+        );
       } finally {
         setIsUploading(false);
       }
@@ -258,10 +279,15 @@ export default function Tickets({ adminid, ticketid }) {
       a.click();
       window.URL.revokeObjectURL(url);
 
-      showAlert("success", `Downloaded: ${attachment.filename}`);
+      showAlert(
+        "success",
+        t("ticketDetails.alerts.downloadSuccess", {
+          filename: attachment.filename,
+        })
+      );
     } catch (error) {
       console.error("Download error:", error);
-      showAlert("error", "Failed to download file");
+      showAlert("error", t("ticketDetails.alerts.downloadFailed"));
     }
   };
 
@@ -286,7 +312,7 @@ export default function Tickets({ adminid, ticketid }) {
             <div className="p-1 rounded-lg group-hover:bg-gray-200 transition-colors">
               <ArrowLeft className="w-4 h-4" />
             </div>
-            Back to Tickets
+            {t("ticketDetails.backToTickets")}
           </button>
 
           {/* Ticket Header Card */}
@@ -301,12 +327,12 @@ export default function Tickets({ adminid, ticketid }) {
                       <Ticket className="w-5 h-5 text-white" />
                     </div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                      Ticket ID #{ticket.ticket_id}
+                      {t("ticketDetails.ticketId")} #{ticket.ticket_id}
                     </h1>
                     <button
                       onClick={handleCopyTicketId}
                       className="group p-2 cursor-pointer hover:bg-gray-100 rounded-lg transition-all duration-200 relative"
-                      title="Copy Ticket ID"
+                      title={t("ticketDetails.copyTicketId")}
                     >
                       {isCopied ? (
                         <TicketCheck className="w-4 h-4 text-green-600" />
@@ -322,7 +348,7 @@ export default function Tickets({ adminid, ticketid }) {
                       ticket.status
                     )}`}
                   >
-                    {ticket.status.replace("_", " ")}
+                    {t(`ticketDetails.statuses.${ticket.status}`)}
                   </span>
 
                   {/* Priority Badge */}
@@ -331,7 +357,7 @@ export default function Tickets({ adminid, ticketid }) {
                       ticket.priority
                     )}`}
                   >
-                    {ticket.priority}
+                    {t(`ticketDetails.priorities.${ticket.priority}`)}
                   </span>
 
                   {/* SLA Breached Badge */}
@@ -339,7 +365,7 @@ export default function Tickets({ adminid, ticketid }) {
                     <div className="flex items-center gap-1.5 px-3 py-1 bg-red-50 border border-red-200 rounded-full animate-pulse">
                       <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
                       <span className="text-xs font-semibold text-red-700">
-                        SLA Breached
+                        {t("ticketDetails.slaBreached")}
                       </span>
                     </div>
                   )}
@@ -354,7 +380,11 @@ export default function Tickets({ adminid, ticketid }) {
                 <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
                   <span className="flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5" />
-                    Employee: {ticket.employee.name}
+                    {t("ticketDetails.employee")}:{" "}
+                    {t(
+                      `employees.${ticket.employee.name}`,
+                      ticket.employee.name
+                    )}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
@@ -362,11 +392,21 @@ export default function Tickets({ adminid, ticketid }) {
                   </span>
                   <span className="flex items-center gap-1.5">
                     <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                    {ticket.category_name}
+                    {t(
+                      `categories.${ticket.category_name}`,
+                      ticket.category_name
+                    )}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <UserStar className="w-3.5 h-3.5" />
-                    Assigned to: {ticket.assigned_user_name}
+                    {t("ticketDetails.assignedTo")}:{" "}
+                    {t(
+                      `teamMembers.${ticket.assigned_user_name}`,
+                      t(
+                        `employees.${ticket.assigned_user_name}`,
+                        ticket.assigned_user_name
+                      )
+                    )}
                   </span>
                 </div>
               </div>
@@ -376,12 +416,13 @@ export default function Tickets({ adminid, ticketid }) {
                 onClick={handleBack}
                 className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start cursor-pointer"
               >
-                <span>Update Ticket</span>
+                <span>{t("ticketDetails.updateTicket")}</span>
                 <Repeat className="w-4 h-4" />
               </button>
             </div>
           </div>
         </div>
+
         {/* MAIN CONTENT GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column: Tabs Section */}

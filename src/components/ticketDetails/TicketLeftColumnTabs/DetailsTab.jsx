@@ -1,16 +1,22 @@
+import { useTranslation } from "react-i18next";
 import { formatDateTime } from "../../../utils/formatDateTime";
 
 export default function DetailsTab({ ticket, statusHistory }) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       <div>
         <label className="block text-md font-semibold text-gray-700 mb-3">
-          Description
+          {t("ticketDetails.details.description")}
         </label>
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-purple-100 opacity-50 rounded-xl blur"></div>
           <p className="relative text-gray-800 bg-white p-5 rounded-xl border border-gray-200 shadow-sm leading-relaxed">
-            {ticket.description}
+            {/* CHANGED: Check if description is a translation key */}
+            {ticket.description === "ticketDetails.genericDescription"
+              ? t(ticket.description, ticket.descriptionParams || {})
+              : ticket.description}
           </p>
         </div>
       </div>
@@ -18,18 +24,24 @@ export default function DetailsTab({ ticket, statusHistory }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-gradient-to-br from-yellow-50 to-white p-5 rounded-xl border border-yellow-100">
           <label className="block text-md font-semibold text-gray-700 mb-2">
-            Category
+            {t("ticketDetails.details.category")}
           </label>
-          <p className="text-gray-900 font-medium">{ticket.category_name}</p>
+          <p className="text-gray-900 font-medium">
+            {t(`categories.${ticket.category_name}`, {
+              defaultValue: ticket.category_name,
+            })}
+          </p>
           {ticket.subcategory_name && (
             <p className="text-sm text-gray-600 mt-1">
-              {ticket.subcategory_name}
+              {t(`subcategories.${ticket.subcategory_name}`, {
+                defaultValue: ticket.subcategory_name,
+              })}
             </p>
           )}
         </div>
         <div className="bg-gradient-to-br from-yellow-50 to-white p-5 rounded-xl border border-yellow-100">
           <label className="block text-md font-semibold text-gray-700 mb-2">
-            Channel
+            {t("ticketDetails.details.channel")}
           </label>
           <p className="text-gray-900 font-medium">{ticket.channel}</p>
         </div>
@@ -38,7 +50,7 @@ export default function DetailsTab({ ticket, statusHistory }) {
       {statusHistory.length > 0 && (
         <div>
           <label className="block text-lg font-semibold text-gray-700 mb-4">
-            Status History
+            {t("ticketDetails.details.statusHistory")}
           </label>
           <div className="relative space-y-4 pl-6 before:absolute before:left-2 before:top-0 before:bottom-0 before:w-0.5 before:bg-gradient-to-b before:from-orange-400 before:to-yellow-300">
             {statusHistory.map((history) => (
@@ -52,11 +64,11 @@ export default function DetailsTab({ ticket, statusHistory }) {
                     <span className="text-sm font-semibold text-gray-900">
                       {history.old_status && (
                         <span className="text-yellow-500">
-                          {history.old_status} →{" "}
+                          {t(`ticketDetails.statuses.${history.old_status}`)} →{" "}
                         </span>
                       )}
                       <span className="text-gray-500">
-                        {history.new_status}
+                        {t(`ticketDetails.statuses.${history.new_status}`)}
                       </span>
                     </span>
                   </div>
@@ -65,7 +77,10 @@ export default function DetailsTab({ ticket, statusHistory }) {
                   </span>
                 </div>
                 <p className="text-xs text-gray-600 mb-1">
-                  by {history.changed_by_name}
+                  {t("ticketDetails.details.changedBy")}{" "}
+                  {t(`employees.${history.changed_by_name}`, {
+                    defaultValue: history.changed_by_name,
+                  })}
                 </p>
                 {history.comment && (
                   <p className="text-sm text-gray-700 mt-2 p-3 bg-gray-50 rounded-lg border border-gray-100">

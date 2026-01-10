@@ -92,8 +92,8 @@ export const INITIAL_TICKETS = [
     priority: "HIGH",
     status: "Under Process",
     assignedTo: "Anna Williams",
-    created: "Dec 23, 2025",
-    slaDue: "Dec 25, 10:00 AM",
+    created: "Jan 11, 2026",
+    slaDue: "Jan 12, 10:00 PM",
   },
   {
     ticketId: "TKT-02",
@@ -104,8 +104,8 @@ export const INITIAL_TICKETS = [
     priority: "MEDIUM",
     status: "Completed",
     assignedTo: "Anna Williams",
-    created: "Dec 1, 2025",
-    slaDue: "Dec 1, 03:00 PM",
+    created: "Jan 3, 2025",
+    slaDue: "Jan 4, 10:00 PM",
   },
   {
     ticketId: "TKT-03",
@@ -1313,12 +1313,12 @@ export const mockStatsAll = {
     slaComplianceRate: -3,
   },
   ticketsByStatus: {
-    NEW: 145,
-    UNDER_PROCESS: 210,
-    PENDING_EMPLOYEE: 87,
-    PENDING_THIRD_PARTY: 56,
-    COMPLETED: 123,
-    CLOSED: 626,
+    NEW: 50,
+    UNDER_PROCESS: 50,
+    PENDING_EMPLOYEE: 50,
+    PENDING_THIRD_PARTY: 50,
+    COMPLETED: 50,
+    CLOSED: 50,
   },
   ticketsByPriority: {
     LOW: 412,
@@ -1334,9 +1334,7 @@ export const mockStatsAll = {
   },
   ticketsByCategory: [
     { category: "Technical Support", count: 425 },
-    { category: "Account Issues", count: 289 },
     { category: "Billing", count: 187 },
-    { category: "Product Inquiry", count: 156 },
     { category: "Bug Report", count: 134 },
     { category: "Other", count: 56 },
   ],
@@ -1437,9 +1435,7 @@ export const mockStatsTeamA = {
   },
   ticketsByCategory: [
     { category: "Technical Support", count: 245 },
-    { category: "Account Issues", count: 152 },
     { category: "Billing", count: 98 },
-    { category: "Product Inquiry", count: 87 },
     { category: "Bug Report", count: 78 },
     { category: "Other", count: 27 },
   ],
@@ -1526,9 +1522,7 @@ export const mockStatsTeamB = {
   },
   ticketsByCategory: [
     { category: "Technical Support", count: 180 },
-    { category: "Account Issues", count: 137 },
     { category: "Billing", count: 89 },
-    { category: "Product Inquiry", count: 69 },
     { category: "Bug Report", count: 56 },
     { category: "Other", count: 29 },
   ],
@@ -1604,11 +1598,16 @@ export const mockApi = {
     // Parse the dates from ticket
     const createdDate = new Date(ticket.created);
 
-    // Fix slaDue parsing - if it doesn't have a year, add 2025
+    // if it doesn't have a year, add appropriate year based on created date
     let slaDueString = ticket.slaDue;
-    if (!slaDueString.includes("2025") && !slaDueString.includes("2024")) {
-      // Add year 2025 to the date string
-      slaDueString = slaDueString.replace(/^(\w+ \d+)/, "$1, 2025");
+    if (
+      !slaDueString.includes("2025") &&
+      !slaDueString.includes("2024") &&
+      !slaDueString.includes("2026")
+    ) {
+      // Get the year from the created date to ensure consistency
+      const createdYear = createdDate.getFullYear();
+      slaDueString = slaDueString.replace(/^(\w+ \d+)/, `$1, ${createdYear}`);
     }
     const slaDueDate = new Date(slaDueString);
 
@@ -1626,7 +1625,8 @@ export const mockApi = {
     return {
       ticket_id: ticket.ticketId,
       title: ticket.title,
-      description: `Detailed description for ${ticket.title}. This is a mockup description.`,
+      description: "ticketDetails.genericDescription",
+      descriptionParams: { title: ticket.title },
       status: ticket.status.toUpperCase().replace(/ /g, "_"),
       priority: ticket.priority,
       category_name: ticket.category,

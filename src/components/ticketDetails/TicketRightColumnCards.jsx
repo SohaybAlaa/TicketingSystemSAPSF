@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   CheckCircle2,
   ChevronDown,
@@ -17,6 +18,8 @@ export default function TicketRightColumnCards({
   handleStatusChange,
   handlePriorityChange,
 }) {
+  const { t } = useTranslation();
+
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString("en-US", {
@@ -36,14 +39,14 @@ export default function TicketRightColumnCards({
           <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
             <CheckCircle2 className="w-4 h-4 text-white" />
           </div>
-          Ticket Information
+          {t("ticketDetails.rightColumn.ticketInformation")}
         </h3>
 
         <div className="space-y-5">
           {/* Status Dropdown */}
           <div>
             <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
-              Status
+              {t("ticketDetails.rightColumn.status")}
             </label>
             <div className="dropdown dropdown-bottom w-full">
               <div
@@ -51,7 +54,7 @@ export default function TicketRightColumnCards({
                 role="button"
                 className="btn btn-outline w-full justify-between px-4 py-3 h-auto min-h-0 border-2 border-gray-300 rounded-xl hover:border-yellow-400 hover:bg-yellow-50 focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-200 font-medium"
               >
-                <span>{(localStatus || "").replace("_", " ")}</span>
+                <span>{t(`ticketDetails.statuses.${localStatus || ""}`)}</span>
                 <ChevronDown className="w-5 h-5 text-gray-500" />
               </div>
               <ul
@@ -59,26 +62,34 @@ export default function TicketRightColumnCards({
                 className="dropdown-content menu bg-base-100 rounded-xl z-[1] w-full p-2 shadow-xl border border-gray-200 mt-2"
               >
                 <li onClick={() => handleStatusChange("NEW")}>
-                  <a className="font-medium hover:bg-purple-400">New</a>
+                  <a className="font-medium hover:bg-purple-400">
+                    {t("ticketDetails.statuses.NEW")}
+                  </a>
                 </li>
                 <li onClick={() => handleStatusChange("UNDER_PROCESS")}>
-                  <a className="font-medium hover:bg-blue-400">Under Process</a>
+                  <a className="font-medium hover:bg-blue-400">
+                    {t("ticketDetails.statuses.UNDER_PROCESS")}
+                  </a>
                 </li>
                 <li onClick={() => handleStatusChange("PENDING_EMPLOYEE")}>
                   <a className="font-medium hover:bg-orange-400">
-                    Pending with Employee
+                    {t("ticketDetails.statuses.PENDING_EMPLOYEE")}
                   </a>
                 </li>
                 <li onClick={() => handleStatusChange("PENDING_THIRD_PARTY")}>
                   <a className="font-medium hover:bg-orange-300">
-                    Pending with Third Party
+                    {t("ticketDetails.statuses.PENDING_THIRD_PARTY")}
                   </a>
                 </li>
                 <li onClick={() => handleStatusChange("COMPLETED")}>
-                  <a className="font-medium hover:bg-green-400">Completed</a>
+                  <a className="font-medium hover:bg-green-400">
+                    {t("ticketDetails.statuses.COMPLETED")}
+                  </a>
                 </li>
                 <li onClick={() => handleStatusChange("CLOSED")}>
-                  <a className="font-medium hover:bg-gray-400">Closed</a>
+                  <a className="font-medium hover:bg-gray-400">
+                    {t("ticketDetails.statuses.CLOSED")}
+                  </a>
                 </li>
               </ul>
             </div>
@@ -87,7 +98,7 @@ export default function TicketRightColumnCards({
           {/* Priority Dropdown */}
           <div>
             <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
-              Priority
+              {t("ticketDetails.rightColumn.priority")}
             </label>
             <div className="dropdown dropdown-bottom w-full">
               <div
@@ -95,7 +106,9 @@ export default function TicketRightColumnCards({
                 role="button"
                 className="btn btn-outline w-full justify-between px-4 py-3 h-auto min-h-0 border-2 border-gray-300 rounded-xl hover:border-yellow-400 hover:bg-yellow-50 focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-200 font-medium"
               >
-                <span>{localPriority || ""}</span>
+                <span>
+                  {t(`ticketDetails.priorities.${localPriority || ""}`)}
+                </span>
                 <ChevronDown className="w-5 h-5 text-gray-500" />
               </div>
               <ul
@@ -103,16 +116,24 @@ export default function TicketRightColumnCards({
                 className="dropdown-content menu bg-base-100 rounded-xl z-[1] w-full p-2 shadow-xl border border-gray-200 mt-2"
               >
                 <li onClick={() => handlePriorityChange("LOW")}>
-                  <a className="font-medium hover:bg-green-400">Low</a>
+                  <a className="font-medium hover:bg-green-400">
+                    {t("ticketDetails.priorities.LOW")}
+                  </a>
                 </li>
                 <li onClick={() => handlePriorityChange("MEDIUM")}>
-                  <a className="font-medium hover:bg-blue-400">Medium</a>
+                  <a className="font-medium hover:bg-blue-400">
+                    {t("ticketDetails.priorities.MEDIUM")}
+                  </a>
                 </li>
                 <li onClick={() => handlePriorityChange("HIGH")}>
-                  <a className="font-medium hover:bg-orange-400">High</a>
+                  <a className="font-medium hover:bg-orange-400">
+                    {t("ticketDetails.priorities.HIGH")}
+                  </a>
                 </li>
                 <li onClick={() => handlePriorityChange("CRITICAL")}>
-                  <a className="font-medium hover:bg-red-500">Critical</a>
+                  <a className="font-medium hover:bg-red-500">
+                    {t("ticketDetails.priorities.CRITICAL")}
+                  </a>
                 </li>
               </ul>
             </div>
@@ -120,7 +141,7 @@ export default function TicketRightColumnCards({
 
           <div className="pt-4 border-t border-gray-200">
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              Assigned To
+              {t("ticketDetails.rightColumn.assignedTo")}
             </label>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center shadow-md">
@@ -128,10 +149,16 @@ export default function TicketRightColumnCards({
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900">
-                  {ticket.assigned_user_name || "Unassigned"}
+                  {ticket.assigned_user_name
+                    ? t(`employees.${ticket.assigned_user_name}`, {
+                        defaultValue: ticket.assigned_user_name,
+                      })
+                    : t("ticketDetails.rightColumn.unassigned")}
                 </p>
                 <p className="text-xs text-gray-600">
-                  {ticket.assigned_group_name}
+                  {t(`groups.${ticket.assigned_group_name}`, {
+                    defaultValue: ticket.assigned_group_name,
+                  })}
                 </p>
               </div>
             </div>
@@ -145,13 +172,15 @@ export default function TicketRightColumnCards({
           <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
             <Clock className="w-4 h-4 text-white" />
           </div>
-          <h3 className="text-lg font-bold text-gray-900">SLA Tracking</h3>
+          <h3 className="text-lg font-bold text-gray-900">
+            {t("ticketDetails.rightColumn.slaTracking")}
+          </h3>
         </div>
 
         <div className="space-y-4">
           <div className="p-4 bg-gradient-to-br from-orange-50 to-white rounded-xl border border-blue-100">
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              Response Due
+              {t("ticketDetails.rightColumn.responseDue")}
             </label>
             <p
               className={`text-sm font-semibold ${
@@ -163,14 +192,14 @@ export default function TicketRightColumnCards({
             {ticket.sla_response_breached && (
               <span className="inline-flex items-center gap-1 mt-2 px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">
                 <AlertTriangle className="w-3 h-3" />
-                Breached
+                {t("ticketDetails.rightColumn.breached")}
               </span>
             )}
           </div>
 
           <div className="p-4 bg-gradient-to-br from-orange-100 to-white rounded-xl border border-purple-100">
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              Resolution Due
+              {t("ticketDetails.rightColumn.resolutionDue")}
             </label>
             <p
               className={`text-sm font-semibold ${
@@ -184,7 +213,7 @@ export default function TicketRightColumnCards({
             {ticket.sla_resolution_breached && (
               <span className="inline-flex items-center gap-1 mt-2 px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">
                 <AlertTriangle className="w-3 h-3" />
-                Breached
+                {t("ticketDetails.rightColumn.breached")}
               </span>
             )}
           </div>
@@ -197,7 +226,9 @@ export default function TicketRightColumnCards({
           <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
             <User className="w-4 h-4 text-white" />
           </div>
-          <h3 className="text-lg font-bold text-gray-900">Employee Details</h3>
+          <h3 className="text-lg font-bold text-gray-900">
+            {t("ticketDetails.rightColumn.employeeDetails")}
+          </h3>
         </div>
 
         <div className="space-y-4">
@@ -207,10 +238,12 @@ export default function TicketRightColumnCards({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Name
+                {t("ticketDetails.rightColumn.name")}
               </p>
               <p className="text-sm font-semibold text-gray-900 truncate">
-                {ticket.employee.name}
+                {t(`employees.${ticket.employee.name}`, {
+                  defaultValue: ticket.employee.name,
+                })}
               </p>
             </div>
           </div>
@@ -221,7 +254,7 @@ export default function TicketRightColumnCards({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Email
+                {t("ticketDetails.rightColumn.email")}
               </p>
               <p className="text-sm font-semibold text-gray-900 truncate">
                 {ticket.employee.email}
@@ -235,10 +268,12 @@ export default function TicketRightColumnCards({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Department
+                {t("ticketDetails.rightColumn.department")}
               </p>
               <p className="text-sm font-semibold text-gray-900">
-                {ticket.employee.department}
+                {t(`departments.${ticket.employee.department}`, {
+                  defaultValue: ticket.employee.department,
+                })}
               </p>
             </div>
           </div>
@@ -249,7 +284,7 @@ export default function TicketRightColumnCards({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Position
+                {t("ticketDetails.rightColumn.position")}
               </p>
               <p className="text-sm font-semibold text-gray-900">
                 {ticket.employee.position}
@@ -264,7 +299,7 @@ export default function TicketRightColumnCards({
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  Location
+                  {t("ticketDetails.rightColumn.location")}
                 </p>
                 <p className="text-sm font-semibold text-gray-900">
                   {ticket.employee.location}

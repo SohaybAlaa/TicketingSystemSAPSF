@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Plus, User } from "lucide-react";
 import { formatDateTime } from "../../../utils/formatDateTime";
 
@@ -7,6 +8,8 @@ export default function InternalNotesTab({
   setNewNote,
   handleAddNote,
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-4">
       {internalNotes.map((note) => (
@@ -36,9 +39,11 @@ export default function InternalNotesTab({
           <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Plus className="w-8 h-8 text-yellow-600" />
           </div>
-          <p className="text-gray-500 font-medium">No internal notes</p>
+          <p className="text-gray-500 font-medium">
+            {t("ticketDetails.internalNotes.noNotes")}
+          </p>
           <p className="text-sm text-gray-400 mt-1">
-            Add private notes for HR team only
+            {t("ticketDetails.internalNotes.addPrivateNotes")}
           </p>
         </div>
       )}
@@ -46,12 +51,12 @@ export default function InternalNotesTab({
       {/* Add Note */}
       <div className="mt-6 pt-6 border-t-2 border-gray-200">
         <label className="block text-sm font-semibold text-gray-700 mb-3">
-          Add Internal Note
+          {t("ticketDetails.internalNotes.addInternalNote")}
         </label>
         <textarea
           value={newNote}
           onChange={(e) => setNewNote(e.target.value)}
-          placeholder="Add a note visible only to HR team..."
+          placeholder={t("ticketDetails.internalNotes.placeholder")}
           rows={3}
           className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 resize-none"
         />
@@ -60,7 +65,7 @@ export default function InternalNotesTab({
           className="mt-3 px-6 py-3 cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-700 font-semibold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          Add Note
+          {t("ticketDetails.internalNotes.addNote")}
         </button>
       </div>
     </div>

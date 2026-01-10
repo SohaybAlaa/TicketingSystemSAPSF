@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import { STATUSES } from "../../utils/helpers";
 
@@ -17,6 +18,9 @@ export default function ChangeStatusModal({
   onSave,
   ticketId,
 }) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   const [selectedStatus, setSelectedStatus] = useState(currentStatus);
 
   // Update selected status when currentStatus changes
@@ -33,7 +37,7 @@ export default function ChangeStatusModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Change Status - ${ticketId}`}
+      title={t("modals.changeStatus.title", { ticketId })}
     >
       <div style={{ marginBottom: "24px" }}>
         <label
@@ -43,9 +47,10 @@ export default function ChangeStatusModal({
             fontWeight: "500",
             color: "#374151",
             marginBottom: "8px",
+            textAlign: isRTL ? "right" : "left",
           }}
         >
-          Select Status
+          {t("modals.changeStatus.selectStatus")}
         </label>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {STATUSES.map((status) => (
@@ -63,6 +68,8 @@ export default function ChangeStatusModal({
                   selectedStatus === status.value ? "#fefce8" : "white",
                 cursor: "pointer",
                 transition: "all 0.15s",
+                flexDirection: "row",
+                justifyContent: "start",
               }}
               onMouseEnter={(e) => {
                 if (selectedStatus !== status.value) {
@@ -75,18 +82,6 @@ export default function ChangeStatusModal({
                 }
               }}
             >
-              <input
-                type="radio"
-                name="status"
-                value={status.value}
-                checked={selectedStatus === status.value}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                style={{
-                  marginRight: "12px",
-                  cursor: "pointer",
-                  accentColor: "#facc15",
-                }}
-              />
               <span
                 style={{
                   backgroundColor: status.color,
@@ -95,10 +90,25 @@ export default function ChangeStatusModal({
                   fontSize: "13px",
                   fontWeight: "600",
                   color: "#374151",
+                  whiteSpace: "nowrap",
+                  marginRight: isRTL ? "0" : "12px",
+                  marginLeft: isRTL ? "12px" : "0",
                 }}
               >
-                {status.label}
+                {t(`ticketsPage.statuses.${status.value}`)}
               </span>
+              <input
+                type="radio"
+                name="status"
+                value={status.value}
+                checked={selectedStatus === status.value}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                style={{
+                  cursor: "pointer",
+                  accentColor: "#facc15",
+                  flexShrink: 0,
+                }}
+              />
             </label>
           ))}
         </div>
@@ -109,6 +119,7 @@ export default function ChangeStatusModal({
           display: "flex",
           gap: "12px",
           justifyContent: "flex-end",
+          flexDirection: isRTL ? "row-reverse" : "row",
         }}
       >
         <button
@@ -131,7 +142,7 @@ export default function ChangeStatusModal({
             e.currentTarget.style.backgroundColor = "white";
           }}
         >
-          Cancel
+          {t("modals.changeStatus.cancel")}
         </button>
         <button
           onClick={handleSave}
@@ -153,7 +164,7 @@ export default function ChangeStatusModal({
             e.currentTarget.style.backgroundColor = "#facc15";
           }}
         >
-          Save Changes
+          {t("modals.changeStatus.save")}
         </button>
       </div>
     </Modal>

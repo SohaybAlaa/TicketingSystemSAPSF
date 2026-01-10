@@ -1,6 +1,10 @@
 import { Bot, ArrowLeft, Home, RefreshCw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function Error404() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   return (
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 p-6">
       {/* Background decoration */}
@@ -15,9 +19,15 @@ export default function Error404() {
           <div className="p-8 sm:p-12">
             {/* Top badge */}
             <div className="flex justify-center mb-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 text-white/80 text-sm">
+              <div
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 text-white/80 text-sm ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
+              >
                 <span className="h-2 w-2 rounded-full bg-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.35)]" />
-                Error • 404
+                <span className={isRTL ? "tracking-wide" : ""}>
+                  {t("error404.badge", "Error • 404")}
+                </span>
               </div>
             </div>
 
@@ -28,8 +38,12 @@ export default function Error404() {
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="px-5 py-2 rounded-2xl border border-white/10 bg-gray-950/40 backdrop-blur">
-                  <p className="text-xl sm:text-2xl font-bold text-white">
-                    PAGE NOT FOUND
+                  <p
+                    className={`text-xl sm:text-2xl font-bold text-white ${
+                      isRTL ? "tracking-wide" : ""
+                    }`}
+                  >
+                    {t("error404.title", "PAGE NOT FOUND")}
                   </p>
                 </div>
               </div>
@@ -43,14 +57,23 @@ export default function Error404() {
             </div>
 
             {/* Message */}
-            <div className="text-center">
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                Oops! We couldn’t find that page.
+            <div className={`text-center ${isRTL ? "text-right" : ""}`}>
+              <h2
+                className={`text-2xl sm:text-3xl font-extrabold tracking-tight text-white ${
+                  isRTL ? "tracking-wide" : ""
+                }`}
+              >
+                {t("error404.heading", "Oops! We couldn't find that page.")}
               </h2>
-              <p className="mt-2 text-sm sm:text-base text-white/70 max-w-lg mx-auto leading-relaxed">
-                The page you’re looking for might have been removed, renamed, or
-                is temporarily unavailable. Try going back, refreshing, or head
-                home.
+              <p
+                className={`mt-2 text-sm sm:text-base text-white/70 max-w-lg mx-auto leading-relaxed ${
+                  isRTL ? "tracking-wide" : ""
+                }`}
+              >
+                {t(
+                  "error404.message",
+                  "The page you're looking for might have been removed, renamed, or is temporarily unavailable. Try going back, refreshing, or head home."
+                )}
               </p>
             </div>
 
@@ -58,26 +81,38 @@ export default function Error404() {
             <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <button
                 onClick={() => window.history.back()}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 shadow-lg shadow-yellow-500/20 transform hover:scale-[1.02] active:scale-[0.99] transition"
+                className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 shadow-lg shadow-yellow-500/20 transform hover:scale-[1.02] active:scale-[0.99] transition ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
               >
-                <ArrowLeft className="w-4 h-4" />
-                Go Back
+                <ArrowLeft className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
+                <span className={isRTL ? "tracking-wide" : ""}>
+                  {t("error404.goBack", "Go Back")}
+                </span>
               </button>
 
               <button
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition"
+                className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
               >
                 <RefreshCw className="w-4 h-4" />
-                Try Again
+                <span className={isRTL ? "tracking-wide" : ""}>
+                  {t("error404.tryAgain", "Try Again")}
+                </span>
               </button>
 
               <button
                 onClick={() => (window.location.href = "/")}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition"
+                className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
               >
                 <Home className="w-4 h-4" />
-                Go Home
+                <span className={isRTL ? "tracking-wide" : ""}>
+                  {t("error404.goHome", "Go Home")}
+                </span>
               </button>
             </div>
 

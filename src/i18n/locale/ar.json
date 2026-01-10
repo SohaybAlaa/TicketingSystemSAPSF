@@ -1,0 +1,457 @@
+{
+  "welcome": "مرحبا بك في كلينكا",
+  "chatbot": "روبوت الدردشة SAP SF",
+  "home": "الرئيسية",
+  "tickets": "التذاكر",
+  "analytics": "الإحصائيات",
+  "documents": "اللوائح",
+  "language": "اللغة",
+  "hrSupport": "دعم الموارد البشرية",
+  "employeeSystem": "نظام الموظفين",
+  "hrAdmin": "مسؤول الموارد البشرية",
+  "version": "الإصدار {{version}}",
+  "footer": {
+    "title": "كلينكا - نظام دعم الموارد البشرية",
+    "copyright": "© 2025 جميع الحقوق محفوظة."
+  },
+  "adminName": "عماد عمر",
+  "dashboard": {
+    "title": "لوحة دعم الموارد البشرية",
+    "welcome": "مرحباً بعودتك، {{name}}",
+    "cards": {
+      "Assigned to Me": "المعينة لي",
+      "My Team Tickets": "تذاكر فريقي",
+      "New Tickets": "تذاكر جديدة",
+      "Under Process": "قيد المعالجة",
+      "SLA Breached": "تجاوز اتفاقية مستوى الخدمة",
+      "Closed (30 days)": "مغلقة (30 يوم)"
+    },
+    "quickActions": {
+      "title": "إجراءات سريعة",
+      "viewAllTickets": "عرض جميع التذاكر",
+      "viewSLABreached": "عرض التذاكر المتجاوزة",
+      "viewAnalytics": "عرض الإحصائيات",
+      "viewDocuments": "عرض اللوائح"
+    },
+    "recentActivity": {
+      "title": "النشاط الأخير",
+      "newTicket": "تذكرة جديدة معينة: {{id}}",
+      "portalAccess": "تعذر الوصول إلى بوابة الموارد البشرية - أولوية حرجة",
+      "slaAlert": "تنبيه بتجاوز اتفاقية مستوى الخدمة: {{id}}",
+      "vacationLeave": "تم تجاوز وقت الحل للموافقة على إجازة",
+      "ticketCompleted": "تم إكمال التذكرة: {{id}}",
+      "healthInsurance": "تم حل استفسار التأمين الصحي",
+      "time": {
+        "hoursAgo": "منذ {{count}} ساعة",
+        "daysAgo": "منذ {{count}} يوم"
+      }
+    }
+  },
+  "teams": {
+    "teamA": "الفريق أ",
+    "teamB": "الفريق ب"
+  },
+  "teamMembers": {
+    "John Smith": "جون سميث",
+    "Jennifer Lee": "جينيفر لي",
+    "Maria Garcia": "ماريا غارسيا",
+    "James Wilson": "جيمس ويلسون",
+    "Anna Williams": "آنا ويليامز",
+    "Robert Brown": "روبرت براون",
+    "Christopher Davis": "كريستوفر ديفيس"
+  },
+  "employees": {
+    "Emad Omar": "عماد عمر",
+    "Ahmed Tohamy": "أحمد تهامى",
+    "Sohayb Alaa": "صهيب علاء",
+    "Abdallah Khfagy": "عبدالله خفاجي",
+    "Mohamed Selim": "محمد سليم",
+    "Amr Weal": "عمرو وائل",
+    "Mohamed Mahmoud": "محمد محمود",
+    "Sarah Johnson": "سارة جونسون",
+    "Emily Rodriguez": "إيميلي رودريغيز",
+    "Michael Chen": "مايكل تشين"
+  },
+  "groups": {
+    "HR Operations": "عمليات الموارد البشرية",
+    "IT Support": "الدعم التقني",
+    "Finance Team": "فريق المالية",
+    "Operations Team": "فريق العمليات"
+  },
+  "departments": {
+    "Engineering": "الهندسة",
+    "Operations": "العمليات",
+    "Finance": "المالية",
+    "Sales": "المبيعات",
+    "HR": "الموارد البشرية"
+  },
+  "categories": {
+    "Leave & Attendance": "الإجازات والحضور",
+    "Payroll & Benefits": "الرواتب والمزايا",
+    "IT Access": "الوصول إلى تكنولوجيا المعلومات",
+    "Exit & Entry": "الدخول والخروج",
+    "HR Policies": "سياسات الموارد البشرية"
+  },
+  "actionMenu": {
+    "assignToMe": "تعيين لي",
+    "assignToOther": "تعيين لآخر",
+    "changeStatus": "تغيير الحالة",
+    "changePriority": "تغيير الأولوية",
+    "delete": "حذف"
+  },
+  "modals": {
+    "assignToOther": {
+      "title": "تعيين إلى آخر - {{ticketId}}",
+      "step1": "الخطوة 1: اختر الفريق",
+      "step2": "الخطوة 2: اختر عضو الفريق",
+      "members": "أعضاء",
+      "cancel": "إلغاء",
+      "assign": "تعيين"
+    },
+    "changePriority": {
+      "title": "تغيير الأولوية - {{ticketId}}",
+      "selectPriority": "اختر الأولوية",
+      "cancel": "إلغاء",
+      "save": "حفظ التغييرات"
+    },
+    "changeStatus": {
+      "title": "تغيير الحالة - {{ticketId}}",
+      "selectStatus": "اختر الحالة",
+      "cancel": "إلغاء",
+      "save": "حفظ التغييرات"
+    },
+    "deleteConfirm": {
+      "deleteTicket": "حذف التذكرة",
+      "deleteTickets": "حذف {{count}} تذاكر",
+      "deleteDocument": "حذف المستند",
+      "deleteDocuments": "حذف {{count}} مستندات",
+      "cannotUndo": "لا يمكن التراجع عن هذا الإجراء",
+      "confirmTicket": "هل أنت متأكد أنك تريد حذف التذكرة <strong>{{itemName}}</strong>؟",
+      "confirmTickets": "هل أنت متأكد أنك تريد حذف هذه {{count}} تذاكر؟",
+      "confirmDocument": "هل أنت متأكد أنك تريد حذف <strong>\"{{itemName}}\"</strong>؟",
+      "confirmDocuments": "هل أنت متأكد أنك تريد حذف هذه {{count}} مستندات؟",
+      "cancel": "إلغاء",
+      "delete": "حذف"
+    }
+  },
+  "ticketsPage": {
+    "title": "إدارة التذاكر",
+    "subtitle": "عرض وإدارة تذاكر الدعم",
+    "search": "بحث...",
+    "export": "تصدير",
+    "showing": "عرض",
+    "of": "من",
+    "ticket": "تذكرة",
+    "tickets": "تذاكر",
+    "actions": "إجراءات",
+    "bulkActions": "إجراءات ({{count}})",
+    "columns": {
+      "ticketId": "رقم الطلب",
+      "title": "العنوان",
+      "employee": "الموظف",
+      "category": "التصنيف",
+      "priority": "الأولوية",
+      "status": "الحالة",
+      "assignedTo": "معين إلى",
+      "created": "الإنشاء",
+      "slaDue": "الاستحقاق",
+      "action": "الإجراء"
+    },
+    "priorities": {
+      "CRITICAL": "حرج",
+      "HIGH": "عالي",
+      "MEDIUM": "متوسط",
+      "LOW": "منخفض"
+    },
+    "statuses": {
+      "New": "جديد",
+      "Under Process": "قيد المعالجة",
+      "Pending Employee": "بانتظار الموظف",
+      "Pending ThirdParty": "بانتظار طرف ثالث",
+      "Completed": "مكتمل",
+      "Closed": "مغلق"
+    },
+    "sla": {
+      "overdue": "متأخر"
+    },
+    "alerts": {
+      "statusUpdated": "تم تحديث الحالة",
+      "statusChanged": "تم تغيير الحالة إلى {{status}} للتذكرة {{ticketId}}",
+      "priorityUpdated": "تم تحديث الأولوية",
+      "priorityChanged": "تم تغيير الأولوية إلى {{priority}} للتذكرة {{ticketId}}",
+      "assignmentSuccessful": "تم التعيين بنجاح",
+      "assignedToMe": "تم تعيين التذكرة {{ticketId}} إلى {{adminId}}",
+      "assignedToOther": "تم تعيين التذكرة {{ticketId}} إلى {{memberName}}",
+      "ticketDeleted": "تم حذف التذكرة",
+      "ticketDeletedMessage": "تم حذف التذكرة {{ticketId}}",
+      "bulkAssignmentSuccessful": "تم التعيين الجماعي بنجاح",
+      "bulkAssignedToMe": "تم تعيين {{count}} تذكرة إلى {{adminId}}",
+      "bulkAssignedToOther": "تم تعيين {{count}} تذكرة إلى {{memberName}}",
+      "ticketsDeleted": "تم حذف التذاكر",
+      "bulkTicketsDeleted": "تم حذف {{count}} تذكرة",
+      "bulkStatusUpdated": "تم تحديث الحالة",
+      "bulkStatusChanged": "تم تغيير الحالة إلى {{status}} لـ {{count}} تذكرة",
+      "bulkPriorityUpdated": "تم تحديث الأولوية",
+      "bulkPriorityChanged": "تم تغيير الأولوية إلى {{priority}} لـ {{count}} تذكرة"
+    }
+  },
+  "analyticsMenu": {
+    "title": "لوحة الإحصائيات",
+    "subtitle": "مقاييس الأداء والرؤى التحليلية",
+    "filters": {
+      "title": "الفلاتر",
+      "team": "الفريق",
+      "allTeams": "جميع الفرق",
+      "dateRange": "النطاق الزمني",
+      "week": "أسبوع",
+      "month": "شهر",
+      "year": "سنة",
+      "custom": "تاريخ مخصّص",
+      "selectDateRange": "اختر النطاق الزمني",
+      "startDate": "تاريخ البداية",
+      "endDate": "تاريخ النهاية",
+      "apply": "تطبيق",
+      "cancel": "إلغاء",
+      "last7days": "آخر ٧ أيام",
+      "last30days": "آخر ٣٠ يوماً",
+      "last365days": "آخر ٣٦٥ يوماً",
+      "customRange": "نطاق مخصص",
+      "showingResults": "عرض النتائج لـ"
+    },
+    "status": {
+      "NEW": "جديد",
+      "UNDER_PROCESS": "قيد المعالجة",
+      "PENDING_EMPLOYEE": "بانتظار الموظف",
+      "PENDING_THIRD_PARTY": "بانتظار طرف ثالث",
+      "COMPLETED": "مكتمل",
+      "CLOSED": "مغلق",
+      "New": "جديد",
+      "Under_Process": "قيد المعالجة",
+      "Pending_Customer_Response": "بانتظار رد العميل",
+      "Resolved": "محلول",
+      "Closed": "مغلق"
+    },
+    "priority": {
+      "CRITICAL": "حرج",
+      "HIGH": "عالي",
+      "MEDIUM": "متوسط",
+      "LOW": "منخفض",
+      "Critical": "حرج",
+      "High": "عالي",
+      "Medium": "متوسط",
+      "Low": "منخفض"
+    },
+    "metrics": {
+      "totalTickets": "إجمالي التذاكر",
+      "closedTickets": "التذاكر المغلقة",
+      "avgResponseTime": "متوسط وقت الاستجابة",
+      "slaCompliance": "الالتزام باتفاقية مستوى الخدمة",
+      "fromLastMonth": "من الشهر الماضي",
+      "hours": "س"
+    },
+    "charts": {
+      "ticketsByStatus": "التذاكر حسب الحالة",
+      "ticketsByPriority": "التذاكر حسب الأولوية",
+      "slaBreachesByPriority": "تجاوزات اتفاقية مستوى الخدمة حسب الأولوية",
+      "ticketsByCategory": "التذاكر حسب الفئة",
+      "breached": "تجاوزات",
+      "total": "الإجمالي"
+    },
+    "categories": {
+      "Technical Support": "الدعم الفني",
+      "Account Issues": "مشاكل الحساب",
+      "Billing": "الفواتير",
+      "Product Inquiry": "استفسار المنتج",
+      "Bug Report": "تقرير خطأ",
+      "Other": "أخرى"
+    },
+    "agentPerformance": {
+      "title": "أداء الموظفين",
+      "agentName": "اسم الموظف",
+      "ticketsHandled": "التذاكر المعالجة",
+      "avgResponseTime": "متوسط وقت الاستجابة (ساعات)",
+      "avgResolutionTime": "متوسط وقت الحل (ساعات)",
+      "slaBreaches": "تجاوزات اتفاقية مستوى الخدمة",
+      "performance": "الأداء",
+      "excellent": "ممتاز",
+      "good": "جيد",
+      "needsImprovement": "يحتاج إلى تحسين"
+    },
+    "additionalMetrics": {
+      "resolutionMetrics": "مقاييس الحل",
+      "avgResolutionTime": "متوسط وقت الحل",
+      "closedThisMonth": "المغلقة هذا الشهر",
+      "openTickets": "التذاكر المفتوحة",
+      "slaMetrics": "مقاييس اتفاقية مستوى الخدمة",
+      "complianceRate": "معدل الالتزام",
+      "totalBreaches": "إجمالي التجاوزات",
+      "criticalBreaches": "التجاوزات الحرجة",
+      "workloadDistribution": "توزيع الأحمال الوظيفية",
+      "newTickets": "تذاكر جديدة",
+      "underProcess": "قيد المعالجة",
+      "pendingResponse": "بانتظار الرد"
+    },
+    "agents": {
+      "sarah_johnson": "سارة جونسون",
+      "michael_chen": "مايكل تشين",
+      "emily_rodriguez": "إيميلي رودريغيز",
+      "david_kim": "ديفيد كيم",
+      "jessica_patel": "جيسيكا باتيل",
+      "james_wilson": "جيمس ويلسون",
+      "maria_garcia": "ماريا غارسيا",
+      "robert_taylor": "روبرت تايلور",
+      "linda_anderson": "ليندا أندرسون",
+      "william_thomas": "ويليام توماس",
+      "jessica_taylor": "جيسيكا تايلور",
+      "robert_martinez": "روبرت مارتينيز"
+    }
+  },
+  "documentsMenu": {
+    "title": "مستندات سياسات الموارد البشرية",
+    "subtitle": "إدارة مستندات الموارد البشرية التي يستخدمها فاهم للرد على أسئلة الموظفين.",
+    "upload": "رفع المستندات",
+    "uploading": "جاري الرفع...",
+    "search": "البحث بإسم الملف أو تاريخ الرفع (السنة-الشهر-اليوم)...",
+    "stats": {
+      "total": "إجمالي المستندات",
+      "pdf": "ملفات PDF",
+      "word": "مستندات وورد",
+      "text": "الملفات النصية"
+    },
+    "filters": {
+      "all": "جميع الأنواع"
+    },
+    "table": {
+      "document": "المستند",
+      "uploaded": "تاريخ الرفع",
+      "size": "الحجم",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "download": "تحميل",
+      "delete": "حذف"
+    },
+    "empty": {
+      "title": "لا توجد مستندات",
+      "noResults": "حاول تعديل معايير البحث أو التصفية",
+      "noDocuments": "لم يتم رفع أي مستندات بعد. قم برفع مستند للبدء."
+    },
+    "alerts": {
+      "loadFailed": "فشل في تحميل المستندات",
+      "uploadSuccess": "تم الرفع بنجاح",
+      "uploadFailed": "فشل في الرفع",
+      "invalidType": "نوع ملف غير صالح",
+      "deleteSuccess": "تم الحذف",
+      "deleteFailed": "فشل في حذف المستند",
+      "downloadSuccess": "تم التنزيل",
+      "downloadFailed": "فشل في تنزيل المستند"
+    }
+  },
+  "ticketDetails": {
+  "backToTickets": "العودة إلى التذاكر",
+  "ticketId": "رقم الطلب",
+  "copyTicketId": "نسخ رقم الطلب",
+  "updateTicket": "تحديث التذكرة",
+  "slaBreached": "تجاوز اتفاقية مستوى الخدمة",
+  "employee": "الموظف",
+  "assignedTo": "معين إلى",
+  "genericDescription": "وصف تفصيلي لـ {{title}}. هذا وصف تجريبي.",
+  "tabs": {
+    "details": "التفاصيل",
+    "communication": "التواصل",
+    "attachments": "المرفقات",
+    "internalNotes": "الملاحظات الداخلية"
+  },
+  "rightColumn": {
+    "ticketInformation": "معلومات التذكرة",
+    "status": "الحالة",
+    "priority": "الأولوية",
+    "assignedTo": "معين إلى",
+    "unassigned": "غير معين",
+    "slaTracking": "تتبع اتفاقية مستوى الخدمة",
+    "responseDue": "موعد الاستجابة",
+    "resolutionDue": "موعد الحل",
+    "breached": "تجاوز",
+    "employeeDetails": "تفاصيل الموظف",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "department": "القسم",
+    "position": "المنصب",
+    "location": "الموقع"
+  },
+  "details": {
+    "description": "الوصف",
+    "category": "الفئة",
+    "channel": "القناة",
+    "statusHistory": "سجل الحالة",
+    "changedBy": "بواسطة"
+  },
+  "communication": {
+    "noComments": "لا يوجد تواصل بعد",
+    "startConversation": "ابدأ المحادثة أدناه",
+    "addResponse": "إضافة رد للموظف",
+    "placeholder": "اكتب ردك هنا...",
+    "sendResponse": "إرسال الرد"
+  },
+  "attachments": {
+    "noAttachments": "لا توجد مرفقات",
+    "uploadFiles": "قم برفع الملفات للمشاركة.",
+    "download": "تحميل",
+    "uploading": "جاري الرفع...",
+    "uploadAttachment": "رفع مرفق"
+  },
+  "internalNotes": {
+    "noNotes": "لا توجد ملاحظات داخلية",
+    "addPrivateNotes": "أضف ملاحظات خاصة لفريق الموارد البشرية فقط",
+    "addInternalNote": "إضافة ملاحظة داخلية",
+    "placeholder": "أضف ملاحظة مرئية فقط لفريق الموارد البشرية...",
+    "addNote": "إضافة ملاحظة"
+  },
+  "notFound": {
+    "title": "التذكرة غير موجودة",
+    "description": "التذكرة التي تحاول الوصول إليها غير موجودة أو تم حذفها أو ليس لديك إذن لعرضها.",
+    "backToList": "العودة إلى القائمة",
+    "tryAgain": "حاول مرة أخرى",
+    "tip": "نصيحة: تحقق من الرابط أو ارجع إلى قائمة التذاكر."
+  },
+  "alerts": {
+    "ticketIdCopied": "تم نسخ رقم الطلب",
+    "copyFailed": "فشل نسخ رقم الطلب",
+    "statusUpdated": "تم تحديث الحالة محلياً إلى: {{status}}",
+    "priorityUpdated": "تم تحديث الأولوية محلياً إلى: {{priority}}",
+    "responseSent": "تم إرسال الرد بنجاح",
+    "noteAdded": "تمت إضافة الملاحظة الداخلية بنجاح",
+    "uploadSuccess": "تم الرفع بنجاح: {{filename}}",
+    "uploadFailed": "فشل الرفع: {{filename}}",
+    "invalidFileType": "نوع ملف غير صالح: {{filename}}. الأنواع المسموحة: {{types}}",
+    "fileTooLarge": "الملف كبير جداً: {{filename}}. الحد الأقصى للحجم هو {{maxSize}} ميجابايت",
+    "downloadSuccess": "تم التنزيل: {{filename}}",
+    "downloadFailed": "فشل تنزيل الملف",
+    "attachmentsFailed": "فشل تحميل المرفقات"
+  },
+  "statuses": {
+    "NEW": "جديد",
+    "UNDER_PROCESS": "قيد المعالجة",
+    "PENDING_EMPLOYEE": "بانتظار الموظف",
+    "PENDING_THIRD_PARTY": "بانتظار طرف ثالث",
+    "COMPLETED": "مكتمل",
+    "CLOSED": "مغلق"
+  },
+  "priorities": {
+    "LOW": "منخفض",
+    "MEDIUM": "متوسط",
+    "HIGH": "عالي",
+    "CRITICAL": "حرج"
+  }
+},
+ "error404": {
+    "badge": "خطأ • 404",
+    "title": "الصفحة غير موجودة",
+    "heading": "عذراً! لم نتمكن من العثور على هذه الصفحة.",
+    "message": "قد تكون الصفحة التي تبحث عنها قد تم حذفها أو إعادة تسميتها أو أنها غير متاحة مؤقتاً. حاول الرجوع أو تحديث الصفحة أو العودة للصفحة الرئيسية.",
+    "goBack": "العودة",
+    "tryAgain": "حاول مرة أخرى",
+    "goHome": "الصفحة الرئيسية"
+  }
+}
+

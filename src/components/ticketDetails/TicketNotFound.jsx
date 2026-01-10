@@ -1,6 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, AlertTriangle, Repeat } from "lucide-react";
 
 export default function TicketNotFound({ handleBack }) {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
       {/* Background decoration */}
@@ -21,11 +24,10 @@ export default function TicketNotFound({ handleBack }) {
             {/* Text */}
             <div className="text-center">
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white tracking-wide">
-                TICKET NOT FOUND
+                {t("ticketDetails.notFound.title")}
               </h1>
               <p className="mt-2 text-sm sm:text-base text-white/70 leading-relaxed">
-                The ticket you're trying to access doesn't exist, was deleted,
-                or you don't have permission to view it.
+                {t("ticketDetails.notFound.description")}
               </p>
 
               {/* Actions */}
@@ -34,7 +36,7 @@ export default function TicketNotFound({ handleBack }) {
                   onClick={handleBack}
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-gray-900 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 shadow-lg shadow-yellow-500/20 transform hover:scale-[1.02] active:scale-[0.99] transition"
                 >
-                  Back to List
+                  {t("ticketDetails.notFound.backToList")}
                   <ArrowLeft className="w-4 h-4" />
                 </button>
 
@@ -42,14 +44,14 @@ export default function TicketNotFound({ handleBack }) {
                   onClick={() => window.location.reload()}
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl cursor-pointer font-semibold text-white border border-white/15 bg-white/5 hover:bg-white/10 transition"
                 >
-                  Try Again
+                  {t("ticketDetails.notFound.tryAgain")}
                   <Repeat className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Small hint / meta */}
               <div className="mt-6 text-xs text-white/50">
-                Tip: Double-check the URL or return to the tickets list.
+                {t("ticketDetails.notFound.tip")}
               </div>
             </div>
           </div>

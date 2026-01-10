@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { User, Users, SquarePen, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 /**
  * Action Menu Component - Dropdown menu for ticket actions
@@ -10,7 +11,15 @@ import { User, Users, SquarePen, Trash2 } from "lucide-react";
  * @param {function} onAction - Callback when an action is selected
  * @param {string} ticketId - ID of ticket the actions apply to
  */
-export default function ActionMenu({ isOpen, onClose, position, onAction, ticketId }) {
+export default function ActionMenu({
+  isOpen,
+  onClose,
+  position,
+  onAction,
+  ticketId,
+}) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -32,11 +41,32 @@ export default function ActionMenu({ isOpen, onClose, position, onAction, ticket
   if (!isOpen) return null;
 
   const menuItems = [
-    { icon: User, label: "Assign to Me", action: "assignToMe" },
-    { icon: Users, label: "Assign to Other", action: "assignToOther" },
-    { icon: SquarePen, label: "Change Status", action: "changeStatus" },
-    { icon: SquarePen, label: "Change Priority", action: "changePriority" },
-    { icon: Trash2, label: "Delete", action: "delete", danger: true },
+    {
+      icon: User,
+      label: t("actionMenu.assignToMe", "Assign to Me"),
+      action: "assignToMe",
+    },
+    {
+      icon: Users,
+      label: t("actionMenu.assignToOther", "Assign to Other"),
+      action: "assignToOther",
+    },
+    {
+      icon: SquarePen,
+      label: t("actionMenu.changeStatus", "Change Status"),
+      action: "changeStatus",
+    },
+    {
+      icon: SquarePen,
+      label: t("actionMenu.changePriority", "Change Priority"),
+      action: "changePriority",
+    },
+    {
+      icon: Trash2,
+      label: t("actionMenu.delete", "Delete"),
+      action: "delete",
+      danger: true,
+    },
   ];
 
   return createPortal(
@@ -54,7 +84,9 @@ export default function ActionMenu({ isOpen, onClose, position, onAction, ticket
           "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
         minWidth: "180px",
         padding: "4px",
+        transform: isRTL ? "translateX(60%)" : "none",
       }}
+      dir={isRTL ? "rtl" : "ltr"}
     >
       {menuItems.map((item, index) => (
         <button
@@ -76,6 +108,8 @@ export default function ActionMenu({ isOpen, onClose, position, onAction, ticket
             fontSize: "14px",
             color: item.danger ? "#dc2626" : "#374151",
             transition: "background-color 0.15s",
+            flexDirection: isRTL ? "row-reverse" : "row",
+            textAlign: isRTL ? "right" : "left",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = item.danger

@@ -1,8 +1,10 @@
 import { AllCommunityModule } from "ag-grid-community";
 import { myTheme } from "../../../../utils/agGridThemes";
 import { AgGridReact } from "ag-grid-react";
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import { EllipsisVertical, Download } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
 // Components
 import AlertNotification from "../../../../components/ui/AlertNotification";
 import ActionMenu from "../../../../components/ui/ActionMenu";
@@ -10,25 +12,33 @@ import DeleteConfirmModal from "../../../../components/modals/DeleteConfirmModal
 import ChangeStatusModal from "../../../../components/modals/ChangeStatusModal";
 import ChangePriorityModal from "../../../../components/modals/ChangePriorityModal";
 import AssignToOtherModal from "../../../../components/modals/AssignToOtherModal";
+
 // Data
 import { INITIAL_TICKETS } from "../../../../data/mockData";
-//utilities
+
+// Utilities
 import { getColumnDefs, defaultColDef } from "../../../../utils/columnDefs";
 
 export default function Tickets() {
-  //selected rows for bulk actions
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
+  // Key to force AG Grid rerender when language changes
+  const [gridKey, setGridKey] = useState(0);
+
+  // Selected rows for bulk actions
   const [selectedRows, setSelectedRows] = useState([]);
 
-  //notification alerts on top right (supports multiple stacked alerts)
+  // Notification alerts on top right (supports multiple stacked alerts)
   const [alerts, setAlerts] = useState([]);
 
-  //mockup Date for table
+  // Mockup Date for table
   const [rowData, setRowData] = useState(INITIAL_TICKETS);
 
-  // search Input
+  // Search Input
   const [quickFilterText, setQuickFilterText] = useState("");
 
-  // ticket rows count
+  // Ticket rows count
   const [displayedRowCount, setDisplayedRowCount] = useState(0);
 
   // Bulk action modals
@@ -50,11 +60,20 @@ export default function Tickets() {
   }, []);
 
   const gridRef = useRef(null);
-  // Ag Grid callbacks row Selecion
+
+  // Force AG Grid to reinitialize when language changes
+  useEffect(() => {
+    setGridKey((prev) => prev + 1);
+    // Clear selections when language changes
+    setSelectedRows([]);
+  }, [i18n.language]);
+
+  // Ag Grid callbacks row Selection
   const onSelectionChanged = () => {
     const rows = gridRef.current.api.getSelectedRows();
     setSelectedRows(rows);
   };
+
   // Ag Grid callbacks export CSV file
   const handleExport = () => {
     if (gridRef.current) {
@@ -66,6 +85,7 @@ export default function Tickets() {
       });
     }
   };
+
   // Ag Grid callbacks filter changed
   const onFilterChanged = () => {
     if (gridRef.current?.api) {
@@ -73,16 +93,17 @@ export default function Tickets() {
       setDisplayedRowCount(count);
     }
   };
+
   // Ag Grid callbacks grid ready initial displayed row count before filters
   const onGridReady = (params) => {
     const count = params.api.getDisplayedRowCount();
     setDisplayedRowCount(count);
   };
 
-  //total tickets count
+  // Total tickets count
   const totalTickets = rowData.length;
 
-  // admin id HARDCODED - Mockup
+  // Admin id HARDCODED - Mockup
   const adminId = "Emad Omar";
 
   const showAlert = (type, message, title = "") => {
@@ -109,8 +130,11 @@ export default function Tickets() {
     );
     showAlert(
       "success",
-      `Status changed to ${newStatus} for ticket ${ticketId}`,
-      "Status Updated"
+      t("ticketsPage.alerts.statusChanged", {
+        status: t(`ticketsPage.statuses.${newStatus}`),
+        ticketId,
+      }),
+      t("ticketsPage.alerts.statusUpdated")
     );
   };
 
@@ -122,8 +146,11 @@ export default function Tickets() {
     );
     showAlert(
       "success",
-      `Priority changed to ${newPriority} for ticket ${ticketId}`,
-      "Priority Updated"
+      t("ticketsPage.alerts.priorityChanged", {
+        priority: t(`ticketsPage.priorities.${newPriority}`),
+        ticketId,
+      }),
+      t("ticketsPage.alerts.priorityUpdated")
     );
   };
 
@@ -135,8 +162,8 @@ export default function Tickets() {
     );
     showAlert(
       "success",
-      `Ticket ${ticketId} assigned to ${adminId}`,
-      "Assignment Successful"
+      t("ticketsPage.alerts.assignedToMe", { ticketId, adminId }),
+      t("ticketsPage.alerts.assignmentSuccessful")
     );
   };
 
@@ -148,8 +175,8 @@ export default function Tickets() {
     );
     showAlert(
       "success",
-      `Ticket ${ticketId} assigned to ${memberName}`,
-      "Assignment Successful"
+      t("ticketsPage.alerts.assignedToOther", { ticketId, memberName }),
+      t("ticketsPage.alerts.assignmentSuccessful")
     );
   };
 
@@ -157,8 +184,8 @@ export default function Tickets() {
     setRowData((prev) => prev.filter((row) => row.ticketId !== ticketId));
     showAlert(
       "success",
-      `Ticket ${ticketId} has been deleted`,
-      "Ticket Deleted"
+      t("ticketsPage.alerts.ticketDeletedMessage", { ticketId }),
+      t("ticketsPage.alerts.ticketDeleted")
     );
   };
 
@@ -173,8 +200,11 @@ export default function Tickets() {
     );
     showAlert(
       "success",
-      `${selectedRows.length} ticket(s) assigned to ${adminId}`,
-      "Bulk Assignment Successful"
+      t("ticketsPage.alerts.bulkAssignedToMe", {
+        count: selectedRows.length,
+        adminId,
+      }),
+      t("ticketsPage.alerts.bulkAssignmentSuccessful")
     );
     setSelectedRows([]);
   };
@@ -189,8 +219,11 @@ export default function Tickets() {
     );
     showAlert(
       "success",
-      `${selectedRows.length} ticket(s) assigned to ${memberName}`,
-      "Bulk Assignment Successful"
+      t("ticketsPage.alerts.bulkAssignedToOther", {
+        count: selectedRows.length,
+        memberName,
+      }),
+      t("ticketsPage.alerts.bulkAssignmentSuccessful")
     );
     setSelectedRows([]);
   };
@@ -202,8 +235,8 @@ export default function Tickets() {
     );
     showAlert(
       "success",
-      `${count} ticket(s) have been deleted`,
-      "Tickets Deleted"
+      t("ticketsPage.alerts.bulkTicketsDeleted", { count }),
+      t("ticketsPage.alerts.ticketsDeleted")
     );
     setSelectedRows([]);
   };
@@ -218,8 +251,11 @@ export default function Tickets() {
     );
     showAlert(
       "success",
-      `Status changed to ${newStatus} for ${selectedRows.length} ticket(s)`,
-      "Status Updated"
+      t("ticketsPage.alerts.bulkStatusChanged", {
+        status: t(`ticketsPage.statuses.${newStatus}`),
+        count: selectedRows.length,
+      }),
+      t("ticketsPage.alerts.bulkStatusUpdated")
     );
     setSelectedRows([]);
   };
@@ -234,8 +270,11 @@ export default function Tickets() {
     );
     showAlert(
       "success",
-      `Priority changed to ${newPriority} for ${selectedRows.length} ticket(s)`,
-      "Priority Updated"
+      t("ticketsPage.alerts.bulkPriorityChanged", {
+        priority: t(`ticketsPage.priorities.${newPriority}`),
+        count: selectedRows.length,
+      }),
+      t("ticketsPage.alerts.bulkPriorityUpdated")
     );
     setSelectedRows([]);
   };
@@ -268,7 +307,7 @@ export default function Tickets() {
       const rect = bulkButtonRef.current.getBoundingClientRect();
       setBulkMenuPosition({
         top: rect.bottom + 4,
-        left: rect.left - 150,
+        left: isRTL ? rect.left - 150 : rect.left - 150,
       });
     }
     setIsBulkMenuOpen(!isBulkMenuOpen);
@@ -279,13 +318,14 @@ export default function Tickets() {
     window.open(`/admin/${adminId}/tickets/${ticketId}`, "_blank");
   };
 
-  // Get column definitions with handlers
+  // Get column definitions with handlers and translation function
   const colDefs = getColumnDefs(
     handleStatusChange,
     handlePriorityChange,
     handleDeleteTicket,
     handleAssignToMe,
-    handleAssignToOther
+    handleAssignToOther,
+    t // Pass translation function
   );
 
   return (
@@ -298,9 +338,9 @@ export default function Tickets() {
         <div className="mb-5 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Ticket Management
+              {t("ticketsPage.title")}
             </h1>
-            <p className="text-gray-600">View and manage support tickets</p>
+            <p className="text-gray-600">{t("ticketsPage.subtitle")}</p>
           </div>
         </div>
 
@@ -310,15 +350,16 @@ export default function Tickets() {
             <input
               type="text"
               autoFocus
-              placeholder="Search..."
+              placeholder={t("ticketsPage.search")}
               onChange={(e) => setQuickFilterText(e.target.value)}
               className="border p-2 rounded w-full border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              dir={isRTL ? "rtl" : "ltr"}
             />
             <button
               onClick={handleExport}
               className="flex items-center justify-center gap-2 px-5 py-3 cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
             >
-              Export
+              {t("ticketsPage.export")}
               <Download size={16} />
             </button>
           </div>
@@ -326,14 +367,20 @@ export default function Tickets() {
 
         <div className="mb-4 flex justify-between items-center">
           {/* Left: Tickets count */}
-          <p className="text-gray-600 text-sm ml-3">
+          <p className={`text-gray-600 text-sm ${isRTL ? "mr-3" : "ml-3"}`}>
             {quickFilterText ? (
               <>
-                Showing {displayedRowCount} of {totalTickets} ticket
-                {totalTickets !== 1 ? "s" : ""}
+                {t("ticketsPage.showing")} {displayedRowCount}{" "}
+                {t("ticketsPage.of")} {totalTickets}{" "}
+                {totalTickets !== 1
+                  ? t("ticketsPage.tickets")
+                  : t("ticketsPage.ticket")}
               </>
             ) : (
-              <>Showing {totalTickets} tickets</>
+              <>
+                {t("ticketsPage.showing")} {totalTickets}{" "}
+                {t("ticketsPage.tickets")}
+              </>
             )}
           </p>
 
@@ -345,7 +392,7 @@ export default function Tickets() {
                 onClick={handleBulkButtonClick}
                 className="flex items-center justify-center gap-2 px-5 py-3 cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
               >
-                Actions ({selectedRows.length})
+                {t("ticketsPage.bulkActions", { count: selectedRows.length })}
                 <EllipsisVertical size={16} />
               </button>
 
@@ -365,7 +412,7 @@ export default function Tickets() {
                 onClose={() => setIsBulkStatusModalOpen(false)}
                 currentStatus={selectedRows[0]?.status || "New"}
                 onSave={handleBulkStatusChange}
-                ticketId={`${selectedRows.length} tickets`}
+                ticketId={`${selectedRows.length} ${t("ticketsPage.tickets")}`}
               />
 
               <ChangePriorityModal
@@ -373,7 +420,7 @@ export default function Tickets() {
                 onClose={() => setIsBulkPriorityModalOpen(false)}
                 currentPriority={selectedRows[0]?.priority || "MEDIUM"}
                 onSave={handleBulkPriorityChange}
-                ticketId={`${selectedRows.length} tickets`}
+                ticketId={`${selectedRows.length} ${t("ticketsPage.tickets")}`}
               />
 
               <DeleteConfirmModal
@@ -388,7 +435,7 @@ export default function Tickets() {
                 isOpen={isBulkAssignToOtherModalOpen}
                 onClose={() => setIsBulkAssignToOtherModalOpen(false)}
                 onSave={handleBulkAssignToOther}
-                ticketId={`${selectedRows.length} tickets`}
+                ticketId={`${selectedRows.length} ${t("ticketsPage.tickets")}`}
               />
             </div>
           )}
@@ -398,31 +445,33 @@ export default function Tickets() {
         <div
           className="ag-theme-alpine mb-15"
           style={{ width: "100%", height: "800px", marginBottom: "2rem" }}
+          dir={isRTL ? "rtl" : "ltr"}
         >
           <AgGridReact
+            key={gridKey}
             getRowStyle={() => ({ cursor: "pointer" })}
-            rowSelection={rowSelection} // Controls row selection mode (single / multiple)
-            getRowHeight={() => 48} // Sets fixed row height to 48px
-            ref={gridRef} // Reference to access AG Grid API
-            modules={[AllCommunityModule]} // Registers AG Grid community modules
-            rowData={rowData} // Data rows displayed in the grid
-            columnDefs={colDefs} // Column definitions (headers, fields, renderers)
-            defaultColDef={defaultColDef} // Default settings applied to all columns
-            quickFilterText={quickFilterText} // Global quick filter text
-            pagination={true} // Enables pagination
-            paginationPageSize={25} // Number of rows per page
-            paginationPageSizeSelector={[10, 25, 50, 100]} // Page size dropdown options
+            rowSelection={rowSelection}
+            getRowHeight={() => 48}
+            ref={gridRef}
+            modules={[AllCommunityModule]}
+            rowData={rowData}
+            columnDefs={colDefs}
+            defaultColDef={defaultColDef}
+            quickFilterText={quickFilterText}
+            pagination={true}
+            paginationPageSize={25}
+            paginationPageSizeSelector={[10, 25, 50, 100]}
             gridOptions={{
-              // Additional grid configuration
-              theme: myTheme, // Custom grid theme
-              enableCellTextSelection: true, // Allows text selection in cells
-              ensureDomOrder: true, // Keeps DOM order in sync for accessibility
+              theme: myTheme,
+              enableCellTextSelection: true,
+              ensureDomOrder: true,
+              enableRtl: isRTL, // Enable RTL for AG Grid
             }}
-            onGridReady={onGridReady} // Called when grid is initialized
-            onSelectionChanged={onSelectionChanged} // Called when row selection changes
-            onRowDoubleClicked={(event) => handleRowClick(event)} // Handles row double-click
-            onFilterChanged={onFilterChanged} // Called when filters change
-            domLayout="autoHeight" // Adjusts grid height based on content
+            onGridReady={onGridReady}
+            onSelectionChanged={onSelectionChanged}
+            onRowDoubleClicked={(event) => handleRowClick(event)}
+            onFilterChanged={onFilterChanged}
+            domLayout="autoHeight"
           />
         </div>
       </div>

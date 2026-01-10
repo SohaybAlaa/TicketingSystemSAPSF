@@ -12,10 +12,17 @@
 /* 
   --color-base-100: oklch(1.0 0.25 145); Light green background */
   --color-base-100: oklch(0.99 0.002 247);
-
 }
 
 body {
   @apply leading-relaxed;
-  
+}
+
+/* Arabic ONLY (stronger) */
+:lang(ar),
+:lang(ar) *,
+[dir="rtl"],
+[dir="rtl"] * {
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 600;
 }

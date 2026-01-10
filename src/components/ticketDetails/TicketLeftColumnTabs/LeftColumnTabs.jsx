@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import DetailsTab from "./DetailsTab";
 import CommunicationTab from "./CommunicationTab";
 import AttachmentsTab from "./AttachmentsTab";
@@ -23,17 +24,26 @@ export default function LeftColumnTabs({
   setNewNote,
   handleAddNote,
 }) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("details");
 
   const tabs = [
-    { id: "details", label: "Details" },
-    { id: "communication", label: "Communication", count: comments.length },
+    { id: "details", label: t("ticketDetails.tabs.details") },
+    {
+      id: "communication",
+      label: t("ticketDetails.tabs.communication"),
+      count: comments.length,
+    },
     {
       id: "attachments",
-      label: "Attachments",
+      label: t("ticketDetails.tabs.attachments"),
       count: actualAttachments.length,
     },
-    { id: "notes", label: "Internal Notes", count: internalNotes.length },
+    {
+      id: "notes",
+      label: t("ticketDetails.tabs.internalNotes"),
+      count: internalNotes.length,
+    },
   ];
 
   return (

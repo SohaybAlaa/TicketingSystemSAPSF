@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Download, Plus } from "lucide-react";
 import { formatDateTime } from "../../../utils/formatDateTime";
 
@@ -10,6 +11,8 @@ export default function AttachmentsTab({
   handleUploadClick,
   handleDownloadAttachment,
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-4">
       {isLoadingAttachments ? (
@@ -42,7 +45,7 @@ export default function AttachmentsTab({
                 onClick={() => handleDownloadAttachment(attachment)}
                 className="px-4 py-2 text-sm font-semibold text-yellow-600 hover:bg-yellow-50 rounded-lg border border-yellow-200 hover:border-yellow-300 transition-all duration-200"
               >
-                Download
+                {t("ticketDetails.attachments.download")}
               </button>
             </div>
           ))}
@@ -52,9 +55,11 @@ export default function AttachmentsTab({
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Download className="w-8 h-8 text-gray-600" />
               </div>
-              <p className="text-gray-900 font-medium">No Attachments</p>
+              <p className="text-gray-900 font-medium">
+                {t("ticketDetails.attachments.noAttachments")}
+              </p>
               <p className="text-sm text-gray-400 mt-1">
-                Upload files to share.
+                {t("ticketDetails.attachments.uploadFiles")}
               </p>
             </div>
           )}
@@ -80,12 +85,12 @@ export default function AttachmentsTab({
         {isUploading ? (
           <>
             <div className="w-5 h-5 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin" />
-            Uploading...
+            {t("ticketDetails.attachments.uploading")}
           </>
         ) : (
           <>
             <Plus className="w-5 h-5 transition-transform duration-300 ease-out group-hover:rotate-90 group-hover:scale-110" />
-            Upload Attachment
+            {t("ticketDetails.attachments.uploadAttachment")}
           </>
         )}
       </button>

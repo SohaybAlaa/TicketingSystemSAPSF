@@ -8,7 +8,6 @@ import MainLayout from "./_MainLayout";
 import LoadingSpinner from "./components/LoadingSpinner";
 import "../styles/global.css";
 
-
 export default function App() {
   return (
     <MainLayout>

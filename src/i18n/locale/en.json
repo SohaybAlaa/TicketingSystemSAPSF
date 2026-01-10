@@ -1,0 +1,457 @@
+{
+  "welcome": "Welcome to Klinka",
+  "chatbot": "SAP SF Chatbot",
+  "home": "Home",
+  "tickets": "Tickets",
+  "analytics": "Analytics",
+  "documents": "Documents",
+  "language": "Language",
+  "hrSupport": "HR Support",
+  "employeeSystem": "Employee System",
+  "hrAdmin": "HR Admin",
+    "version": "V{{version}}",
+  "footer": {
+    "title": "Klenka - HR Support System",
+    "copyright": "© 2025 All rights reserved."
+  },
+  "adminName": "Emad Omar",
+  "dashboard": {
+    "title": "HR Support Dashboard",
+    "welcome": "Welcome back, {{name}}",
+    "cards": {
+      "Assigned to Me": "Assigned to Me",
+      "My Team Tickets": "My Team Tickets",
+      "New Tickets": "New Tickets",
+      "Under Process": "Under Process",
+      "SLA Breached": "SLA Breached",
+      "Closed (30 days)": "Closed (30 days)"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "viewAllTickets": "View All Tickets",
+      "viewSLABreached": "View SLA Breached",
+      "viewAnalytics": "View Analytics",
+      "viewDocuments": "View Documents"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "newTicket": "New ticket assigned: {{id}}",
+      "portalAccess": "HR Portal access issue - Critical priority",
+      "slaAlert": "SLA breach alert: {{id}}",
+      "vacationLeave": "Vacation leave approval resolution time exceeded",
+      "ticketCompleted": "Ticket completed: {{id}}",
+      "healthInsurance": "Health insurance query resolved",
+      "time": {
+        "hoursAgo": "{{count}} hours ago",
+        "daysAgo": "{{count}} days ago"
+      }
+    }
+  },
+  "teams": {
+    "teamA": "Team A",
+    "teamB": "Team B"
+  },
+  "teamMembers": {
+    "John Smith": "John Smith",
+    "Jennifer Lee": "Jennifer Lee",
+    "Maria Garcia": "Maria Garcia",
+    "James Wilson": "James Wilson",
+    "Anna Williams": "Anna Williams",
+    "Robert Brown": "Robert Brown",
+    "Christopher Davis": "Christopher Davis"
+  },
+  "employees": {
+    "Emad Omar": "Emad Omar",
+    "Ahmed Tohamy": "Ahmed Tohamy",
+    "Sohayb Alaa": "Sohayb Alaa",
+    "Abdallah Khfagy": "Abdallah Khfagy",
+    "Mohamed Selim": "Mohamed Selim",
+    "Amr Weal": "Amr Weal",
+    "Mohamed Mahmoud": "Mohamed Mahmoud",
+    "Sarah Johnson": "Sarah Johnson",
+    "Emily Rodriguez": "Emily Rodriguez",
+    "Michael Chen": "Michael Chen"
+  },
+  "groups": {
+    "HR Operations": "HR Operations",
+    "IT Support": "IT Support",
+    "Finance Team": "Finance Team",
+    "Operations Team": "Operations Team"
+  },
+  "departments": {
+    "Engineering": "Engineering",
+    "Operations": "Operations",
+    "Finance": "Finance",
+    "Sales": "Sales",
+    "HR": "HR"
+  },
+  "categories": {
+    "Leave & Attendance": "Leave & Attendance",
+    "Payroll & Benefits": "Payroll & Benefits",
+    "IT Access": "IT Access",
+    "Exit & Entry": "Exit & Entry",
+    "HR Policies": "HR Policies"
+  },
+  "actionMenu": {
+    "assignToMe": "Assign to Me",
+    "assignToOther": "Assign to Other",
+    "changeStatus": "Change Status",
+    "changePriority": "Change Priority",
+    "delete": "Delete"
+  },
+  "modals": {
+    "assignToOther": {
+      "title": "Assign to Other - {{ticketId}}",
+      "step1": "Step 1: Select Team",
+      "step2": "Step 2: Select Team Member",
+      "members": "members",
+      "cancel": "Cancel",
+      "assign": "Assign"
+    },
+    "changePriority": {
+      "title": "Change Priority - {{ticketId}}",
+      "selectPriority": "Select Priority",
+      "cancel": "Cancel",
+      "save": "Save Changes"
+    },
+    "changeStatus": {
+      "title": "Change Status - {{ticketId}}",
+      "selectStatus": "Select Status",
+      "cancel": "Cancel",
+      "save": "Save Changes"
+    },
+    "deleteConfirm": {
+      "deleteTicket": "Delete Ticket",
+      "deleteTickets": "Delete {{count}} Tickets",
+      "deleteDocument": "Delete Document",
+      "deleteDocuments": "Delete {{count}} Documents",
+      "cannotUndo": "This action cannot be undone",
+      "confirmTicket": "Are you sure you want to delete ticket <strong>{{itemName}}</strong>?",
+      "confirmTickets": "Are you sure you want to delete these {{count}} tickets?",
+      "confirmDocument": "Are you sure you want to delete <strong>\"{{itemName}}\"</strong>?",
+      "confirmDocuments": "Are you sure you want to delete these {{count}} documents?",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    }
+  },
+  "ticketsPage": {
+    "title": "Ticket Management",
+    "subtitle": "View and manage support tickets",
+    "search": "Search...",
+    "export": "Export",
+    "showing": "Showing",
+    "of": "of",
+    "ticket": "ticket",
+    "tickets": "tickets",
+    "actions": "Actions",
+    "bulkActions": "Actions ({{count}})",
+    "columns": {
+      "ticketId": "Ticket ID",
+      "title": "Title",
+      "employee": "Employee",
+      "category": "Category",
+      "priority": "Priority",
+      "status": "Status",
+      "assignedTo": "Assigned To",
+      "created": "Created",
+      "slaDue": "SLA Due",
+      "action": "Action"
+    },
+    "priorities": {
+      "CRITICAL": "Critical",
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
+    "statuses": {
+      "New": "New",
+      "Under Process": "Under Process",
+      "Pending Employee": "Pending Employee",
+      "Pending ThirdParty": "Pending Third Party",
+      "Completed": "Completed",
+      "Closed": "Closed"
+    },
+    "sla": {
+      "overdue": "OVERDUE"
+    },
+    "alerts": {
+      "statusUpdated": "Status Updated",
+      "statusChanged": "Status changed to {{status}} for ticket {{ticketId}}",
+      "priorityUpdated": "Priority Updated",
+      "priorityChanged": "Priority changed to {{priority}} for ticket {{ticketId}}",
+      "assignmentSuccessful": "Assignment Successful",
+      "assignedToMe": "Ticket {{ticketId}} assigned to {{adminId}}",
+      "assignedToOther": "Ticket {{ticketId}} assigned to {{memberName}}",
+      "ticketDeleted": "Ticket Deleted",
+      "ticketDeletedMessage": "Ticket {{ticketId}} has been deleted",
+      "bulkAssignmentSuccessful": "Bulk Assignment Successful",
+      "bulkAssignedToMe": "{{count}} ticket(s) assigned to {{adminId}}",
+      "bulkAssignedToOther": "{{count}} ticket(s) assigned to {{memberName}}",
+      "ticketsDeleted": "Tickets Deleted",
+      "bulkTicketsDeleted": "{{count}} ticket(s) have been deleted",
+      "bulkStatusUpdated": "Status Updated",
+      "bulkStatusChanged": "Status changed to {{status}} for {{count}} ticket(s)",
+      "bulkPriorityUpdated": "Priority Updated",
+      "bulkPriorityChanged": "Priority changed to {{priority}} for {{count}} ticket(s)"
+    }
+  },
+  "analyticsMenu": {
+    "title": "Analytics Dashboard",
+    "subtitle": "Performance Metrics and Insights",
+    "filters": {
+      "title": "Filters",
+      "team": "Team",
+      "allTeams": "All Teams",
+      "dateRange": "Date Range",
+      "week": "Week",
+      "month": "Month",
+      "year": "Year",
+      "custom": "Custom",
+      "selectDateRange": "Select Date Range",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "apply": "Apply",
+      "cancel": "Cancel",
+      "last7days": "Last 7 days",
+      "last30days": "Last 30 days",
+      "last365days": "Last 365 days",
+      "customRange": "Custom Range",
+      "showingResults": "Showing results for"
+    },
+    "status": {
+      "NEW": "New",
+      "UNDER_PROCESS": "Under Process",
+      "PENDING_EMPLOYEE": "Pending Employee",
+      "PENDING_THIRD_PARTY": "Pending Third Party",
+      "COMPLETED": "Completed",
+      "CLOSED": "Closed",
+      "New": "New",
+      "Under_Process": "Under Process",
+      "Pending_Customer_Response": "Pending Customer Response",
+      "Resolved": "Resolved",
+      "Closed": "Closed"
+    },
+    "priority": {
+      "CRITICAL": "Critical",
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low",
+      "Critical": "Critical",
+      "High": "High",
+      "Medium": "Medium",
+      "Low": "Low"
+    },
+    "metrics": {
+      "totalTickets": "Total Tickets",
+      "closedTickets": "Closed Tickets",
+      "avgResponseTime": "Avg Response Time",
+      "slaCompliance": "SLA Compliance",
+      "fromLastMonth": "from last month",
+      "hours": "h"
+    },
+    "charts": {
+      "ticketsByStatus": "Tickets by Status",
+      "ticketsByPriority": "Tickets by Priority",
+      "slaBreachesByPriority": "SLA Breaches by Priority",
+      "ticketsByCategory": "Tickets by Category",
+      "breached": "Breached",
+      "total": "Total"
+    },
+    "categories": {
+      "Technical Support": "Technical Support",
+      "Account Issues": "Account Issues",
+      "Billing": "Billing",
+      "Product Inquiry": "Product Inquiry",
+      "Bug Report": "Bug Report",
+      "Other": "Other"
+    },
+    "agentPerformance": {
+      "title": "Agent Performance",
+      "agentName": "Agent Name",
+      "ticketsHandled": "Tickets Handled",
+      "avgResponseTime": "Avg Response Time (hours)",
+      "avgResolutionTime": "Avg Resolution Time (hours)",
+      "slaBreaches": "SLA Breaches",
+      "performance": "Performance",
+      "excellent": "Excellent",
+      "good": "Good",
+      "needsImprovement": "Needs Improvement"
+    },
+    "additionalMetrics": {
+      "resolutionMetrics": "Resolution Metrics",
+      "avgResolutionTime": "Avg Resolution Time",
+      "closedThisMonth": "Closed This Month",
+      "openTickets": "Open Tickets",
+      "slaMetrics": "SLA Metrics",
+      "complianceRate": "Compliance Rate",
+      "totalBreaches": "Total Breaches",
+      "criticalBreaches": "Critical Breaches",
+      "workloadDistribution": "Workload Distribution",
+      "newTickets": "New Tickets",
+      "underProcess": "Under Process",
+      "pendingResponse": "Pending Response"
+    },
+    "agents": {
+      "sarah_johnson": "Sarah Johnson",
+      "michael_chen": "Michael Chen",
+      "emily_rodriguez": "Emily Rodriguez",
+      "david_kim": "David Kim",
+      "jessica_patel": "Jessica Patel",
+      "james_wilson": "James Wilson",
+      "maria_garcia": "Maria Garcia",
+      "robert_taylor": "Robert Taylor",
+      "linda_anderson": "Linda Anderson",
+      "william_thomas": "William Thomas",
+      "jessica_taylor": "Jessica Taylor",
+      "robert_martinez": "Robert Martinez"
+    }
+  },
+  "documentsMenu": {
+    "title": "HR Policy Documents",
+    "subtitle": "Manage the HR documents that Fahim uses to respond to employee questions.",
+    "upload": "Upload Documents",
+    "uploading": "Uploading...",
+    "search": "Search by File Name or Upload Date (YYYY-MM-DD)...",
+    "stats": {
+      "total": "Total Documents",
+      "pdf": "PDF Files",
+      "word": "Word Documents",
+      "text": "Text Files"
+    },
+    "filters": {
+      "all": "All Types"
+    },
+    "table": {
+      "document": "Document",
+      "uploaded": "Uploaded",
+      "size": "Size",
+      "actions": "Actions"
+    },
+    "actions": {
+      "download": "Download",
+      "delete": "Delete"
+    },
+    "empty": {
+      "title": "No documents found",
+      "noResults": "Try adjusting your search or filter criteria",
+      "noDocuments": "No documents uploaded yet. Upload a document to get started."
+    },
+    "alerts": {
+      "loadFailed": "Failed to load documents",
+      "uploadSuccess": "Successfully uploaded",
+      "uploadFailed": "Failed to upload",
+      "invalidType": "Invalid file type",
+      "deleteSuccess": "Deleted",
+      "deleteFailed": "Failed to delete document",
+      "downloadSuccess": "Downloaded",
+      "downloadFailed": "Failed to download document"
+    }
+  },
+  
+"ticketDetails": {
+  "backToTickets": "Back to Tickets",
+  "ticketId": "Ticket ID",
+  "copyTicketId": "Copy Ticket ID",
+  "updateTicket": "Update Ticket",
+  "slaBreached": "SLA Breached",
+  "employee": "Employee",
+  "assignedTo": "Assigned to",
+  "genericDescription": "Detailed description for {{title}}. This is a mockup description.",
+  "tabs": {
+    "details": "Details",
+    "communication": "Communication",
+    "attachments": "Attachments",
+    "internalNotes": "Internal Notes"
+  },
+  "rightColumn": {
+    "ticketInformation": "Ticket Information",
+    "status": "Status",
+    "priority": "Priority",
+    "assignedTo": "Assigned To",
+    "unassigned": "Unassigned",
+    "slaTracking": "SLA Tracking",
+    "responseDue": "Response Due",
+    "resolutionDue": "Resolution Due",
+    "breached": "Breached",
+    "employeeDetails": "Employee Details",
+    "name": "Name",
+    "email": "Email",
+    "department": "Department",
+    "position": "Position",
+    "location": "Location"
+  },
+  "details": {
+    "description": "Description",
+    "category": "Category",
+    "channel": "Channel",
+    "statusHistory": "Status History",
+    "changedBy": "by"
+  },
+  "communication": {
+    "noComments": "No communication yet",
+    "startConversation": "Start the conversation below",
+    "addResponse": "Add Response to Employee",
+    "placeholder": "Type your response here...",
+    "sendResponse": "Send Response"
+  },
+  "attachments": {
+    "noAttachments": "No Attachments",
+    "uploadFiles": "Upload files to share.",
+    "download": "Download",
+    "uploading": "Uploading...",
+    "uploadAttachment": "Upload Attachment"
+  },
+  "internalNotes": {
+    "noNotes": "No internal notes",
+    "addPrivateNotes": "Add private notes for HR team only",
+    "addInternalNote": "Add Internal Note",
+    "placeholder": "Add a note visible only to HR team...",
+    "addNote": "Add Note"
+  },
+  "notFound": {
+    "title": "TICKET NOT FOUND",
+    "description": "The ticket you're trying to access doesn't exist, was deleted, or you don't have permission to view it.",
+    "backToList": "Back to List",
+    "tryAgain": "Try Again",
+    "tip": "Tip: Double-check the URL or return to the tickets list."
+  },
+  "alerts": {
+    "ticketIdCopied": "Ticket ID copied to clipboard",
+    "copyFailed": "Failed to copy ticket ID",
+    "statusUpdated": "Status updated locally to: {{status}}",
+    "priorityUpdated": "Priority updated locally to: {{priority}}",
+    "responseSent": "Response sent successfully",
+    "noteAdded": "Internal note added successfully",
+    "uploadSuccess": "Successfully uploaded: {{filename}}",
+    "uploadFailed": "Failed to upload: {{filename}}",
+    "invalidFileType": "Invalid file type: {{filename}}. Allowed types: {{types}}",
+    "fileTooLarge": "File too large: {{filename}}. Maximum size is {{maxSize}}MB",
+    "downloadSuccess": "Downloaded: {{filename}}",
+    "downloadFailed": "Failed to download file",
+    "attachmentsFailed": "Failed to load attachments"
+  },
+  "statuses": {
+    "NEW": "New",
+    "UNDER_PROCESS": "Under Process",
+    "PENDING_EMPLOYEE": "Pending with Employee",
+    "PENDING_THIRD_PARTY": "Pending with Third Party",
+    "COMPLETED": "Completed",
+    "CLOSED": "Closed"
+  },
+  "priorities": {
+    "LOW": "Low",
+    "MEDIUM": "Medium",
+    "HIGH": "High",
+    "CRITICAL": "Critical"
+  }
+},
+ "error404": {
+    "badge": "Error • 404",
+    "title": "PAGE NOT FOUND",
+    "heading": "Oops! We couldn't find that page.",
+    "message": "The page you're looking for might have been removed, renamed, or is temporarily unavailable. Try going back, refreshing, or head home.",
+    "goBack": "Go Back",
+    "tryAgain": "Try Again",
+    "goHome": "Go Home"
+  }
+}

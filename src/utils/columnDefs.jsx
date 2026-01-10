@@ -12,6 +12,7 @@ import ActionCellRenderer from "../components/grid/ActionCellRenderer";
  * @param {function} handleDeleteTicket - Callback for delete action
  * @param {function} handleAssignToMe - Callback for assign to me
  * @param {function} handleAssignToOther - Callback for assign to other
+ * @param {function} t - Translation function from i18next
  */
 
 // Status order for sorting
@@ -37,34 +38,44 @@ export const getColumnDefs = (
   handlePriorityChange,
   handleDeleteTicket,
   handleAssignToMe,
-  handleAssignToOther
+  handleAssignToOther,
+  t // Add translation function parameter
 ) => [
   {
     field: "ticketId",
-    headerName: "Ticket ID",
+    headerName: t("ticketsPage.columns.ticketId"),
     filter: "agTextColumnFilter",
     tooltipField: "ticketId",
+    maxWidth: 130,
   },
   {
     field: "title",
-    headerName: "Title",
+    headerName: t("ticketsPage.columns.title"),
     filter: "agTextColumnFilter",
     tooltipField: "title",
   },
   {
     field: "employee",
-    headerName: "Employee",
+    headerName: t("ticketsPage.columns.employee"),
     filter: "agTextColumnFilter",
+    valueGetter: (params) => {
+      const employeeName = params.data.employee;
+      return t(`employees.${employeeName}`, employeeName);
+    },
   },
   {
     field: "category",
-    headerName: "Category",
+    headerName: t("ticketsPage.columns.category"),
     filter: "agTextColumnFilter",
     tooltipField: "category",
+    valueGetter: (params) => {
+      const category = params.data.category;
+      return t(`categories.${category}`, category);
+    },
   },
   {
     field: "priority",
-    headerName: "Priority",
+    headerName: t("ticketsPage.columns.priority"),
     width: 120,
     filter: "agTextColumnFilter",
     comparator: (valueA, valueB) =>
@@ -80,6 +91,8 @@ export const getColumnDefs = (
     },
     cellRenderer: (params) => {
       const colors = getPriorityColorStyles(params.value);
+      // Translate priority value
+      const translatedPriority = t(`ticketsPage.priorities.${params.value}`);
 
       return (
         <span
@@ -96,14 +109,14 @@ export const getColumnDefs = (
             whiteSpace: "nowrap",
           }}
         >
-          {params.value}
+          {translatedPriority}
         </span>
       );
     },
   },
   {
     field: "status",
-    headerName: "Status",
+    headerName: t("ticketsPage.columns.status"),
     width: 170,
     filter: "agTextColumnFilter",
     comparator: (valueA, valueB) => STATUS_ORDER[valueA] - STATUS_ORDER[valueB],
@@ -118,6 +131,8 @@ export const getColumnDefs = (
     },
     cellRenderer: (params) => {
       const colors = getStatusColorStyles(params.value);
+      // Translate status value
+      const translatedStatus = t(`ticketsPage.statuses.${params.value}`);
 
       return (
         <span
@@ -134,25 +149,34 @@ export const getColumnDefs = (
             whiteSpace: "nowrap",
           }}
         >
-          {params.value}
+          {translatedStatus}
         </span>
       );
     },
   },
   {
     field: "assignedTo",
-    headerName: "Assigned To",
+    headerName: t("ticketsPage.columns.assignedTo"),
     filter: "agTextColumnFilter",
     minWidth: 170,
+    valueGetter: (params) => {
+      const assignedTo = params.data.assignedTo;
+      // Try teamMembers first, then employees, fallback to original value
+      const translated = t(
+        `teamMembers.${assignedTo}`,
+        t(`employees.${assignedTo}`, assignedTo)
+      );
+      return translated;
+    },
   },
   {
     field: "created",
-    headerName: "Created",
+    headerName: t("ticketsPage.columns.created"),
     filter: "agDateColumnFilter",
   },
   {
     field: "slaDue",
-    headerName: "SLA Due",
+    headerName: t("ticketsPage.columns.slaDue"),
     width: 150,
     filter: "agDateColumnFilter",
     cellStyle: {
@@ -180,7 +204,9 @@ export const getColumnDefs = (
             <span style={{ fontSize: "12px", color: "#6b7280" }}>
               {params.value}
             </span>
-            <span style={{ color: "#FF2C2C" }}>OVERDUE</span>
+            <span style={{ color: "#FF2C2C" }}>
+              {t("ticketsPage.sla.overdue")}
+            </span>
           </div>
         );
       }
@@ -194,7 +220,7 @@ export const getColumnDefs = (
   },
   {
     field: "action",
-    headerName: "Action",
+    headerName: t("ticketsPage.columns.action"),
     maxWidth: 105,
     cellStyle: {
       textAlign: "center",
