@@ -1,5 +1,5 @@
 {
-  "welcome": "Welcome to Klinka",
+  "welcome": "Welcome to Klenka",
   "chatbot": "SAP SF Chatbot",
   "home": "Home",
   "tickets": "Tickets",
@@ -9,10 +9,11 @@
   "hrSupport": "HR Support",
   "employeeSystem": "Employee System",
   "hrAdmin": "HR Admin",
-    "version": "V{{version}}",
+  "version": "V{{version}}",
+  "logout": "Logout",
   "footer": {
     "title": "Klenka - HR Support System",
-    "copyright": "© 2025 All rights reserved."
+    "copyright": " 2025 All rights reserved."
   },
   "adminName": "Emad Omar",
   "dashboard": {
@@ -35,11 +36,11 @@
     },
     "recentActivity": {
       "title": "Recent Activity",
-      "newTicket": "New ticket assigned: {{id}}",
+      "newTicket": "New ticket assigned {{id}}",
       "portalAccess": "HR Portal access issue - Critical priority",
-      "slaAlert": "SLA breach alert: {{id}}",
+      "slaAlert": "SLA breach alert {{id}}",
       "vacationLeave": "Vacation leave approval resolution time exceeded",
-      "ticketCompleted": "Ticket completed: {{id}}",
+      "ticketCompleted": "Ticket completed {{id}}",
       "healthInsurance": "Health insurance query resolved",
       "time": {
         "hoursAgo": "{{count}} hours ago",
@@ -144,7 +145,7 @@
     "ticket": "ticket",
     "tickets": "tickets",
     "actions": "Actions",
-    "bulkActions": "Actions ({{count}})",
+    "bulkActions": "Bulk Actions {{count}}",
     "columns": {
       "ticketId": "Ticket ID",
       "title": "Title",
@@ -308,7 +309,11 @@
   },
   "documentsMenu": {
     "title": "HR Policy Documents",
-    "subtitle": "Manage the HR documents that Fahim uses to respond to employee questions.",
+    "subtitle": {
+      "part1": "Manage the HR documents that",
+      "name": "Fahim",
+      "part2": "uses to respond to employee questions."
+    },
     "upload": "Upload Documents",
     "uploading": "Uploading...",
     "search": "Search by File Name or Upload Date (YYYY-MM-DD)...",
@@ -453,5 +458,18 @@
     "goBack": "Go Back",
     "tryAgain": "Try Again",
     "goHome": "Go Home"
+  },
+  "login": {
+    "loginTitle": "Login",
+    "welcome": "Welcome To Klenka",
+    "subtitle": "Klenka - HR Support System",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign In",
+    "loggingIn": "Logging in...",
+    "error": "Invalid username or password",
+    "footer": "Klenka. All rights reserved."
   }
 }

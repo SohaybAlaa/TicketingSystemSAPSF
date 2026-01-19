@@ -1,7 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
-import { STATUSES } from "../../utils/helpers";
+import { STATUSES } from "@utils/helpers";
+
+// Color mapping function based on Tag component
+const getTagColor = (value) => {
+  const COLOR_MAP = {
+    // Status colors
+    "PENDING THIRDPARTY": "#fc6900",
+    "PENDING EMPLOYEE": "#eab308",
+    "UNDER PROCESS": "#3b82f6",
+    NEW: "#9333ea",
+    COMPLETED: "#22c55e",
+    CLOSED: "#6b7280",
+  };
+  
+  // Normalize the value for color mapping
+  const normalizedValue = value?.toUpperCase().replace(/_/g, ' ') || "";
+  
+  // Get the color based on the value
+  return COLOR_MAP[normalizedValue] || "#6b7280"; // Default gray
+};
 
 /**
  * Change Status Modal
@@ -39,20 +58,13 @@ export default function ChangeStatusModal({
       onClose={onClose}
       title={t("modals.changeStatus.title", { ticketId })}
     >
-      <div style={{ marginBottom: "24px" }}>
+      <div className="mb-6">
         <label
-          style={{
-            display: "block",
-            fontSize: "14px",
-            fontWeight: "500",
-            color: "#374151",
-            marginBottom: "8px",
-            textAlign: isRTL ? "right" : "left",
-          }}
+          className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "text-right" : "text-left"}`}
         >
           {t("modals.changeStatus.selectStatus")}
         </label>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <div className="flex flex-col gap-2">
           {STATUSES.map((status) => (
             <label
               key={status.value}
@@ -62,14 +74,18 @@ export default function ChangeStatusModal({
                 padding: "12px",
                 borderRadius: "8px",
                 border: `2px solid ${
-                  selectedStatus === status.value ? "#facc15" : "#e5e7eb"
+                  selectedStatus === status.value 
+                    ? getTagColor(status.value) 
+                    : "#e5e7eb"
                 }`,
                 backgroundColor:
-                  selectedStatus === status.value ? "#fefce8" : "white",
+                  selectedStatus === status.value 
+                    ? `${getTagColor(status.value)}10` // 10% opacity background for selected state
+                    : "white",
                 cursor: "pointer",
                 transition: "all 0.15s",
                 flexDirection: "row",
-                justifyContent: "start",
+                justifyContent: "space-between", // Better spacing between label and radio
               }}
               onMouseEnter={(e) => {
                 if (selectedStatus !== status.value) {
@@ -84,15 +100,19 @@ export default function ChangeStatusModal({
             >
               <span
                 style={{
-                  backgroundColor: status.color,
+                  backgroundColor: `${getTagColor(status.value)}20`, // 20% opacity
+                  borderColor: `${getTagColor(status.value)}40`, // 40% opacity
+                  color: getTagColor(status.value),
+                  borderWidth: "1px",
+                  borderStyle: "solid",
                   padding: "4px 12px",
                   borderRadius: "9999px",
                   fontSize: "13px",
                   fontWeight: "600",
-                  color: "#374151",
                   whiteSpace: "nowrap",
                   marginRight: isRTL ? "0" : "12px",
                   marginLeft: isRTL ? "12px" : "0",
+                  direction: isRTL ? "rtl" : "ltr"
                 }}
               >
                 {t(`ticketsPage.statuses.${status.value}`)}
@@ -103,11 +123,7 @@ export default function ChangeStatusModal({
                 value={status.value}
                 checked={selectedStatus === status.value}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                style={{
-                  cursor: "pointer",
-                  accentColor: "#facc15",
-                  flexShrink: 0,
-                }}
+                className="hidden-radio"
               />
             </label>
           ))}
@@ -115,54 +131,17 @@ export default function ChangeStatusModal({
       </div>
 
       <div
-        style={{
-          display: "flex",
-          gap: "12px",
-          justifyContent: "flex-end",
-          flexDirection: isRTL ? "row-reverse" : "row",
-        }}
+        className={`flex gap-3 justify-end mt-6 ${isRTL ? "flex-row-reverse" : ""}`}
       >
         <button
           onClick={onClose}
-          style={{
-            padding: "10px 20px",
-            borderRadius: "8px",
-            border: "1px solid #e5e7eb",
-            backgroundColor: "white",
-            color: "#374151",
-            fontSize: "14px",
-            fontWeight: "500",
-            cursor: "pointer",
-            transition: "all 0.15s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#f9fafb";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "white";
-          }}
+          className="modal-cancel-button"
         >
           {t("modals.changeStatus.cancel")}
         </button>
         <button
           onClick={handleSave}
-          style={{
-            padding: "10px 20px",
-            borderRadius: "8px",
-            border: "none",
-            backgroundColor: "#facc15",
-            color: "#111827",
-            fontSize: "14px",
-            fontWeight: "600",
-            cursor: "pointer",
-            transition: "all 0.15s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#fbbf24";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "#facc15";
-          }}
+          className="modal-save-button"
         >
           {t("modals.changeStatus.save")}
         </button>

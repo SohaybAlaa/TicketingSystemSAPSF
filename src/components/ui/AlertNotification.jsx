@@ -37,7 +37,7 @@ const Alert = ({ id, type, message, title, onClose, isRTL }) => {
         {icons[type]}
         <div>
           {title && <div className="font-bold">{title}</div>}
-          <span className={title ? "text-sm" : ""}>{message}</span>
+          <span>{message}</span>
         </div>
       </div>
       <button

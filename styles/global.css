@@ -14,8 +14,69 @@
   --color-base-100: oklch(0.99 0.002 247);
 }
 
+/* Main Color System */
+:root {
+  /* Brand */
+  --color-brand: #FDC700;
+  
+  /* Status */
+  --color-status-new: #9333ea;
+  --color-status-process: #3b82f6;
+  --color-status-pending-employee: #eab308;
+  --color-status-pending-third: #fc6900;
+  --color-status-completed: #22c55e;
+  --color-status-closed: #6b7280;
+  
+  /* Priority */
+  --color-priority-low: #22c55e;
+  --color-priority-medium: #3b82f6;
+  --color-priority-high: #fc6900;
+  --color-priority-critical: #ef4444;
+  
+  /* Semantic */
+  --color-success: #22c55e;
+  --color-warning: #fc6900;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+}
+
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
 body {
   @apply leading-relaxed;
+  height: 100%;
+  overflow: hidden;
+}
+
+h1 {
+  @apply text-3xl font-bold text-gray-900;
+}
+
+h2 {
+  @apply text-xl font-bold text-gray-900;
+}
+
+h3 {
+  @apply text-lg font-bold text-gray-900;
+}
+
+h4 {
+  @apply text-base font-bold text-gray-900;
+}
+
+h5 {
+  @apply text-sm font-semibold text-gray-900;
+}
+
+h6 {
+  @apply text-xs font-medium text-gray-900;
+}
+
+p {
+  @apply text-base text-gray-700;
 }
 
 /* Arabic ONLY (stronger) */
@@ -25,4 +86,76 @@ body {
 [dir="rtl"] * {
   font-family: 'Tajawal', sans-serif;
   font-weight: 600;
+  @apply tracking-wide;
+}
+
+
+/* Reusable utility classes */
+.hover-effect {
+  @apply hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer;
+}
+
+.yellow-button {
+  @apply cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-800 font-semibold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl flex items-center gap-2;
+}
+
+.action-button {
+  @apply flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl whitespace-nowrap cursor-pointer;
+}
+ /* // delete modal */
+.delete-button {
+  @apply flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium 
+  transition-all duration-1000 ease-out cursor-pointer
+  hover:bg-red-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-red-600/30 
+  active:translate-y-0 active:shadow-md active:scale-[0.98]
+  focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+}
+
+.cancel-button {
+  @apply flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium 
+  transition-all duration-1000 ease-in-out cursor-pointer
+  hover:bg-gray-300 hover:-translate-y-0.5 hover:shadow-md 
+  active:translate-y-0 active:shadow-sm active:scale-[0.98]
+  focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2;
+}
+
+/* STATUS PRIORTY Modal button styles */
+.modal-cancel-button {
+  @apply px-5 py-2.5 rounded-lg text-sm font-medium bg-white text-gray-700 border border-gray-200
+  transition-all duration-200 cursor-pointer shadow-sm
+  hover:bg-gray-50 hover:-translate-y-0.5 hover:shadow-md
+  active:translate-y-0 active:shadow-sm active:scale-[0.98];
+}
+
+.modal-save-button {
+  @apply px-6 py-2.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-yellow-400 to-yellow-500
+  text-gray-900 border-none shadow-sm
+  transition-all duration-200 cursor-pointer
+  hover:from-yellow-500 hover:to-yellow-400 hover:-translate-y-0.5 hover:shadow-md
+  active:translate-y-0 active:shadow-sm active:scale-[0.98];
+}
+
+/* Hidden radio button that keeps functionality */
+.hidden-radio {
+  @apply absolute opacity-0 w-0 h-0;
+}
+
+/* Custom black scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #000000 #1a1a1a;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #000000;
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #2a2a2a;
 }

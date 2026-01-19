@@ -1,23 +1,21 @@
 import { AllCommunityModule } from "ag-grid-community";
-import { myTheme } from "../../../../utils/agGridThemes";
+import { myTheme } from "@utils/agGridThemes";
 import { AgGridReact } from "ag-grid-react";
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { EllipsisVertical, Download } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 // Components
-import AlertNotification from "../../../../components/ui/AlertNotification";
-import ActionMenu from "../../../../components/ui/ActionMenu";
-import DeleteConfirmModal from "../../../../components/modals/DeleteConfirmModal";
-import ChangeStatusModal from "../../../../components/modals/ChangeStatusModal";
-import ChangePriorityModal from "../../../../components/modals/ChangePriorityModal";
-import AssignToOtherModal from "../../../../components/modals/AssignToOtherModal";
+import AdminLayout from "@components/layouts/AdminLayout";
+import AlertNotification from "@ui/AlertNotification";
+import BulkActionsButton from "@ui/BulkActionsButton";
+import TicketsCountDisplay from "@ui/TicketsCountDisplay";
 
 // Data
-import { INITIAL_TICKETS } from "../../../../data/mockData";
+import { INITIAL_TICKETS } from "@data/mockData";
 
 // Utilities
-import { getColumnDefs, defaultColDef } from "../../../../utils/columnDefs";
+import { getColumnDefs, defaultColDef } from "@utils/columnDefs";
 
 export default function Tickets() {
   const { t, i18n } = useTranslation();
@@ -103,8 +101,8 @@ export default function Tickets() {
   // Total tickets count
   const totalTickets = rowData.length;
 
-  // Admin id HARDCODED - Mockup
-  const adminId = "Emad Omar";
+  // Admin name for display purposes only
+  const adminName = "Emad Omar";
 
   const showAlert = (type, message, title = "") => {
     const id = Date.now() + Math.random();
@@ -157,12 +155,12 @@ export default function Tickets() {
   const handleAssignToMe = (ticketId) => {
     setRowData((prev) =>
       prev.map((row) =>
-        row.ticketId === ticketId ? { ...row, assignedTo: adminId } : row
+        row.ticketId === ticketId ? { ...row, assignedTo: adminName } : row
       )
     );
     showAlert(
       "success",
-      t("ticketsPage.alerts.assignedToMe", { ticketId, adminId }),
+      t("ticketsPage.alerts.assignedToMe", { ticketId, adminId: adminName }),
       t("ticketsPage.alerts.assignmentSuccessful")
     );
   };
@@ -194,7 +192,7 @@ export default function Tickets() {
     setRowData((prev) =>
       prev.map((row) =>
         selectedRows.some((s) => s.ticketId === row.ticketId)
-          ? { ...row, assignedTo: adminId }
+          ? { ...row, assignedTo: adminName }
           : row
       )
     );
@@ -202,7 +200,7 @@ export default function Tickets() {
       "success",
       t("ticketsPage.alerts.bulkAssignedToMe", {
         count: selectedRows.length,
-        adminId,
+        adminId: adminName,
       }),
       t("ticketsPage.alerts.bulkAssignmentSuccessful")
     );
@@ -315,7 +313,7 @@ export default function Tickets() {
 
   const handleRowClick = (event) => {
     const ticketId = event.data.ticketId;
-    window.open(`/admin/${adminId}/tickets/${ticketId}`, "_blank");
+    window.open(`/admin/tickets/${ticketId}`, "_blank");
   };
 
   // Get column definitions with handlers and translation function
@@ -325,26 +323,33 @@ export default function Tickets() {
     handleDeleteTicket,
     handleAssignToMe,
     handleAssignToOther,
-    t // Pass translation function
+    t, // Pass translation function
+    isRTL // Pass RTL layout parameter
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50">
-      {/* Global Alert Notification - Supports Multiple Stacked Alerts */}
-      <AlertNotification alerts={alerts} onClose={removeAlert} />
+    <>
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+      `}</style>
+      
+      <AdminLayout
+        title={t("ticketsPage.title")}
+        subtitle={t("ticketsPage.subtitle")}
+      >
+        {/* Global Alert Notification - Supports Multiple Stacked Alerts */}
+        <AlertNotification alerts={alerts} onClose={removeAlert} />
 
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-5 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {t("ticketsPage.title")}
-            </h1>
-            <p className="text-gray-600">{t("ticketsPage.subtitle")}</p>
-          </div>
-        </div>
-
-        {/* Search & Export */}
+        {/* Search, Bulk Actions & Export */}
         <div className="bg-white p-4 rounded-lg shadow-sm mb-4">
           <div className="flex items-center gap-4">
             <input
@@ -355,9 +360,37 @@ export default function Tickets() {
               className="border p-2 rounded w-full border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400"
               dir={isRTL ? "rtl" : "ltr"}
             />
+            
+            {/* Bulk Actions Button - Animated show/hide */}
+            {selectedRows.length > 0 && (
+              <BulkActionsButton
+                selectedRows={selectedRows}
+                bulkButtonRef={bulkButtonRef}
+                handleBulkButtonClick={handleBulkButtonClick}
+                isBulkMenuOpen={isBulkMenuOpen}
+                setIsBulkMenuOpen={setIsBulkMenuOpen}
+                bulkMenuPosition={bulkMenuPosition}
+                handleBulkAction={handleBulkAction}
+                isBulkStatusModalOpen={isBulkStatusModalOpen}
+                setIsBulkStatusModalOpen={setIsBulkStatusModalOpen}
+                isBulkPriorityModalOpen={isBulkPriorityModalOpen}
+                setIsBulkPriorityModalOpen={setIsBulkPriorityModalOpen}
+                isBulkDeleteModalOpen={isBulkDeleteModalOpen}
+                setIsBulkDeleteModalOpen={setIsBulkDeleteModalOpen}
+                isBulkAssignToOtherModalOpen={isBulkAssignToOtherModalOpen}
+                setIsBulkAssignToOtherModalOpen={setIsBulkAssignToOtherModalOpen}
+                handleBulkStatusChange={handleBulkStatusChange}
+                handleBulkPriorityChange={handleBulkPriorityChange}
+                handleBulkDelete={handleBulkDelete}
+                handleBulkAssignToOther={handleBulkAssignToOther}
+                isRTL={isRTL}
+                t={t}
+              />
+            )}
+
             <button
               onClick={handleExport}
-              className="flex items-center justify-center gap-2 px-5 py-3 cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
+              className="action-button"
             >
               {t("ticketsPage.export")}
               <Download size={16} />
@@ -365,81 +398,14 @@ export default function Tickets() {
           </div>
         </div>
 
-        <div className="mb-4 flex justify-between items-center">
-          {/* Left: Tickets count */}
-          <p className={`text-gray-600 text-sm ${isRTL ? "mr-3" : "ml-3"}`}>
-            {quickFilterText ? (
-              <>
-                {t("ticketsPage.showing")} {displayedRowCount}{" "}
-                {t("ticketsPage.of")} {totalTickets}{" "}
-                {totalTickets !== 1
-                  ? t("ticketsPage.tickets")
-                  : t("ticketsPage.ticket")}
-              </>
-            ) : (
-              <>
-                {t("ticketsPage.showing")} {totalTickets}{" "}
-                {t("ticketsPage.tickets")}
-              </>
-            )}
-          </p>
-
-          {/* Right: Bulk Action button */}
-          {selectedRows.length > 0 && (
-            <div className="relative">
-              <button
-                ref={bulkButtonRef}
-                onClick={handleBulkButtonClick}
-                className="flex items-center justify-center gap-2 px-5 py-3 cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start"
-              >
-                {t("ticketsPage.bulkActions", { count: selectedRows.length })}
-                <EllipsisVertical size={16} />
-              </button>
-
-              <ActionMenu
-                isOpen={isBulkMenuOpen}
-                onClose={() => setIsBulkMenuOpen(false)}
-                position={bulkMenuPosition}
-                ticketId="BULK"
-                onAction={(action) => {
-                  handleBulkAction(action);
-                  setIsBulkMenuOpen(false);
-                }}
-              />
-
-              <ChangeStatusModal
-                isOpen={isBulkStatusModalOpen}
-                onClose={() => setIsBulkStatusModalOpen(false)}
-                currentStatus={selectedRows[0]?.status || "New"}
-                onSave={handleBulkStatusChange}
-                ticketId={`${selectedRows.length} ${t("ticketsPage.tickets")}`}
-              />
-
-              <ChangePriorityModal
-                isOpen={isBulkPriorityModalOpen}
-                onClose={() => setIsBulkPriorityModalOpen(false)}
-                currentPriority={selectedRows[0]?.priority || "MEDIUM"}
-                onSave={handleBulkPriorityChange}
-                ticketId={`${selectedRows.length} ${t("ticketsPage.tickets")}`}
-              />
-
-              <DeleteConfirmModal
-                isOpen={isBulkDeleteModalOpen}
-                onClose={() => setIsBulkDeleteModalOpen(false)}
-                onConfirm={handleBulkDelete}
-                ticketId=""
-                count={selectedRows.length}
-              />
-
-              <AssignToOtherModal
-                isOpen={isBulkAssignToOtherModalOpen}
-                onClose={() => setIsBulkAssignToOtherModalOpen(false)}
-                onSave={handleBulkAssignToOther}
-                ticketId={`${selectedRows.length} ${t("ticketsPage.tickets")}`}
-              />
-            </div>
-          )}
-        </div>
+        {/* Tickets count */}
+        <TicketsCountDisplay
+          quickFilterText={quickFilterText}
+          displayedRowCount={displayedRowCount}
+          totalTickets={totalTickets}
+          isRTL={isRTL}
+          t={t}
+        />
 
         {/* Table AG GRID */}
         <div
@@ -474,7 +440,7 @@ export default function Tickets() {
             domLayout="autoHeight"
           />
         </div>
-      </div>
-    </div>
+      </AdminLayout>
+    </>
   );
 }

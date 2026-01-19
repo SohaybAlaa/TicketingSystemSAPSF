@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Download, Plus } from "lucide-react";
-import { formatDateTime } from "../../../utils/formatDateTime";
+import { formatDateTime } from "@utils/formatDateTime";
 
 export default function AttachmentsTab({
   actualAttachments,
@@ -24,17 +24,17 @@ export default function AttachmentsTab({
           {actualAttachments.map((attachment) => (
             <div
               key={attachment.id}
-              className="group flex items-center justify-between p-5 bg-gradient-to-r from-yellow-50 to-yellow border-2 border-gray-200 rounded-xl hover:border-yellow-300 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+              className="group flex items-center justify-between p-5 bg-gradient-to-r from-yellow-50 to-yellow border-2 border-gray-200 rounded-xl hover:border-yellow-300 hover-effect"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-200">
                   <Download className="w-6 h-6 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-md font-semibold text-gray-900">
+                  <p className="!text-md !font-semibold !text-gray-900">
                     {attachment.filename}
                   </p>
-                  <p className="text-md text-gray-600 mt-1">
+                  <p className="!text-gray-500 font-semibold !px-2 !py-1 !rounded-full">
                     {attachment.sizeFormatted}
                     {" • "}
                     {formatDateTime(attachment.uploadedAt)}
@@ -55,10 +55,10 @@ export default function AttachmentsTab({
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Download className="w-8 h-8 text-gray-600" />
               </div>
-              <p className="text-gray-900 font-medium">
+              <p className="!text-gray-900 !font-medium">
                 {t("ticketDetails.attachments.noAttachments")}
               </p>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="!text-sm !text-gray-400 mt-1">
                 {t("ticketDetails.attachments.uploadFiles")}
               </p>
             </div>

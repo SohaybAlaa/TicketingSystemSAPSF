@@ -105,13 +105,13 @@ const DeleteConfirmModal = ({
               <Trash2 className="w-6 h-6 text-red-600" />
             </div>
             <div className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}>
-              <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-              <p className="text-sm text-gray-600">{subtitle}</p>
+              <h3>{title}</h3>
+              <p className="!text-sm !text-gray-600">{subtitle}</p>
             </div>
           </div>
           <p
-            className={`text-gray-700 mb-6 ${
-              isRTL ? "text-right" : "text-left"
+            className={`!text-gray-700 !mb-6 ${
+              isRTL ? "!text-right" : "!text-left"
             }`}
             dangerouslySetInnerHTML={{ __html: message }}
           />
@@ -119,11 +119,7 @@ const DeleteConfirmModal = ({
             <button
               onClick={handleClose}
               type="button"
-              className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium
-                transition-all duration-300 ease-out
-                hover:bg-gray-300 hover:-translate-y-0.5 hover:shadow-md
-                active:translate-y-0 active:shadow-sm
-                focus:outline-none focus:ring-2 focus:ring-gray-400/60 focus:ring-offset-2"
+              className="cancel-button"
             >
               {t("modals.deleteConfirm.cancel")}
             </button>
@@ -131,11 +127,7 @@ const DeleteConfirmModal = ({
             <button
               onClick={handleConfirm}
               type="button"
-              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium
-                transition-all duration-300 ease-out
-                hover:bg-red-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-red-600/20
-                active:translate-y-0 active:shadow-md
-                focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:ring-offset-2"
+              className="delete-button"
             >
               {t("modals.deleteConfirm.delete")}
             </button>

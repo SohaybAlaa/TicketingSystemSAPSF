@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Plus, User } from "lucide-react";
-import { formatDateTime } from "../../../utils/formatDateTime";
+import { formatDateTime } from "@utils/formatDateTime";
 
 export default function InternalNotesTab({
   internalNotes,
@@ -15,22 +15,22 @@ export default function InternalNotesTab({
       {internalNotes.map((note) => (
         <div
           key={note.note_id}
-          className="group p-5 bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-xl hover:border-yellow-300 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+          className="group p-5 bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-xl hover:border-yellow-300 hover-effect"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-md">
                 <User className="w-4 h-4 text-white" />
               </div>
-              <p className="text-sm font-semibold text-gray-900">
+              <p className="!text-sm !font-semibold !text-gray-900">
                 {note.author_name}
               </p>
             </div>
-            <span className="text-xs text-gray-500 bg-white/70 px-2 py-1 rounded-full">
+            <span className="!bg-gray-100 text-gray-600 font-semibold !px-2 !py-1 !rounded-full">
               {formatDateTime(note.created_at)}
             </span>
           </div>
-          <p className="text-sm text-gray-800 leading-relaxed">{note.text}</p>
+          <p className="!text-sm !text-gray-800 !leading-relaxed">{note.text}</p>
         </div>
       ))}
 
@@ -39,10 +39,10 @@ export default function InternalNotesTab({
           <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Plus className="w-8 h-8 text-yellow-600" />
           </div>
-          <p className="text-gray-500 font-medium">
+          <p>
             {t("ticketDetails.internalNotes.noNotes")}
           </p>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="!text-sm !text-gray-400 mt-1">
             {t("ticketDetails.internalNotes.addPrivateNotes")}
           </p>
         </div>
@@ -62,7 +62,7 @@ export default function InternalNotesTab({
         />
         <button
           onClick={handleAddNote}
-          className="mt-3 px-6 py-3 cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-700 font-semibold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl flex items-center gap-2"
+          className="mt-3 px-6 py-3 yellow-button"
         >
           <Plus className="w-4 h-4" />
           {t("ticketDetails.internalNotes.addNote")}

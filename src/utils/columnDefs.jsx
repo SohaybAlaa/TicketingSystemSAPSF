@@ -1,8 +1,5 @@
-import {
-  getPriorityColorStyles,
-  getStatusColorStyles,
-  isSLAOverdue,
-} from "../utils/helpers";
+import { isSLAOverdue } from "../utils/helpers";
+import Tag from "@components/ui/Tag";
 import ActionCellRenderer from "../components/grid/ActionCellRenderer";
 
 /**
@@ -39,7 +36,8 @@ export const getColumnDefs = (
   handleDeleteTicket,
   handleAssignToMe,
   handleAssignToOther,
-  t // Add translation function parameter
+  t, // Translation function parameter
+  isRTL = false // RTL layout parameter
 ) => [
   {
     field: "ticketId",
@@ -90,27 +88,14 @@ export const getColumnDefs = (
       justifyContent: "center",
     },
     cellRenderer: (params) => {
-      const colors = getPriorityColorStyles(params.value);
-      // Translate priority value
-      const translatedPriority = t(`ticketsPage.priorities.${params.value}`);
-
       return (
-        <span
-          style={{
-            backgroundColor: colors.bg,
-            color: colors.text,
-            border: `1px solid ${colors.border}`,
-            borderRadius: "9999px",
-            padding: "4px 12px",
-            fontSize: "12px",
-            fontWeight: "600",
-            display: "block",
-            lineHeight: "normal",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {translatedPriority}
-        </span>
+        <Tag 
+          type="priority" 
+          value={params.value} 
+          t={t}
+          isRTL={isRTL}
+          className="w-full"
+        />
       );
     },
   },
@@ -130,27 +115,14 @@ export const getColumnDefs = (
       justifyContent: "center",
     },
     cellRenderer: (params) => {
-      const colors = getStatusColorStyles(params.value);
-      // Translate status value
-      const translatedStatus = t(`ticketsPage.statuses.${params.value}`);
-
       return (
-        <span
-          style={{
-            backgroundColor: colors.bg,
-            color: colors.text,
-            border: `1px solid ${colors.border}`,
-            borderRadius: "9999px",
-            padding: "4px 8px",
-            fontSize: "12px",
-            fontWeight: "600",
-            display: "block",
-            lineHeight: "normal",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {translatedStatus}
-        </span>
+        <Tag 
+          type="status" 
+          value={params.value} 
+          t={t}
+          isRTL={isRTL}
+          className="w-full"
+        />
       );
     },
   },

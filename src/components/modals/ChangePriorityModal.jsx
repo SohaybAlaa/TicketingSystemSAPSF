@@ -1,7 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
-import { PRIORITIES } from "../../utils/helpers";
+import { PRIORITIES } from "@utils/helpers";
+
+// Color mapping function based on Tag component
+const getTagColor = (value) => {
+  const COLOR_MAP = {
+    // Priority colors
+    LOW: "#22c55e",
+    MEDIUM: "#3b82f6",
+    HIGH: "#fc6900",
+    CRITICAL: "#ef4444",
+  };
+  
+  // Normalize the value for color mapping
+  const normalizedValue = value?.toUpperCase().replace(/_/g, ' ') || "";
+  
+  // Get the color based on the value
+  return COLOR_MAP[normalizedValue] || "#6b7280"; // Default gray
+};
 
 /**
  * Change Priority Modal
@@ -62,14 +79,18 @@ export default function ChangePriorityModal({
                 padding: "12px",
                 borderRadius: "8px",
                 border: `2px solid ${
-                  selectedPriority === priority.value ? "#facc15" : "#e5e7eb"
+                  selectedPriority === priority.value 
+                    ? getTagColor(priority.value) 
+                    : "#e5e7eb"
                 }`,
                 backgroundColor:
-                  selectedPriority === priority.value ? "#fefce8" : "white",
+                  selectedPriority === priority.value 
+                    ? `${getTagColor(priority.value)}10` // 10% opacity background for selected state
+                    : "white",
                 cursor: "pointer",
                 transition: "all 0.15s",
                 flexDirection: "row",
-                justifyContent: "start",
+                justifyContent: "space-between", // Better spacing between label and radio
               }}
               onMouseEnter={(e) => {
                 if (selectedPriority !== priority.value) {
@@ -84,15 +105,19 @@ export default function ChangePriorityModal({
             >
               <span
                 style={{
-                  backgroundColor: priority.color,
+                  backgroundColor: `${getTagColor(priority.value)}20`, // 20% opacity
+                  borderColor: `${getTagColor(priority.value)}40`, // 40% opacity
+                  color: getTagColor(priority.value),
+                  borderWidth: "1px",
+                  borderStyle: "solid",
                   padding: "4px 12px",
                   borderRadius: "9999px",
                   fontSize: "13px",
                   fontWeight: "600",
-                  color: "#374151",
                   whiteSpace: "nowrap",
                   marginRight: isRTL ? "0" : "12px",
                   marginLeft: isRTL ? "12px" : "0",
+                  direction: isRTL ? "rtl" : "ltr"
                 }}
               >
                 {t(`ticketsPage.priorities.${priority.value}`)}
@@ -103,11 +128,7 @@ export default function ChangePriorityModal({
                 value={priority.value}
                 checked={selectedPriority === priority.value}
                 onChange={(e) => setSelectedPriority(e.target.value)}
-                style={{
-                  cursor: "pointer",
-                  accentColor: "#facc15",
-                  flexShrink: 0,
-                }}
+                className="hidden-radio"
               />
             </label>
           ))}
@@ -115,54 +136,17 @@ export default function ChangePriorityModal({
       </div>
 
       <div
-        style={{
-          display: "flex",
-          gap: "12px",
-          justifyContent: "flex-end",
-          flexDirection: isRTL ? "row-reverse" : "row",
-        }}
+        className={`flex gap-3 justify-end mt-6 ${isRTL ? "flex-row-reverse" : ""}`}
       >
         <button
           onClick={onClose}
-          style={{
-            padding: "10px 20px",
-            borderRadius: "8px",
-            border: "1px solid #e5e7eb",
-            backgroundColor: "white",
-            color: "#374151",
-            fontSize: "14px",
-            fontWeight: "500",
-            cursor: "pointer",
-            transition: "all 0.15s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#f9fafb";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "white";
-          }}
+          className="modal-cancel-button"
         >
           {t("modals.changePriority.cancel")}
         </button>
         <button
           onClick={handleSave}
-          style={{
-            padding: "10px 20px",
-            borderRadius: "8px",
-            border: "none",
-            backgroundColor: "#facc15",
-            color: "#111827",
-            fontSize: "14px",
-            fontWeight: "600",
-            cursor: "pointer",
-            transition: "all 0.15s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#fbbf24";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "#facc15";
-          }}
+          className="modal-save-button"
         >
           {t("modals.changePriority.save")}
         </button>

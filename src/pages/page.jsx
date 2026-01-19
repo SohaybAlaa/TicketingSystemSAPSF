@@ -1,14 +1,17 @@
 import { useTranslation } from "react-i18next";
+import AdminLayout from "@layouts/AdminLayout";
 
 export default function Home() {
   const { t } = useTranslation();
+  const adminName = "Admin";
 
   return (
     <>
-      <h1 className="text-4xl text-center font-black mt-20 mb-5">
-        {t("welcome")}
-      </h1>
-      <h4 className="text-3xl text-center font-black">{t("chatbot")}</h4>
+    <AdminLayout
+      title={t("welcome")}
+      subtitle={t("chatbot", { name: adminName })}
+    >
+    </AdminLayout>
     </>
   );
 }

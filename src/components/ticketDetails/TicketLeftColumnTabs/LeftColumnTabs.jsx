@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import DetailsTab from "./DetailsTab";
-import CommunicationTab from "./CommunicationTab";
-import AttachmentsTab from "./AttachmentsTab";
-import InternalNotesTab from "./InternalNotesTab";
+import DetailsTab from "@components/ticketDetails/TicketLeftColumnTabs/DetailsTab";
+import CommunicationTab from "@components/ticketDetails/TicketLeftColumnTabs/CommunicationTab";
+import AttachmentsTab from "@components/ticketDetails/TicketLeftColumnTabs/AttachmentsTab";
+import InternalNotesTab from "@components/ticketDetails/TicketLeftColumnTabs/InternalNotesTab";
 
 export default function LeftColumnTabs({
   ticket,

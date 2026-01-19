@@ -12,18 +12,18 @@ import {
   UserStar,
   Repeat,
 } from "lucide-react";
-import { mockApi } from "../../../../../data/mockData";
-import { formatDateTime } from "../../../../../utils/formatDateTime";
-import { getPriorityColor, getStatusColor } from "../../../../../utils/helpers";
-import AlertNotification from "../../../../../components/ui/AlertNotification";
-import TicketNotFound from "../../../../../components/ticketDetails/TicketNotFound";
-import TicketLeftColumn from "../../../../../components/ticketDetails/TicketLeftColumnTabs/LeftColumnTabs";
-import TicketRightColumn from "../../../../../components/ticketDetails/TicketRightColumnCards";
+import { mockApi } from "@data/mockData";
+import { formatDateTime } from "@utils/formatDateTime";
+import Tag from "@components/ui/Tag";
+import AlertNotification from "@ui/AlertNotification";
+import TicketNotFound from "@components/ticketDetails/TicketNotFound";
+import TicketLeftColumn from "@components/ticketDetails/TicketLeftColumnTabs/LeftColumnTabs";
+import TicketRightColumn from "@components/ticketDetails/TicketRightColumnCards";
 
 const VALID_FILE_TYPES = ["pdf", "doc", "docx", "txt", "png", "jpg", "jpeg"];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-export default function Tickets({ adminid, ticketid }) {
+export default function Tickets({ ticketid }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -106,7 +106,7 @@ export default function Tickets({ adminid, ticketid }) {
   };
 
   const handleBack = () => {
-    navigate(`/admin/${adminid}/tickets`);
+    navigate(`/admin/tickets`);
   };
 
   // TICKET ACTION HANDLERS
@@ -326,7 +326,7 @@ export default function Tickets({ adminid, ticketid }) {
                     <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-md">
                       <Ticket className="w-5 h-5 text-white" />
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1>
                       {t("ticketDetails.ticketId")} #{ticket.ticket_id}
                     </h1>
                     <button
@@ -343,36 +343,37 @@ export default function Tickets({ adminid, ticketid }) {
                   </div>
 
                   {/* Status Badge */}
-                  <span
-                    className={`px-3 py-1 text-xs font-semibold rounded-full border ${getStatusColor(
-                      ticket.status
-                    )}`}
-                  >
-                    {t(`ticketDetails.statuses.${ticket.status}`)}
-                  </span>
+                  <Tag
+                    type="status"
+                    value={ticket.status}
+                    t={t}
+                    isRTL={false}
+                  />
 
                   {/* Priority Badge */}
-                  <span
-                    className={`px-3 py-1 text-xs font-semibold rounded-full border ${getPriorityColor(
-                      ticket.priority
-                    )}`}
-                  >
-                    {t(`ticketDetails.priorities.${ticket.priority}`)}
-                  </span>
+                  <Tag
+                    type="priority"
+                    value={ticket.priority}
+                    t={t}
+                    isRTL={false}
+                  />
 
                   {/* SLA Breached Badge */}
                   {isOverdue && (
-                    <div className="flex items-center gap-1.5 px-3 py-1 bg-red-50 border border-red-200 rounded-full animate-pulse">
-                      <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
-                      <span className="text-xs font-semibold text-red-700">
-                        {t("ticketDetails.slaBreached")}
-                      </span>
+                    <div className="animate-pulse">
+                      <Tag
+                        type="status"
+                        value="OVERDUE"
+                        t={() => t("ticketDetails.slaBreached")}
+                        isRTL={false}
+                        icon={<AlertTriangle className="w-3.5 h-3.5" />}
+                      />
                     </div>
                   )}
                 </div>
 
                 {/* Ticket Title */}
-                <h2 className="text-xl font-semibold text-gray-900 mb-3">
+                <h2 className="mb-3">
                   {ticket.title}
                 </h2>
 
@@ -414,8 +415,7 @@ export default function Tickets({ adminid, ticketid }) {
               {/* Right Side: Update Button */}
               <button
                 onClick={handleBack}
-                className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold rounded-xl hover:from-yellow-500 hover:to-yellow-400 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-xl lg:self-start cursor-pointer"
-              >
+                className="action-button">
                 <span>{t("ticketDetails.updateTicket")}</span>
                 <Repeat className="w-4 h-4" />
               </button>

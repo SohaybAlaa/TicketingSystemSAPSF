@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import { User, Users } from "lucide-react";
-import { TEAMS } from "../../data/mockData";
+import { TEAMS } from "@data/mockData";
 
 /**
  * Assign to Other Modal - Two-step selection (Team -> Member)
@@ -50,52 +50,22 @@ export default function AssignToOtherModal({
       onClose={onClose}
       title={t("modals.assignToOther.title", { ticketId })}
     >
-      <div style={{ marginBottom: "24px" }}>
+      <div className="mb-6">
         {/* Step 1: Team Selection */}
-        <div style={{ marginBottom: selectedTeam ? "24px" : "0" }}>
+        <div className={`mb-${selectedTeam ? "6" : "0"}`}>
           <label
-            style={{
-              display: "block",
-              fontSize: "14px",
-              fontWeight: "500",
-              color: "#374151",
-              marginBottom: "8px",
-              textAlign: isRTL ? "right" : "left",
-            }}
+            className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "text-right" : "text-left"}`}
           >
             {t("modals.assignToOther.step1")}
           </label>
-          <div style={{ display: "flex", gap: "12px" }}>
+          <div className="flex gap-3">
             {TEAMS.map((team) => (
               <button
                 key={team.teamId}
                 onClick={() => handleTeamSelect(team.teamId)}
-                style={{
-                  flex: 1,
-                  padding: "16px",
-                  borderRadius: "8px",
-                  border: `2px solid ${
-                    selectedTeam === team.teamId ? "#facc15" : "#e5e7eb"
-                  }`,
-                  backgroundColor:
-                    selectedTeam === team.teamId ? "#fefce8" : "white",
-                  cursor: "pointer",
-                  transition: "all 0.15s",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  color: "#374151",
-                  textAlign: "center",
-                }}
-                onMouseEnter={(e) => {
-                  if (selectedTeam !== team.teamId) {
-                    e.currentTarget.style.backgroundColor = "#f9fafb";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (selectedTeam !== team.teamId) {
-                    e.currentTarget.style.backgroundColor = "white";
-                  }
-                }}
+                className={`flex-1 p-4 rounded-lg border-2 transition-all duration-200 text-sm font-semibold text-gray-700 text-center ${selectedTeam === team.teamId 
+                  ? "border-yellow-400 bg-yellow-50" 
+                  : "border-gray-200 bg-white hover:bg-gray-50"}`}
               >
                 <Users
                   size={20}
@@ -134,82 +104,37 @@ export default function AssignToOtherModal({
             </style>
 
             <label
-              style={{
-                display: "block",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#374151",
-                marginBottom: "8px",
-                textAlign: isRTL ? "right" : "left",
-              }}
+              className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "text-right" : "text-left"}`}
             >
               {t("modals.assignToOther.step2")}
             </label>
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-            >
+            <div className="flex flex-col gap-2">
+
               {currentTeam.members.map((member) => (
                 <label
                   key={member}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "12px",
-                    borderRadius: "8px",
-                    border: `2px solid ${
-                      selectedMember === member ? "#facc15" : "#e5e7eb"
-                    }`,
-                    backgroundColor:
-                      selectedMember === member ? "#fefce8" : "white",
-                    cursor: "pointer",
-                    transition: "all 0.15s",
-                    flexDirection: "row",
-                    justifyContent: "start",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (selectedMember !== member) {
-                      e.currentTarget.style.backgroundColor = "#f9fafb";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (selectedMember !== member) {
-                      e.currentTarget.style.backgroundColor = "white";
-                    }
-                  }}
+                  className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 justify-between ${selectedMember === member 
+                    ? "border-yellow-400 bg-yellow-50" 
+                    : "border-gray-200 bg-white hover:bg-gray-50"}`}
                 >
-                  <User
-                    size={18}
-                    style={{
-                      marginRight: isRTL ? "0" : "8px",
-                      marginLeft: isRTL ? "8px" : "0",
-                      color: "#6b7280",
-                      flexShrink: 0,
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: "500",
-                      color: "#374151",
-                      whiteSpace: "nowrap",
-                      marginRight: isRTL ? "0" : "12px",
-                      marginLeft: isRTL ? "12px" : "0",
-                    }}
-                  >
-                    {t(`teamMembers.${member}`, member)}
-                  </span>
+                  <div className="flex items-center">
+                    <User
+                      size={18}
+                      className={`text-gray-500 flex-shrink-0 ${isRTL ? "ml-2" : "mr-2"}`}
+                    />
+                    <span
+                      className={`text-sm font-medium text-gray-700 whitespace-nowrap ${isRTL ? "ml-3" : "mr-3"}`}
+                    >
+                      {t(`teamMembers.${member}`, member)}
+                    </span>
+                  </div>
                   <input
                     type="radio"
                     name="member"
                     value={member}
                     checked={selectedMember === member}
                     onChange={(e) => setSelectedMember(e.target.value)}
-                    style={{
-                      cursor: "pointer",
-                      accentColor: "#facc15",
-                      outline: "none",
-                      flexShrink: 0,
-                    }}
+                    className="hidden-radio"
                   />
                 </label>
               ))}
@@ -219,59 +144,18 @@ export default function AssignToOtherModal({
       </div>
 
       <div
-        style={{
-          display: "flex",
-          gap: "12px",
-          justifyContent: "flex-end",
-          flexDirection: isRTL ? "row-reverse" : "row",
-        }}
+        className={`flex gap-3 justify-end mt-6 ${isRTL ? "flex-row-reverse" : ""}`}
       >
         <button
           onClick={onClose}
-          style={{
-            padding: "10px 20px",
-            borderRadius: "8px",
-            border: "1px solid #e5e7eb",
-            backgroundColor: "white",
-            color: "#374151",
-            fontSize: "14px",
-            fontWeight: "500",
-            cursor: "pointer",
-            transition: "all 0.15s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#f9fafb";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "white";
-          }}
+          className="modal-cancel-button"
         >
           {t("modals.assignToOther.cancel")}
         </button>
         <button
           onClick={handleSave}
           disabled={!selectedMember}
-          style={{
-            padding: "10px 20px",
-            borderRadius: "8px",
-            border: "none",
-            backgroundColor: selectedMember ? "#facc15" : "#e5e7eb",
-            color: selectedMember ? "#111827" : "#9ca3af",
-            fontSize: "14px",
-            fontWeight: "600",
-            cursor: selectedMember ? "pointer" : "not-allowed",
-            transition: "all 0.15s",
-          }}
-          onMouseEnter={(e) => {
-            if (selectedMember) {
-              e.currentTarget.style.backgroundColor = "#fbbf24";
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (selectedMember) {
-              e.currentTarget.style.backgroundColor = "#facc15";
-            }
-          }}
+          className={selectedMember ? "modal-save-button" : "px-6 py-2.5 rounded-lg text-sm font-semibold bg-gray-200 text-gray-400 cursor-not-allowed"}
         >
           {t("modals.assignToOther.assign")}
         </button>
