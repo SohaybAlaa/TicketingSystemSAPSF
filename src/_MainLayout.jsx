@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { checkAuth } from "@/utils/auth";
 import {
   PanelRightOpen,
   PanelLeftOpen,
@@ -19,14 +20,30 @@ export default function MainLayout({ children }) {
   const { i18n, t } = useTranslation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-
-  // Removed adminId from routes
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
 
   // Get current language from i18n
   const preferredLanguage = i18n.language;
   
-  // Check if current page should hide sidebar (login page)
+  // Check if current page should hide sidebar (login page and root page)
   const isLoginPage = location.pathname === "/login";
+  const isRootPage = location.pathname === "/";
+  
+  // Check authentication status and get user data
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        const { isAuthenticated, user } = await checkAuth();
+        setIsAuthenticated(isAuthenticated);
+        setUser(user);
+      } catch (error) {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    };
+    verifyAuth();
+  }, [location.pathname]);
 
   // Initialize language and direction on mount
   useEffect(() => {
@@ -93,15 +110,15 @@ export default function MainLayout({ children }) {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Mobile Overlay */}
-      {!isLoginPage && isMobile && isSidebarOpen && (
+      {!isLoginPage && !isRootPage && isAuthenticated && isMobile && isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar - Hidden on login page */}
-      {!isLoginPage && (
+      {/* Sidebar */}
+      {!isLoginPage && !isRootPage && isAuthenticated && (
       <aside
         className={`
           bg-gradient-to-b from-[#1f2937] to-[#111827] 
@@ -190,7 +207,7 @@ export default function MainLayout({ children }) {
                     preferredLanguage === "ar" ? "-translate-y-1" : ""
                   }`}
                 >
-                  {t("adminName")?.[0]}
+                  {user?.username?.[0]?.toUpperCase() || t("adminName")?.[0]}
                 </span>
               </div>
               <div
@@ -206,7 +223,7 @@ export default function MainLayout({ children }) {
                       : {}
                   }
                 >
-                  {t("adminName")}
+                  {user?.username ? t(`usernames.${user.username}`, user.username) : t("adminName")}
                 </p>
                 <p
                   className={`!text-gray-400 !text-sm ${
@@ -288,9 +305,9 @@ export default function MainLayout({ children }) {
               {/* Logout Button */}
               <li>
                 <button
-                  onClick={() => {
-                    localStorage.clear(); // Clear all data from localStorage
-                    window.location.href = "/login"; // Redirect to login page
+                  onClick={async () => {
+                    const { logout } = await import('./utils/auth');
+                    await logout();
                   }}
                   className={`w-full flex items-center ${
                     preferredLanguage === "ar" ? "gap-3.5" : "gap-3.5"
@@ -390,17 +407,17 @@ export default function MainLayout({ children }) {
         className="flex-1 flex flex-col overflow-hidden min-w-0 relative transition-all duration-300"
         style={{
           marginLeft:
-            !isLoginPage && !isMobile && isSidebarOpen && preferredLanguage === "en"
+            !isLoginPage && !isRootPage && isAuthenticated && !isMobile && isSidebarOpen && preferredLanguage === "en"
               ? "22rem"
               : "0",
           marginRight:
-            !isLoginPage && !isMobile && isSidebarOpen && preferredLanguage === "ar"
+            !isLoginPage && !isRootPage && isAuthenticated && !isMobile && isSidebarOpen && preferredLanguage === "ar"
               ? "22rem"
               : "0",
         }}
       >
         {/* Floating Toggle Button */}
-        {!isLoginPage && !isSidebarOpen && (
+        {!isLoginPage && !isRootPage && isAuthenticated && !isSidebarOpen && (
           <button
             onClick={() => setIsSidebarOpen(true)}
             className={`

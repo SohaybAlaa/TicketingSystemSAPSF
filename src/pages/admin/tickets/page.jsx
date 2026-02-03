@@ -4,6 +4,7 @@ import { AgGridReact } from "ag-grid-react";
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { EllipsisVertical, Download } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { checkAuth } from "@/utils/auth";
 
 // Components
 import AdminLayout from "@components/layouts/AdminLayout";
@@ -43,8 +44,7 @@ export default function Tickets() {
   const [isBulkStatusModalOpen, setIsBulkStatusModalOpen] = useState(false);
   const [isBulkPriorityModalOpen, setIsBulkPriorityModalOpen] = useState(false);
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
-  const [isBulkAssignToOtherModalOpen, setIsBulkAssignToOtherModalOpen] =
-    useState(false);
+  const [isBulkAssignToOtherModalOpen, setIsBulkAssignToOtherModalOpen] = useState(false);
 
   // Bulk menu button and position
   const [isBulkMenuOpen, setIsBulkMenuOpen] = useState(false);
@@ -101,8 +101,26 @@ export default function Tickets() {
   // Total tickets count
   const totalTickets = rowData.length;
 
-  // Admin name for display purposes only
-  const adminName = "Emad Omar";
+  // Logged-in admin user state
+  const [user, setUser] = useState(null);
+
+  // Fetch logged-in admin user
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { user } = await checkAuth();
+        setUser(user);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  // Get translated admin name for display
+  const adminName = user?.username 
+    ? t(`usernames.${user.username}`, user.username) 
+    : t("adminName");
 
   const showAlert = (type, message, title = "") => {
     const id = Date.now() + Math.random();

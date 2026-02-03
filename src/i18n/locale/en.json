@@ -16,6 +16,10 @@
     "copyright": " 2025 All rights reserved."
   },
   "adminName": "Emad Omar",
+  "usernames": {
+    "emadomar": "Emad Omar",
+    "sohaybalaa": "Sohayb Alaa"
+  },
   "dashboard": {
     "title": "HR Support Dashboard",
     "welcome": "Welcome back, {{name}}",
@@ -471,5 +475,48 @@
     "loggingIn": "Logging in...",
     "error": "Invalid username or password",
     "footer": "Klenka. All rights reserved."
+  },
+  "landingPage": {
+    "title": "Klenka HR Assistant",
+    "subtitle": "SAP SuccessFactors Powered by AI",
+    "description": "Your intelligent companion for seamless HR operations. Manage leave requests, track attendance, access payroll information, and get instant answers to HR policies all through natural conversation.",
+    "features": {
+      "available247": "24/7 Available",
+      "nlpPowered": "NLP Powered",
+      "instantResponses": "Instant Responses",
+      "securePrivate": "Secure & Private"
+    },
+    "employeePortal": {
+      "title": "Employee Portal",
+      "subtitle": "For All Employees",
+      "description": "Chat with your personal HR assistant. Get instant help with requests, questions, and daily HR tasks.",
+      "cta": "Start Conversation",
+      "features": {
+        "leaveRequests": "Leave Requests",
+        "exitPermissions": "Exit Permissions",
+        "payrollQueries": "Payroll Queries",
+        "attendanceTracking": "Attendance Tracking",
+        "hrPolicies": "HR Policies",
+        "vacationBalance": "Vacation Balance"
+      }
+    },
+    "adminPanel": {
+      "title": "Admin Panel",
+      "subtitle": "For HR Administrators",
+      "description": "Comprehensive dashboard for managing employee tickets, analytics, and administrative tasks.",
+      "cta": "Access Dashboard",
+      "features": {
+        "ticketManagement": "Ticket Management",
+        "analyticsDashboard": "Analytics Dashboard",
+        "documentCenter": "Document Center",
+        "userManagement": "User Management",
+        "performanceMetrics": "Performance Metrics",
+        "systemSettings": "System Settings"
+      }
+    },
+    "footer": {
+      "poweredBy": "Powered by Natural Language Processing",
+      "copyright": " 2026 Klenka HR Assistant • Secure • Reliable • Available 24/7"
+    }
   }
 }

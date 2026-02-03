@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import { checkAuth } from "@/utils/auth";
 
 import { cards } from "@data/mockData";
 import AdminLayout from "@layouts/AdminLayout";
@@ -9,9 +11,26 @@ import ActivityItem from "@ui/ActivityItem";
 
 export default function Admin() {
   const { t } = useTranslation();
-  // adminId no longer needed for navigation
-  const adminName = t("adminName");
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  // Fetch logged-in user data
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { user } = await checkAuth();
+        setUser(user);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  // Get translated username or fallback to adminName
+  const adminName = user?.username 
+    ? t(`usernames.${user.username}`, user.username) 
+    : t("adminName");
 
   return (
       <AdminLayout

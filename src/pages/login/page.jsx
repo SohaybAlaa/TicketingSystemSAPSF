@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Lock, User, Eye, EyeOff, LogIn, AlertCircle, Globe } from "lucide-react";
 import FullPageBackground from "@components/common/FullPageBackground";
 
 export default function Login() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const isRTL = i18n.language === "ar";
   
   const [username, setUsername] = useState("");
@@ -20,23 +22,54 @@ export default function Login() {
     document.documentElement.lang = lang;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    setTimeout(() => {
-      if (username === "emadomar" && password === "123456") {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         window.location.href = "/admin";
       } else {
-        setError(t("login.error", "Invalid username or password"));
+        setError(data.error || t("login.error", "Invalid username or password"));
         setIsLoading(false);
       }
-    }, 800);
+    } catch (error) {
+      console.error('Login error:', error);
+      setError(t("login.error", "Invalid username or password"));
+      setIsLoading(false);
+    }
   };
 
   return (
     <FullPageBackground maxWidth="md">
+        {/* Navigation Buttons - Top */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <button
+            onClick={() => navigate('/')}
+            className="hover-effect px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-sm font-medium text-white/80 hover:text-white hover:bg-white/10"
+          >
+            {t("home")}
+          </button>
+          <button
+            onClick={() => navigate('/login')}
+            className="hover-effect px-4 py-2 bg-yellow-400 text-gray-900 backdrop-blur-sm border border-yellow-400 rounded-full text-sm font-bold shadow-lg shadow-yellow-400/50"
+          >
+            {t("login.loginTitle")}
+          </button>
+        </div>
+
         {/* Logo/Brand Section */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-lg shadow-yellow-500/30 mb-4">
@@ -169,7 +202,7 @@ export default function Login() {
                       : "text-white/40 hover:text-white/60"
                   }`}
                 >
-                  AR
+                  العربية
                 </button>
               </div>
             </form>
