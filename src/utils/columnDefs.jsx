@@ -24,10 +24,10 @@ const STATUS_ORDER = {
 
 // Priority order for sorting
 const PRIORITY_ORDER = {
-  CRITICAL: 1,
-  HIGH: 2,
-  MEDIUM: 3,
-  LOW: 4,
+  Critical: 1,
+  High: 2,
+  Medium: 3,
+  Low: 4,
 };
 
 export const getColumnDefs = (
@@ -51,6 +51,10 @@ export const getColumnDefs = (
     headerName: t("ticketsPage.columns.title"),
     filter: "agTextColumnFilter",
     tooltipField: "title",
+    valueGetter: (params) => {
+      const title = params.data.title;
+      return t(`ticketTitles.${title}`, title);
+    },
   },
   {
     field: "employee",
@@ -151,6 +155,16 @@ export const getColumnDefs = (
     headerName: t("ticketsPage.columns.slaDue"),
     width: 150,
     filter: "agDateColumnFilter",
+    valueGetter: (params) => {
+      const slaDue = params.data.slaDue;
+      const deadlineDate = slaDue ? new Date(slaDue) : null;
+      const isOverdue = deadlineDate && new Date() > deadlineDate;
+      const isCompleted = params.data.status === "Completed" || params.data.status === "Closed";
+      if (isOverdue && !isCompleted) {
+        return `${slaDue} late OVERDUE متأخر متاخر`;
+      }
+      return slaDue;
+    },
     cellStyle: {
       textAlign: "center",
       display: "flex",
@@ -158,7 +172,10 @@ export const getColumnDefs = (
       justifyContent: "center",
     },
     cellRenderer: (params) => {
-      const isOverdue = isSLAOverdue(params.data.created);
+      const slaDeadline = params.data.slaDue;
+      const now = new Date();
+      const deadlineDate = slaDeadline ? new Date(slaDeadline) : null;
+      const isOverdue = deadlineDate && now > deadlineDate;
       const isCompleted =
         params.data.status === "Completed" || params.data.status === "Closed";
 
@@ -174,7 +191,7 @@ export const getColumnDefs = (
             }}
           >
             <span style={{ fontSize: "12px", color: "#6b7280" }}>
-              {params.value}
+              {slaDeadline}
             </span>
             <span style={{ color: "#FF2C2C" }}>
               {t("ticketsPage.sla.overdue")}
@@ -185,7 +202,7 @@ export const getColumnDefs = (
 
       return (
         <span style={{ fontSize: "13px", color: "#374151" }}>
-          {params.value}
+          {slaDeadline}
         </span>
       );
     },

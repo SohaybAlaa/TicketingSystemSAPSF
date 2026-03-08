@@ -35,7 +35,7 @@ import bcrypt from 'bcryptjs';
 const users = [
  {
     id: 1,
-    username: 'emadomar',
+    username: 'Emad Omar',
     passwordHash: bcrypt.hashSync('123456', 10), // Hash '123456' with 10 salt rounds
     role: 'admin',
     email: 'emad@klenka.com',
@@ -43,12 +43,48 @@ const users = [
   },
   {
     id: 2,
-    username: 'sohaybalaa',
+    username: 'Sohayb Alaa',
     passwordHash: bcrypt.hashSync('123456', 10), // Hash '123456' with 10 salt rounds
     role: 'user',
     email: 'sohayb@klenka.com',
     createdAt: new Date().toISOString()
-  }
+  },
+  {
+    id: 101,
+    username: 'John Doe',
+    passwordHash: bcrypt.hashSync('123456', 10),
+    role: 'HR Staff',
+    email: 'john.doe@company.com',
+    team: 'Alpha',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 102,
+    username: 'Tommy Shelby',
+    passwordHash: bcrypt.hashSync('123456', 10),
+    role: 'HR Staff',
+    email: 'tommy.shelby@company.com',
+    team: 'Beta',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 103,
+    username: 'William Smith',
+    passwordHash: bcrypt.hashSync('123456', 10),
+    role: 'HR Manager',
+    email: 'william.smith@klenka.com',
+    team: 'Alpha',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 104,
+    username: 'Arthur Morgan',
+    passwordHash: bcrypt.hashSync('123456', 10),
+    role: 'HR Staff',
+    email: 'arthur.morgan@company.com',
+    team: 'Beta',
+    createdAt: new Date().toISOString()
+  },
 ];
 
 /**

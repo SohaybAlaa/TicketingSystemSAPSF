@@ -98,7 +98,7 @@ const DateRangePicker = ({
             ref={pickerRef}
             className={`absolute top-full ${
               isRTL ? "left-0" : "right-0"
-            } mt-2 bg-white rounded-lg border border-gray-300 shadow-lg p-6 z-10 w-80`}
+            } mt-2 bg-white rounded-lg border border-gray-300 shadow-2xl p-6 z-50 w-80`}
           >
             <h3
               className={rtlClass(

@@ -9,7 +9,7 @@ import React from "react";
  */
 const StatisticsCardGrid = ({ children }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
       {children}
     </div>
   );

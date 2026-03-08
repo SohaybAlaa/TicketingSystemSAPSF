@@ -50,7 +50,7 @@ const FiltersSection = ({
     `${base} ${isRTL ? rtlExtra : ""}`.trim();
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 mb-6">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow mb-6">
       {/* Filters Header/Toggle */}
       <button
         onClick={() => setShowFilters(!showFilters)}

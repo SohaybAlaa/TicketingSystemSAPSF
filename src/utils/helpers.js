@@ -14,23 +14,21 @@ export const getColorForIndex = (index) => {
 };
 
 // Status options for action menu button in ticket page
-export const STATUSES = [{
-    value: "Pending ThirdParty",
-    label: "Pending ThirdParty",
-  },
-  { value: "Pending Employee", label: "Pending Employee" },
+export const STATUSES = [
+  { value: "New", label: "New" },
   { value: "Under Process", label: "Under Process" },
+  { value: "Pending Employee", label: "Pending Employee" },
+  { value: "Pending Third Party", label: "Pending Third Party" },
   { value: "Completed", label: "Completed" },
   { value: "Closed", label: "Closed" },
-  { value: "New", label: "New" },
 ];
 
 // Priority options
 export const PRIORITIES = [
-  { value: "CRITICAL", label: "Critical" },
-  { value: "HIGH", label: "High" },
-  { value: "MEDIUM", label: "Medium" },
-  { value: "LOW", label: "Low" },
+  { value: "Critical", label: "Critical" },
+  { value: "High", label: "High" },
+  { value: "Medium", label: "Medium" },
+  { value: "Low", label: "Low" },
 ];
 
 /**

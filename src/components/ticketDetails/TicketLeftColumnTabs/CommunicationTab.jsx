@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Send, User } from "lucide-react";
+import { Send, User, UserCog, Calendar } from "lucide-react";
 import { formatDateTime } from "@utils/formatDateTime";
 
 export default function CommunicationTab({
@@ -18,7 +18,7 @@ export default function CommunicationTab({
           className={`group p-5 rounded-xl border-2 hover-effect ${
             comment.author_type === "HR"
               ? "bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 hover:border-yellow-300"
-              : "bg-gradient-to-br from-gray-50 to-white border-gray-200 hover:border-gray-300"
+              : "bg-gradient-to-br from-blue-50 to-white border-blue-200 hover:border-blue-300"
           }`}
         >
           <div className="flex items-start justify-between mb-3">
@@ -27,10 +27,14 @@ export default function CommunicationTab({
                 className={`w-10 h-10 rounded-full flex items-center justify-center shadow-md ${
                   comment.author_type === "HR"
                     ? "bg-gradient-to-br from-yellow-500 to-yellow-600"
-                    : "bg-gradient-to-br from-gray-600 to-gray-700"
+                    : "bg-gradient-to-br from-blue-500 to-blue-600"
                 }`}
               >
-                <User className="w-5 h-5 text-white" />
+                {comment.author_type === "HR" ? (
+                  <UserCog className="w-5 h-5 text-white" />
+                ) : (
+                  <User className="w-5 h-5 text-white" />
+                )}
               </div>
               <div>
                 <p className="!text-sm !font-semibold !text-gray-900">
@@ -40,14 +44,16 @@ export default function CommunicationTab({
                   className={`!text-xs !font-medium ${
                     comment.author_type === "HR"
                       ? "!text-yellow-600"
-                      : "!text-gray-600"
+                      : "!text-blue-600"
                   }`}
                 >
                   {comment.author_type}
+                  {comment.department && ` • ${comment.department}`}
                 </p>
               </div>
             </div>
-            <span className="!bg-gray-100 text-gray-600 font-semibold !px-2 !py-1 !rounded-full">
+            <span className="flex items-center gap-1.5 !bg-gray-100 !text-xs !text-gray-700 !font-bold !px-3 !py-1.5 !rounded-lg">
+              <Calendar className="w-3 h-3" />
               {formatDateTime(comment.created_at)}
             </span>
           </div>

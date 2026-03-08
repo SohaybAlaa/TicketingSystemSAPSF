@@ -207,7 +207,7 @@ export default function MainLayout({ children }) {
                     preferredLanguage === "ar" ? "-translate-y-1" : ""
                   }`}
                 >
-                  {user?.username?.[0]?.toUpperCase() || t("adminName")?.[0]}
+                  {(user?.username ? t(`usernames.${user.username}`, user.username) : t("adminName"))?.[0]?.toUpperCase()}
                 </span>
               </div>
               <div

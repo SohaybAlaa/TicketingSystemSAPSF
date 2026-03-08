@@ -9,10 +9,10 @@ import {
   Clock,
   User,
   AlertTriangle,
-  UserStar,
+  UserCog,
   Repeat,
+  FilePenLine,
 } from "lucide-react";
-import { mockApi } from "@data/mockData";
 import { formatDateTime } from "@utils/formatDateTime";
 import Tag from "@components/ui/Tag";
 import AlertNotification from "@ui/AlertNotification";
@@ -36,6 +36,11 @@ export default function Tickets({ ticketid }) {
   const [isLoadingAttachments, setIsLoadingAttachments] = useState(false);
   const fileInputRef = useRef(null);
   // Ticket Data States
+  const [ticket, setTicket] = useState(null);
+  const [isLoadingTicket, setIsLoadingTicket] = useState(true);
+  const [statusHistory, setStatusHistory] = useState([]);
+  const [apiComments, setApiComments] = useState([]);
+  const [apiInternalNotes, setApiInternalNotes] = useState([]);
   const [localComments, setLocalComments] = useState([]);
   const [localNotes, setLocalNotes] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -43,18 +48,37 @@ export default function Tickets({ ticketid }) {
   const [localStatus, setLocalStatus] = useState("");
   const [localPriority, setLocalPriority] = useState("");
 
-  // DATA FETCHING
-  const ticket = mockApi.getTicket(ticketid);
-  const statusHistory = mockApi.getStatusHistory(ticketid);
-  const apiComments = mockApi.getComments(ticketid);
-  const apiInternalNotes = mockApi.getInternalNotes(ticketid);
-
   // Combine API and Local Data
   const comments = [...apiComments, ...localComments];
   const internalNotes = [...apiInternalNotes, ...localNotes];
 
-  // Fetch attachments on component mount
+  // Fetch ticket data on component mount
   useEffect(() => {
+    const fetchTicketData = async () => {
+      setIsLoadingTicket(true);
+      try {
+        const response = await fetch(`/api/public/tickets/${ticketid}`);
+        if (!response.ok) {
+          throw new Error('Ticket not found');
+        }
+        const data = await response.json();
+        if (data.success && data.ticket) {
+          setTicket(data.ticket);
+          setStatusHistory(data.statusHistory || []);
+          setApiComments(data.comments || []);
+          setApiInternalNotes(data.internalNotes || []);
+        } else {
+          setTicket(null);
+        }
+      } catch (error) {
+        console.error('Error fetching ticket:', error);
+        setTicket(null);
+      } finally {
+        setIsLoadingTicket(false);
+      }
+    };
+
+    fetchTicketData();
     fetchAttachments();
   }, [ticketid]);
 
@@ -62,7 +86,7 @@ export default function Tickets({ ticketid }) {
   useEffect(() => {
     setLocalStatus(ticket?.status || "");
     setLocalPriority(ticket?.priority || "");
-  }, [ticketid, ticket?.status, ticket?.priority]);
+  }, [ticket?.status, ticket?.priority]);
 
   // API FUNCTIONS
   const fetchAttachments = async () => {
@@ -128,7 +152,7 @@ export default function Tickets({ ticketid }) {
     showAlert(
       "success",
       t("ticketDetails.alerts.statusUpdated", {
-        status: t(`ticketDetails.statuses.${newStatus}`),
+        status: t(`ticketsPage.statuses.${newStatus}`),
       })
     );
   };
@@ -139,41 +163,162 @@ export default function Tickets({ ticketid }) {
     showAlert(
       "success",
       t("ticketDetails.alerts.priorityUpdated", {
-        priority: t(`ticketDetails.priorities.${newPriority}`),
+        priority: t(`ticketsPage.priorities.${newPriority}`),
       })
     );
   };
 
+  const handleUpdateTicket = async () => {
+    try {
+      // Check if status or priority has changed
+      const statusChanged = localStatus !== ticket.status;
+      const priorityChanged = localPriority !== ticket.priority;
+
+      if (!statusChanged && !priorityChanged) {
+        showAlert("info", t("ticketDetails.alerts.noChanges", "No changes to save"));
+        return;
+      }
+
+      // Update status if changed
+      if (statusChanged) {
+        const statusResponse = await fetch('/api/public/tickets/status', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ticketId: ticketid,
+            status: localStatus
+          }),
+        });
+
+        if (!statusResponse.ok) {
+          throw new Error('Failed to update status');
+        }
+      }
+
+      // Update priority if changed
+      if (priorityChanged) {
+        const priorityResponse = await fetch('/api/public/tickets/priority', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ticketId: ticketid,
+            priority: localPriority
+          }),
+        });
+
+        if (!priorityResponse.ok) {
+          throw new Error('Failed to update priority');
+        }
+      }
+
+      // Update local ticket state
+      setTicket(prev => ({
+        ...prev,
+        status: localStatus,
+        priority: localPriority
+      }));
+
+      showAlert(
+        "success",
+        t("ticketDetails.alerts.ticketUpdated", "Ticket updated successfully"),
+        t("ticketDetails.alerts.updateSuccessful", "Update Successful")
+      );
+
+      // Navigate to tickets list after 1.5 second
+      setTimeout(() => {
+        navigate('/admin/tickets');
+      }, 1500);
+    } catch (error) {
+      console.error('Error updating ticket:', error);
+      showAlert(
+        "error",
+        t("ticketDetails.alerts.updateFailed", "Failed to update ticket"),
+        t("ticketDetails.alerts.error", "Error")
+      );
+    }
+  };
+
   // COMMENT HANDLERS
-  const handleSendComment = () => {
+  const handleSendComment = async () => {
     if (newComment.trim()) {
-      const newCommentObj = {
-        comment_id: `local-${Date.now()}`,
-        ticket_id: ticketid,
-        author_name: "HR Admin",
-        author_type: "HR",
-        text: newComment,
-        created_at: new Date().toISOString(),
-      };
-      setLocalComments((prev) => [...prev, newCommentObj]);
-      setNewComment("");
-      showAlert("success", t("ticketDetails.alerts.responseSent"));
+      try {
+        const response = await fetch('/api/public/tickets/communications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ticketId: ticketid,
+            senderType: 'hr_staff',
+            senderInfo: {
+              hr_user_id: 1,
+              hr_user_name: 'HR Admin',
+              hr_user_email: 'hr@company.com',
+              hr_department: 'HR Operations',
+            },
+            messageText: newComment,
+          }),
+        });
+
+        if (!response.ok) throw new Error('Failed to send comment');
+
+        const newCommentObj = {
+          comment_id: `local-${Date.now()}`,
+          ticket_id: ticketid,
+          author_name: "HR Admin",
+          author_type: "HR",
+          department: "HR Operations",
+          text: newComment,
+          created_at: new Date().toISOString(),
+        };
+        setLocalComments((prev) => [...prev, newCommentObj]);
+        setNewComment("");
+        showAlert("success", t("ticketDetails.alerts.responseSent"));
+      } catch (error) {
+        console.error('Error sending comment:', error);
+        showAlert("error", t("ticketDetails.alerts.responseFailed", "Failed to send response"));
+      }
     }
   };
 
   // NOTE HANDLERS
-  const handleAddNote = () => {
+  const handleAddNote = async () => {
     if (newNote.trim()) {
-      const newNoteObj = {
-        note_id: `local-${Date.now()}`,
-        ticket_id: ticketid,
-        author_name: "HR Admin",
-        text: newNote,
-        created_at: new Date().toISOString(),
-      };
-      setLocalNotes((prev) => [...prev, newNoteObj]);
-      setNewNote("");
-      showAlert("success", t("ticketDetails.alerts.noteAdded"));
+      try {
+        const response = await fetch('/api/public/tickets/internal-notes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ticketId: ticketid,
+            hrInfo: {
+              hr_user_id: 1,
+              hr_user_name: 'HR Admin',
+              hr_user_email: 'hr@company.com',
+              hr_department: 'HR Operations',
+            },
+            noteText: newNote,
+          }),
+        });
+
+        if (!response.ok) throw new Error('Failed to add note');
+
+        const newNoteObj = {
+          note_id: `local-${Date.now()}`,
+          ticket_id: ticketid,
+          author_name: "HR Admin",
+          department: "HR Operations",
+          text: newNote,
+          created_at: new Date().toISOString(),
+        };
+        setLocalNotes((prev) => [...prev, newNoteObj]);
+        setNewNote("");
+        showAlert("success", t("ticketDetails.alerts.noteAdded"));
+      } catch (error) {
+        console.error('Error adding note:', error);
+        showAlert("error", t("ticketDetails.alerts.noteFailed", "Failed to add note"));
+      }
     }
   };
 
@@ -291,6 +436,18 @@ export default function Tickets({ ticketid }) {
     }
   };
 
+  // RENDER: LOADING STATE
+  if (isLoadingTicket) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-yellow-500 mb-4"></div>
+          <p className="text-gray-700 font-medium">{t("ticketsPage.loading", "Loading ticket...")}</p>
+        </div>
+      </div>
+    );
+  }
+
   // RENDER: TICKET NOT FOUND
   if (!ticket) {
     return <TicketNotFound handleBack={handleBack} />;
@@ -378,28 +535,18 @@ export default function Tickets({ ticketid }) {
                 </h2>
 
                 {/* Ticket Metadata */}
-                <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                  <span className="flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5" />
+                <div className="flex flex-nowrap items-center gap-x-1 text-sm text-gray-600 overflow-x-auto">
+                  <span className="flex items-center gap-1 !font-medium whitespace-nowrap">
+                    <User className="w-3 h-3" />
                     {t("ticketDetails.employee")}:{" "}
                     {t(
                       `employees.${ticket.employee.name}`,
                       ticket.employee.name
                     )}
                   </span>
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    {formatDateTime(ticket.created_at)}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                    {t(
-                      `categories.${ticket.category_name}`,
-                      ticket.category_name
-                    )}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <UserStar className="w-3.5 h-3.5" />
+                  <span className="text-gray-300">•</span>
+                  <span className="flex items-center gap-1 !font-medium whitespace-nowrap">
+                    <UserCog className="w-3 h-3" />
                     {t("ticketDetails.assignedTo")}:{" "}
                     {t(
                       `teamMembers.${ticket.assigned_user_name}`,
@@ -409,12 +556,34 @@ export default function Tickets({ ticketid }) {
                       )
                     )}
                   </span>
+                  <span className="text-gray-300">•</span>
+                  <span className="flex items-center gap-1 !font-medium whitespace-nowrap cursor-default" title={`${t("ticketDetails.category", "Category")}: ${t(`categories.${ticket.category_name}`, ticket.category_name)}`}>
+                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
+                    {t(
+                      `categories.${ticket.category_name}`,
+                      ticket.category_name
+                    )}
+                  </span>
+                  <span className="text-gray-300">•</span>
+                  <span className="flex items-center gap-1 !font-medium whitespace-nowrap cursor-default" title={`${t("ticketDetails.createdAt")}: ${formatDateTime(ticket.created_at)}`}>
+                    <Clock className="w-3 h-3" />
+                    {formatDateTime(ticket.created_at)}
+                  </span>
+                  {ticket.updated_at && ticket.updated_at !== ticket.created_at && (
+                    <>
+                      <span className="text-gray-300">•</span>
+                      <span className="flex items-center gap-1 !font-medium whitespace-nowrap cursor-default" title={`${t("ticketDetails.lastUpdate")}: ${formatDateTime(ticket.updated_at)}`}>
+                        <FilePenLine className="w-3 h-3" />
+                        {formatDateTime(ticket.updated_at)}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
 
               {/* Right Side: Update Button */}
               <button
-                onClick={handleBack}
+                onClick={handleUpdateTicket}
                 className="action-button">
                 <span>{t("ticketDetails.updateTicket")}</span>
                 <Repeat className="w-4 h-4" />

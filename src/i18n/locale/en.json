@@ -17,8 +17,12 @@
   },
   "adminName": "Emad Omar",
   "usernames": {
-    "emadomar": "Emad Omar",
-    "sohaybalaa": "Sohayb Alaa"
+    "Emad Omar": "Emad Omar",
+    "Sohayb Alaa": "Sohayb Alaa",
+    "William Smith": "William Smith",
+    "John Doe": "John Doe",
+    "Tommy Shelby": "Tommy Shelby",
+    "Arthur Morgan": "Arthur Morgan"
   },
   "dashboard": {
     "title": "HR Support Dashboard",
@@ -46,15 +50,26 @@
       "vacationLeave": "Vacation leave approval resolution time exceeded",
       "ticketCompleted": "Ticket completed {{id}}",
       "healthInsurance": "Health insurance query resolved",
+      "statusChanged": "Status changed to {{value}} on {{id}}",
+      "priorityChanged": "Priority changed to {{value}} on {{id}}",
+      "assignmentChanged": "Assigned to {{value}} on {{id}}",
+      "byUser": "by {{name}}",
+      "loading":"Loading recent activity...",
+      "noActivity": "No recent activity",
       "time": {
-        "hoursAgo": "{{count}} hours ago",
-        "daysAgo": "{{count}} days ago"
-      }
+        "justNow": "Just now",
+        "minutesAgo": "{{count}} min ago",
+        "hoursAgo": "{{count}}h ago",
+        "daysAgo": "{{count}}d ago"
+      },
+      "vsLastWeek": "vs last week"
     }
   },
   "teams": {
     "teamA": "Team A",
-    "teamB": "Team B"
+    "teamB": "Team B",
+    "Alpha": "Alpha",
+    "Beta": "Beta"
   },
   "teamMembers": {
     "John Smith": "John Smith",
@@ -63,7 +78,11 @@
     "James Wilson": "James Wilson",
     "Anna Williams": "Anna Williams",
     "Robert Brown": "Robert Brown",
-    "Christopher Davis": "Christopher Davis"
+    "Christopher Davis": "Christopher Davis",
+    "John Doe": "John Doe",
+    "Tommy Shelby": "Tommy Shelby",
+    "William Smith": "William Smith",
+    "Arthur Morgan": "Arthur Morgan"
   },
   "employees": {
     "Emad Omar": "Emad Omar",
@@ -75,20 +94,67 @@
     "Mohamed Mahmoud": "Mohamed Mahmoud",
     "Sarah Johnson": "Sarah Johnson",
     "Emily Rodriguez": "Emily Rodriguez",
-    "Michael Chen": "Michael Chen"
+    "Michael Chen": "Michael Chen",
+    "Emma Williams": "Emma Williams",
+    "David Martinez": "David Martinez",
+    "Lisa Anderson": "Lisa Anderson",
+    "Robert Taylor": "Robert Taylor",
+    "James Wilson": "James Wilson",
+    "Ahmed Hassan": "Ahmed Hassan",
+    "Carlos Rodriguez": "Carlos Rodriguez",
+    "Daniel Kim": "Daniel Kim",
+    "Isabella Santos": "Isabella Santos",
+    "Jennifer Brown": "Jennifer Brown",
+    "Priya Patel": "Priya Patel",
+    "Nina Kowalski": "Nina Kowalski",
+    "Elena Popov": "Elena Popov",
+    "Ryan Thompson": "Ryan Thompson",
+    "Marcus Johnson": "Marcus Johnson",
+    "Alex Chen": "Alex Chen",
+    "Omar Ibrahim": "Omar Ibrahim",
+    "Kevin Lee": "Kevin Lee",
+    "Rachel Green": "Rachel Green",
+    "Yuki Tanaka": "Yuki Tanaka",
+    "Lars Nielsen": "Lars Nielsen",
+    "Thomas Anderson": "Thomas Anderson",
+    "Sophia Martinez": "Sophia Martinez",
+    "Maya Sharma": "Maya Sharma",
+    "Anna Kowalczyk": "Anna Kowalczyk",
+    "Mohammad Rashid": "Mohammad Rashid",
+    "Raj Kumar": "Raj Kumar",
+    "Paulo Silva": "Paulo Silva",
+    "Sophie Turner": "Sophie Turner",
+    "Fatima Ali": "Fatima Ali"
   },
   "groups": {
     "HR Operations": "HR Operations",
     "IT Support": "IT Support",
     "Finance Team": "Finance Team",
-    "Operations Team": "Operations Team"
+    "Operations Team": "Operations Team",
+    "HR Administration": "HR Administration",
+    "Facilities": "Facilities",
+    "Benefits": "Benefits",
+    "Payroll": "Payroll",
+    "Learning & Development": "Learning & Development"
   },
   "departments": {
     "Engineering": "Engineering",
     "Operations": "Operations",
     "Finance": "Finance",
     "Sales": "Sales",
-    "HR": "HR"
+    "HR": "HR",
+    "Marketing": "Marketing",
+    "Legal": "Legal",
+    "Product": "Product",
+    "Design": "Design",
+    "Research": "Research",
+    "Compliance": "Compliance",
+    "Customer Service": "Customer Service",
+    "IT": "IT",
+    "Human Resources": "Human Resources",
+    "Data Analytics": "Data Analytics",
+    "Facilities": "Facilities",
+    "Learning & Development": "Learning & Development"
   },
   "categories": {
     "Leave & Attendance": "Leave & Attendance",
@@ -96,6 +162,14 @@
     "IT Access": "IT Access",
     "Exit & Entry": "Exit & Entry",
     "HR Policies": "HR Policies"
+  },
+  "ticketTitles": {
+    "Vacation leave request via chatbot": "Vacation leave request via chatbot",
+    "Sick leave request": "Sick leave request",
+    "Policy clarification on remote work": "Policy clarification on remote work",
+    "Annual leave request": "Annual leave request",
+    "Family emergency leave": "Family emergency leave",
+    "Question about benefits enrollment": "Question about benefits enrollment"
   },
   "actionMenu": {
     "assignToMe": "Assign to Me",
@@ -150,6 +224,8 @@
     "tickets": "tickets",
     "actions": "Actions",
     "bulkActions": "Bulk Actions {{count}}",
+    "noTicketsFound": "No tickets available",
+    "loading": "Loading tickets...",
     "columns": {
       "ticketId": "Ticket ID",
       "title": "Title",
@@ -163,16 +239,16 @@
       "action": "Action"
     },
     "priorities": {
-      "CRITICAL": "Critical",
-      "HIGH": "High",
-      "MEDIUM": "Medium",
-      "LOW": "Low"
+      "Critical": "Critical",
+      "High": "High",
+      "Medium": "Medium",
+      "Low": "Low"
     },
     "statuses": {
       "New": "New",
       "Under Process": "Under Process",
       "Pending Employee": "Pending Employee",
-      "Pending ThirdParty": "Pending Third Party",
+      "Pending Third Party": "Pending Third Party",
       "Completed": "Completed",
       "Closed": "Closed"
     },
@@ -197,12 +273,28 @@
       "bulkStatusUpdated": "Status Updated",
       "bulkStatusChanged": "Status changed to {{status}} for {{count}} ticket(s)",
       "bulkPriorityUpdated": "Priority Updated",
-      "bulkPriorityChanged": "Priority changed to {{priority}} for {{count}} ticket(s)"
+      "bulkPriorityChanged": "Priority changed to {{priority}} for {{count}} ticket(s)",
+      "error": "Error",
+      "unknownError": "Unknown error",
+      "failedStatusUpdate": "Failed to update status for ticket {{ticketId}}: {{error}}",
+      "failedPriorityUpdate": "Failed to update priority for ticket {{ticketId}}: {{error}}",
+      "failedAssign": "Failed to assign ticket {{ticketId}}: {{error}}",
+      "failedDelete": "Failed to delete ticket {{ticketId}}: {{error}}",
+      "failedBulkAssign": "Failed to assign tickets",
+      "failedBulkDelete": "Failed to delete tickets",
+      "failedBulkStatus": "Failed to update status",
+      "failedBulkPriority": "Failed to update priority",
+      "bulkActionSuccessful": "Bulk Action Successful",
+      "bulkActionFailed": "Bulk Action Failed",
+      "bulkAllFailed": "All {{count}} ticket(s) failed: {{error}}",
+      "bulkPartialSuccess": "{{succeeded}} of {{total}} succeeded, {{failed}} failed",
+      "bulkPartialTitle": "Partial Success"
     }
   },
   "analyticsMenu": {
     "title": "Analytics Dashboard",
     "subtitle": "Performance Metrics and Insights",
+    "loading": "Loading Analytics Dashboard...",
     "filters": {
       "title": "Filters",
       "team": "Team",
@@ -231,10 +323,16 @@
       "COMPLETED": "Completed",
       "CLOSED": "Closed",
       "New": "New",
+      "Under Process": "Under Process",
       "Under_Process": "Under Process",
+      "Pending Employee": "Pending Employee",
+      "Pending_Employee": "Pending Employee",
+      "Pending Third Party": "Pending Third Party",
+      "Pending_Third_Party": "Pending Third Party",
+      "Completed": "Completed",
+      "Closed": "Closed",
       "Pending_Customer_Response": "Pending Customer Response",
-      "Resolved": "Resolved",
-      "Closed": "Closed"
+      "Resolved": "Resolved"
     },
     "priority": {
       "CRITICAL": "Critical",
@@ -248,11 +346,17 @@
     },
     "metrics": {
       "totalTickets": "Total Tickets",
-      "closedTickets": "Closed Tickets",
+      "closedTickets": "closed",
+      "openTickets": "Open Tickets",
+      "slaBreached": "SLA breached",
       "avgResponseTime": "Avg Response Time",
+      "avgResolutionTime": "Avg Resolution Time",
+      "resolvedInPeriod": "resolved in period",
       "slaCompliance": "SLA Compliance",
+      "criticalBreaches": "critical breaches",
       "fromLastMonth": "from last month",
-      "hours": "h"
+      "hours": "h",
+      "minutes": "m"
     },
     "charts": {
       "ticketsByStatus": "Tickets by Status",
@@ -268,7 +372,13 @@
       "Billing": "Billing",
       "Product Inquiry": "Product Inquiry",
       "Bug Report": "Bug Report",
-      "Other": "Other"
+      "Other": "Other",
+      "Leave & Attendance": "Leave & Attendance",
+      "Payroll & Benefits": "Payroll & Benefits",
+      "IT Access": "IT Access",
+      "Exit & Entry": "Exit & Entry",
+      "HR Policies": "HR Policies",
+      "IT Support": "IT Support"
     },
     "agentPerformance": {
       "title": "Agent Performance",
@@ -365,6 +475,8 @@
   "slaBreached": "SLA Breached",
   "employee": "Employee",
   "assignedTo": "Assigned to",
+  "lastUpdate": "Last Update",
+  "createdAt": "Created at",
   "genericDescription": "Detailed description for {{title}}. This is a mockup description.",
   "tabs": {
     "details": "Details",
@@ -393,7 +505,11 @@
     "description": "Description",
     "category": "Category",
     "channel": "Channel",
-    "statusHistory": "Status History",
+    "activityLog": "Activity Log",
+    "ticketCreated": "Ticket Created",
+    "statusChanged": "Status Changed",
+    "priorityChanged": "Priority Changed",
+    "assignmentChanged": "Assignment Changed",
     "changedBy": "by"
   },
   "communication": {

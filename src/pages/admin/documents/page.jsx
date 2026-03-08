@@ -424,6 +424,8 @@ const Documents = () => {
           title={t("documentsMenu.stats.total")}
           value={documents.length}
           icon={Files}
+          iconBoxColor="#eab308"
+          hoverShadow="rgba(234,179,8,0.3)"
           isActive={filterType === "all"}
           onClick={() => setFilterType("all")}
           isRTL={isRTL}
@@ -434,9 +436,8 @@ const Documents = () => {
           title={t("documentsMenu.stats.pdf")}
           value={documents.filter((d) => d.type === "pdf").length}
           icon={File}
-          iconBgColor="bg-red-100"
-          iconColor="text-red-600"
-          activeBorderColor="border-red-400"
+          iconBoxColor="#dc2626"
+          hoverShadow="rgba(220,38,38,0.3)"
           isActive={filterType === "pdf"}
           onClick={() => setFilterType("pdf")}
           isRTL={isRTL}
@@ -447,9 +448,8 @@ const Documents = () => {
           title={t("documentsMenu.stats.word")}
           value={documents.filter((d) => d.type === "doc" || d.type === "docx").length}
           icon={FileText}
-          iconBgColor="bg-blue-100"
-          iconColor="text-blue-600"
-          activeBorderColor="border-blue-400"
+          iconBoxColor="#2563eb"
+          hoverShadow="rgba(37,99,235,0.3)"
           isActive={filterType === "doc" || filterType === "docx"}
           onClick={() => setFilterType("docx")}
           isRTL={isRTL}
@@ -460,9 +460,8 @@ const Documents = () => {
           title={t("documentsMenu.stats.text")}
           value={documents.filter((d) => d.type === "txt").length}
           icon={FileText}
-          iconBgColor="bg-gray-100"
-          iconColor="text-gray-600"
-          activeBorderColor="border-gray-400"
+          iconBoxColor="#4b5563"
+          hoverShadow="rgba(75,85,99,0.3)"
           isActive={filterType === "txt"}
           onClick={() => setFilterType("txt")}
           isRTL={isRTL}

@@ -1,4 +1,5 @@
 import React from "react";
+import { Sparkles, ClockAlert, AlarmClock, Loader2, CheckCheck, ArchiveRestore, ArrowDown, Minus, ArrowUp, ShieldAlert ,TriangleAlert} from "lucide-react";
 
 /**
  * Tag - A reusable component for displaying status and priority tags
@@ -12,27 +13,56 @@ import React from "react";
  * @param {React.ReactNode} props.icon - Optional icon to display before the text
  * @returns {JSX.Element}
  */
-const Tag = ({ type, value, t, isRTL = false, className = "", icon }) => {
-  // Centralized color mapping for all statuses and priorities
-  const COLOR_MAP = {
-    // Status colors
-    "PENDING THIRDPARTY": "#fc6900", // Alternative spelling
-    "PENDING EMPLOYEE": "#eab308",
-    "UNDER PROCESS": "#3b82f6",
-    NEW: "#9333ea",
-    COMPLETED: "#22c55e",
-    CLOSED: "#6b7280",
-    
-    // Priority colors
-    LOW: "#22c55e", // Same as UNDER PROCESS
-    MEDIUM: "#3b82f6", // Same as UNDER PROCESS
-    HIGH: "#fc6900", // Same as PENDING THIRD PARTY
-    CRITICAL: "#ef4444",
-    
-    // Special tags
-    OVERDUE: "#ef4444", // Same as CRITICAL
-  };
+// Centralized color mapping for all statuses and priorities
+export const COLOR_MAP = {
+  // Status colors
+  "PENDING THIRDPARTY": "#fc6900", // Alternative spelling
+  "PENDING THIRD PARTY": "#fc6900", // With space
+  "PENDING EMPLOYEE": "#eab308",
+  "UNDER PROCESS": "#3b82f6",
+  NEW: "#9333ea",
+  COMPLETED: "#22c55e",
+  CLOSED: "#6b7280",
   
+  // Priority colors
+  LOW: "#22c55e",
+  MEDIUM: "#3b82f6",
+  HIGH: "#fc6900",
+  CRITICAL: "#ef4444",
+  
+  // Special tags
+  OVERDUE: "#ef4444",
+};
+
+export const ICON_MAP = {
+  // Status icons
+  NEW: Sparkles,
+  "PENDING THIRD PARTY": ClockAlert,
+  "PENDING THIRDPARTY": ClockAlert,
+  "PENDING EMPLOYEE": AlarmClock,
+  "UNDER PROCESS": Loader2,
+  COMPLETED: CheckCheck,
+  CLOSED: ArchiveRestore,
+
+  // Priority icons
+  LOW: ArrowDown,
+  MEDIUM: Minus,
+  HIGH: ArrowUp,
+  CRITICAL: ShieldAlert,
+  OVERDUE: TriangleAlert,
+};
+
+export const getValueColor = (value) => {
+  const normalized = value?.toUpperCase().replace(/_/g, " ") || "";
+  return COLOR_MAP[normalized] || "#6b7280";
+};
+
+export const getValueIcon = (value) => {
+  const normalized = value?.toUpperCase().replace(/_/g, " ") || "";
+  return ICON_MAP[normalized] || null;
+};
+
+const Tag = ({ type, value, t, isRTL = false, className = "", icon, showIcon = false }) => {
   // Normalize the value for color mapping
   const normalizedValue = value?.toUpperCase().replace(/_/g, ' ') || "";
   
@@ -43,6 +73,7 @@ const Tag = ({ type, value, t, isRTL = false, className = "", icon }) => {
   const bgColor = `${color}20`; // 20% opacity version of the color
   const borderColor = `${color}40`; // 40% opacity version of the color
   const textColor = color;
+  const IconComp = ICON_MAP[normalizedValue] || null;
   
   // Translation key based on type
   let translationKey;
@@ -54,16 +85,11 @@ const Tag = ({ type, value, t, isRTL = false, className = "", icon }) => {
     
     if (isTicketDetailsPage) {
       // In ticket details page, use the ticketDetails.statuses namespace
-      // Convert status values to translation key format
-      // First standardize by replacing spaces with underscores and converting to uppercase
-      const formattedValue = value
-        .toUpperCase()
-        .replace(/ /g, '_')
-        .replace('THIRDPARTY', 'THIRD_PARTY'); // Handle the special case more generally
-      
-      translationKey = `ticketDetails.statuses.${formattedValue}`;
+      // Use the value as-is (with spaces) for translation keys
+      translationKey = `ticketsPage.statuses.${value}`;
     } else {
       // In tickets list page, use the ticketsPage.statuses namespace
+      // Use the value as-is (with spaces) for translation keys
       translationKey = `ticketsPage.statuses.${value}`;
     }
   } else {
@@ -71,7 +97,7 @@ const Tag = ({ type, value, t, isRTL = false, className = "", icon }) => {
     const isTicketDetailsPage = window.location.pathname.includes('/tickets/');
     
     if (isTicketDetailsPage) {
-      translationKey = `ticketDetails.priorities.${value}`;
+      translationKey = `ticketsPage.priorities.${value}`;
     } else {
       translationKey = `ticketsPage.priorities.${value}`;
     }
@@ -89,7 +115,10 @@ const Tag = ({ type, value, t, isRTL = false, className = "", icon }) => {
         direction: isRTL ? "rtl" : "ltr"
       }}
     >
-      {icon && <span className="mr-1">{icon}</span>}
+      {icon
+        ? <span className="mr-1">{icon}</span>
+        : showIcon && IconComp && <IconComp className="w-3.5 h-3.5 mr-1" />
+      }
       {t ? t(translationKey) : value}
     </div>
   );

@@ -17,8 +17,12 @@
   },
   "adminName": "عماد عمر",
   "usernames": {
-    "emadomar": "عماد عمر",
-    "sohaybalaa": "صهيب علاء"
+    "Emad Omar": "عماد عمر",
+    "Sohayb Alaa": "صهيب علاء",
+    "William Smith": "ويليام سميث",
+    "John Doe": "جون دو",
+    "Tommy Shelby": "تومي شيلبي",
+    "Arthur Morgan": "آرثر مورغان"
   },
   "dashboard": {
     "title": "لوحة دعم الموارد البشرية",
@@ -46,15 +50,26 @@
       "vacationLeave": "تم تجاوز وقت الحل للموافقة على إجازة",
       "ticketCompleted": "تم إكمال التذكرة {{id}}",
       "healthInsurance": "تم حل استفسار التأمين الصحي",
+      "statusChanged": "تم تغيير الحالة إلى {{value}} في {{id}}",
+      "priorityChanged": "تم تغيير الأولوية إلى {{value}} في {{id}}",
+      "assignmentChanged": "تم التعيين إلى {{value}} في {{id}}",
+      "byUser": "بواسطة {{name}}",
+      "loading": "جاري التحميل...",
+      "noActivity": "لا يوجد نشاط حديث",
       "time": {
+        "justNow": "الآن",
+        "minutesAgo": "منذ {{count}} دقيقة",
         "hoursAgo": "منذ {{count}} ساعة",
         "daysAgo": "منذ {{count}} يوم"
-      }
+      },
+      "vsLastWeek": "مقارنة بالأسبوع الماضي"
     }
   },
   "teams": {
     "teamA": "الفريق أ",
-    "teamB": "الفريق ب"
+    "teamB": "الفريق ب",
+    "Alpha": "ألفا",
+    "Beta": "بيتا"
   },
   "teamMembers": {
     "John Smith": "جون سميث",
@@ -63,7 +78,11 @@
     "James Wilson": "جيمس ويلسون",
     "Anna Williams": "آنا ويليامز",
     "Robert Brown": "روبرت براون",
-    "Christopher Davis": "كريستوفر ديفيس"
+    "Christopher Davis": "كريستوفر ديفيس",
+    "John Doe": "جون دو",
+    "Tommy Shelby": "تومي شيلبي",
+    "William Smith": "ويليام سميث",
+    "Arthur Morgan": "آرثر مورغان"
   },
   "employees": {
     "Emad Omar": "عماد عمر",
@@ -75,20 +94,67 @@
     "Mohamed Mahmoud": "محمد محمود",
     "Sarah Johnson": "سارة جونسون",
     "Emily Rodriguez": "إيميلي رودريغيز",
-    "Michael Chen": "مايكل تشين"
+    "Michael Chen": "مايكل تشين",
+    "Emma Williams": "إيما ويليامز",
+    "David Martinez": "ديفيد مارتينيز",
+    "Lisa Anderson": "ليزا أندرسون",
+    "Robert Taylor": "روبرت تايلور",
+    "James Wilson": "جيمس ويلسون",
+    "Ahmed Hassan": "أحمد حسن",
+    "Carlos Rodriguez": "كارلوس رودريغيز",
+    "Daniel Kim": "دانيال كيم",
+    "Isabella Santos": "إيزابيلا سانتوس",
+    "Jennifer Brown": "جينيفر براون",
+    "Priya Patel": "بريا باتيل",
+    "Nina Kowalski": "نينا كوالسكي",
+    "Elena Popov": "إيلينا بوبوف",
+    "Ryan Thompson": "رايان تومبسون",
+    "Marcus Johnson": "ماركوس جونسون",
+    "Alex Chen": "أليكس تشين",
+    "Omar Ibrahim": "عمر إبراهيم",
+    "Kevin Lee": "كيفن لي",
+    "Rachel Green": "راشيل غرين",
+    "Yuki Tanaka": "يوكي تاناكا",
+    "Lars Nielsen": "لارس نيلسن",
+    "Thomas Anderson": "توماس أندرسون",
+    "Sophia Martinez": "صوفيا مارتينيز",
+    "Maya Sharma": "مايا شارما",
+    "Anna Kowalczyk": "آنا كوالتشيك",
+    "Mohammad Rashid": "محمد راشد",
+    "Raj Kumar": "راج كومار",
+    "Paulo Silva": "باولو سيلفا",
+    "Sophie Turner": "صوفي تيرنر",
+    "Fatima Ali": "فاطمة علي"
   },
   "groups": {
     "HR Operations": "عمليات الموارد البشرية",
     "IT Support": "الدعم التقني",
     "Finance Team": "فريق المالية",
-    "Operations Team": "فريق العمليات"
+    "Operations Team": "فريق العمليات",
+    "HR Administration": "إدارة الموارد البشرية",
+    "Facilities": "المرافق",
+    "Benefits": "المزايا",
+    "Payroll": "الرواتب",
+    "Learning & Development": "التعلم والتطوير"
   },
   "departments": {
     "Engineering": "الهندسة",
     "Operations": "العمليات",
     "Finance": "المالية",
     "Sales": "المبيعات",
-    "HR": "الموارد البشرية"
+    "HR": "الموارد البشرية",
+    "Marketing": "التسويق",
+    "Legal": "الشؤون القانونية",
+    "Product": "المنتج",
+    "Design": "التصميم",
+    "Research": "البحث والتطوير",
+    "Compliance": "الامتثال",
+    "Customer Service": "خدمة العملاء",
+    "IT": "تقنية المعلومات",
+    "Human Resources": "الموارد البشرية",
+    "Data Analytics": "تحليل البيانات",
+    "Facilities": "المرافق",
+    "Learning & Development": "التعلم والتطوير"
   },
   "categories": {
     "Leave & Attendance": "الإجازات والحضور",
@@ -96,6 +162,14 @@
     "IT Access": "الوصول إلى تكنولوجيا المعلومات",
     "Exit & Entry": "الدخول والخروج",
     "HR Policies": "سياسات الموارد البشرية"
+  },
+  "ticketTitles": {
+    "Vacation leave request via chatbot": "طلب إجازة سنوية عبر الشات بوت",
+    "Sick leave request": "طلب إجازة مرضية",
+    "Policy clarification on remote work": "توضيح السياسة بشأن العمل عن بعد",
+    "Annual leave request": "طلب إجازة سنوية",
+    "Family emergency leave": "إجازة طارئة عائلية",
+    "Question about benefits enrollment": "سؤال حول التسجيل في المزايا"
   },
   "actionMenu": {
     "assignToMe": "تعيين لي",
@@ -150,6 +224,8 @@
     "tickets": "تذاكر",
     "actions": "إجراءات",
     "bulkActions": "إجراءات {{count}}",
+    "noTicketsFound": "لا توجد تذاكر متاحة",
+    "loading": "جاري تحميل التذاكر...",
     "columns": {
       "ticketId": "رقم الطلب",
       "title": "العنوان",
@@ -163,16 +239,16 @@
       "action": "الإجراء"
     },
     "priorities": {
-      "CRITICAL": "حرج",
-      "HIGH": "عالي",
-      "MEDIUM": "متوسط",
-      "LOW": "منخفض"
+      "Critical": "حرج",
+      "High": "عالي",
+      "Medium": "متوسط",
+      "Low": "منخفض"
     },
     "statuses": {
       "New": "جديد",
       "Under Process": "قيد المعالجة",
       "Pending Employee": "بانتظار الموظف",
-      "Pending ThirdParty": "بانتظار طرف ثالث",
+      "Pending Third Party": "بانتظار طرف ثالث",
       "Completed": "مكتمل",
       "Closed": "مغلق"
     },
@@ -197,12 +273,28 @@
       "bulkStatusUpdated": "تم تحديث الحالة",
       "bulkStatusChanged": "تم تغيير الحالة إلى {{status}} لـ {{count}} تذكرة",
       "bulkPriorityUpdated": "تم تحديث الأولوية",
-      "bulkPriorityChanged": "تم تغيير الأولوية إلى {{priority}} لـ {{count}} تذكرة"
+      "bulkPriorityChanged": "تم تغيير الأولوية إلى {{priority}} لـ {{count}} تذكرة",
+      "error": "خطأ",
+      "unknownError": "خطأ غير معروف",
+      "failedStatusUpdate": "فشل تحديث حالة التذكرة {{ticketId}}: {{error}}",
+      "failedPriorityUpdate": "فشل تحديث أولوية التذكرة {{ticketId}}: {{error}}",
+      "failedAssign": "فشل تعيين التذكرة {{ticketId}}: {{error}}",
+      "failedDelete": "فشل حذف التذكرة {{ticketId}}: {{error}}",
+      "failedBulkAssign": "فشل تعيين التذاكر",
+      "failedBulkDelete": "فشل حذف التذاكر",
+      "failedBulkStatus": "فشل تحديث الحالة",
+      "failedBulkPriority": "فشل تحديث الأولوية",
+      "bulkActionSuccessful": "تم تنفيذ الإجراء الجماعي بنجاح",
+      "bulkActionFailed": "فشل الإجراء الجماعي",
+      "bulkAllFailed": "فشلت جميع التذاكر ({{count}}): {{error}}",
+      "bulkPartialSuccess": "نجح {{succeeded}} من {{total}}، فشل {{failed}}",
+      "bulkPartialTitle": "نجاح جزئي"
     }
   },
   "analyticsMenu": {
     "title": "لوحة الإحصائيات",
     "subtitle": "مقاييس الأداء والرؤى التحليلية",
+    "loading": "جاري تحميل لوحة الإحصائيات...",
     "filters": {
       "title": "الفلاتر",
       "team": "الفريق",
@@ -231,7 +323,13 @@
       "COMPLETED": "مكتمل",
       "CLOSED": "مغلق",
       "New": "جديد",
+      "Under Process": "قيد المعالجة",
       "Under_Process": "قيد المعالجة",
+      "Pending Employee": "بانتظار الموظف",
+      "Pending_Employee": "بانتظار الموظف",
+      "Pending Third Party": "بانتظار طرف ثالث",
+      "Pending_Third_Party": "بانتظار طرف ثالث",
+      "Completed": "مكتمل",
       "Pending_Customer_Response": "بانتظار رد العميل",
       "Resolved": "محلول",
       "Closed": "مغلق"
@@ -248,11 +346,17 @@
     },
     "metrics": {
       "totalTickets": "إجمالي التذاكر",
-      "closedTickets": "التذاكر المغلقة",
+      "closedTickets": "مغلقة",
+      "openTickets": "التذاكر المفتوحة",
+      "slaBreached": "خرق اتفاقية الخدمة",
       "avgResponseTime": "متوسط وقت الاستجابة",
+      "avgResolutionTime": "متوسط وقت الحل",
+      "resolvedInPeriod": "تم حلها في الفترة",
       "slaCompliance": "الالتزام باتفاقية مستوى الخدمة",
+      "criticalBreaches": "خرق حرج",
       "fromLastMonth": "من الشهر الماضي",
-      "hours": "س"
+      "hours": "س",
+      "minutes": "د"
     },
     "charts": {
       "ticketsByStatus": "التذاكر حسب الحالة",
@@ -268,7 +372,13 @@
       "Billing": "الفواتير",
       "Product Inquiry": "استفسار المنتج",
       "Bug Report": "تقرير خطأ",
-      "Other": "أخرى"
+      "Other": "أخرى",
+      "Leave & Attendance": "الإجازات والحضور",
+      "Payroll & Benefits": "الرواتب والمزايا",
+      "IT Access": "الوصول إلى تكنولوجيا المعلومات",
+      "Exit & Entry": "الدخول والخروج",
+      "HR Policies": "سياسات الموارد البشرية",
+      "IT Support": "الدعم الفني"
     },
     "agentPerformance": {
       "title": "أداء الموظفين",
@@ -364,6 +474,8 @@
   "slaBreached": "تجاوز اتفاقية مستوى الخدمة",
   "employee": "الموظف",
   "assignedTo": "معين إلى",
+  "lastUpdate": "آخر تحديث",
+  "createdAt": "أنشئ في",
   "genericDescription": "وصف تفصيلي لـ {{title}}. هذا وصف تجريبي.",
   "tabs": {
     "details": "التفاصيل",
@@ -393,6 +505,11 @@
     "category": "الفئة",
     "channel": "القناة",
     "statusHistory": "سجل الحالة",
+    "activityLog": "سجل النشاط",
+    "ticketCreated": "تم إنشاء التذكرة",
+    "statusChanged": "تغيير الحالة",
+    "priorityChanged": "تغيير الأولوية",
+    "assignmentChanged": "تغيير التعيين",
     "changedBy": "بواسطة"
   },
   "communication": {
@@ -519,4 +636,3 @@
     }
   }
 }
-

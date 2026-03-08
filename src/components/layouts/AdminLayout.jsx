@@ -16,14 +16,19 @@ export default function AdminLayout({ children, title, subtitle, headerActions }
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         {(title || headerActions) && (
-          <div className="mb-5 flex items-center justify-between">
+          <div className="mb-8 flex items-center justify-between">
             {title && (
               <div>
-                <h1 className="mb-2">{title}</h1>
-                {subtitle && <p>{subtitle}</p>}
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-1 h-7 rounded-full bg-gradient-to-b from-yellow-400 to-yellow-500" />
+                  <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">{title}</h1>
+                </div>
+                {subtitle && (
+                  <p className="text-sm text-gray-400 font-medium pl-4">{subtitle}</p>
+                )}
               </div>
             )}
-            {headerActions && (
+            {headerActions && ( //button
               <div className="flex items-center gap-4">
                 {headerActions}
               </div>

@@ -7,7 +7,7 @@ import { STATUSES } from "@utils/helpers";
 const getTagColor = (value) => {
   const COLOR_MAP = {
     // Status colors
-    "PENDING THIRDPARTY": "#fc6900",
+    "PENDING THIRD PARTY": "#fc6900",
     "PENDING EMPLOYEE": "#eab308",
     "UNDER PROCESS": "#3b82f6",
     NEW: "#9333ea",
@@ -15,8 +15,8 @@ const getTagColor = (value) => {
     CLOSED: "#6b7280",
   };
   
-  // Normalize the value for color mapping
-  const normalizedValue = value?.toUpperCase().replace(/_/g, ' ') || "";
+  // Normalize the value for color mapping (uppercase only, keep spaces)
+  const normalizedValue = value?.toUpperCase() || "";
   
   // Get the color based on the value
   return COLOR_MAP[normalizedValue] || "#6b7280"; // Default gray

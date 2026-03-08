@@ -7,6 +7,7 @@ import {
   Tooltip,
 } from "recharts";
 import { getColorForIndex } from "@utils/helpers";
+import { getValueColor } from "@ui/Tag";
 
 /**
  * PieChartComponent - A reusable pie chart component for displaying status data
@@ -16,9 +17,11 @@ import { getColorForIndex } from "@utils/helpers";
  * @param {boolean} props.isRTL - Whether the chart should be displayed in RTL mode
  * @param {string} props.title - Optional title for the chart
  * @param {number} props.height - Optional height for the chart (default: 300)
+ * @param {boolean} props.useStatusColors - Whether to use status colors from Tag component
+ * @param {Array} props.originalNames - Optional array of original (untranslated) names for color lookup
  * @returns {JSX.Element}
  */
-const PieChartComponent = ({ data, isRTL, title, height = 300 }) => {
+const PieChartComponent = ({ data, isRTL, title, height = 300, useStatusColors = false, originalNames = [] }) => {
   // Chart styling configuration
   const tooltipStyle = {
     fontFamily: isRTL ? "Cairo, sans-serif" : "inherit",
@@ -42,7 +45,10 @@ const PieChartComponent = ({ data, isRTL, title, height = 300 }) => {
     const labelText = isRTL
       ? `${name} %${(percent * 100).toFixed(0)}`
       : `${name} ${(percent * 100).toFixed(0)}%`;
-    const sliceColor = getColorForIndex(index);
+    
+    // Use original name for color lookup if available, otherwise use the displayed name
+    const colorLookupName = useStatusColors && originalNames[index] ? originalNames[index] : name;
+    const sliceColor = useStatusColors ? getValueColor(colorLookupName) : getColorForIndex(index);
     const textAnchor = isRTL
       ? x > cx
         ? "end"
@@ -70,8 +76,13 @@ const PieChartComponent = ({ data, isRTL, title, height = 300 }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      {title && <h2 className="mb-4">{title}</h2>}
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6">
+      {title && (
+        <div className="mb-6">
+          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+          <div className="h-1 w-12 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full mt-2"></div>
+        </div>
+      )}
       <ResponsiveContainer width="100%" height={height}>
         <RechartsPC>
           <Pie
@@ -89,7 +100,7 @@ const PieChartComponent = ({ data, isRTL, title, height = 300 }) => {
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={getColorForIndex(index)}
+                fill={useStatusColors ? getValueColor(useStatusColors && originalNames[index] ? originalNames[index] : entry.name) : getColorForIndex(index)}
               />
             ))}
           </Pie>

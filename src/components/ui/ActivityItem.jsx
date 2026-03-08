@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
  * @param {boolean} props.isLast - Whether this is the last item (no border)
  * @returns {JSX.Element}
  */
-export default function ActivityItem({ title, description, time, color = "blue", isLast = false }) {
+export default function ActivityItem({ title, description, time, color = "blue", isLast = false, onDoubleClick }) {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
   
@@ -26,12 +26,12 @@ export default function ActivityItem({ title, description, time, color = "blue",
       case "green": return "bg-green-500";
       case "yellow": return "bg-yellow-500";
       case "purple": return "bg-purple-500";
-      default: return "bg-blue-500";
+      default: return "bg-black";
     }
   };
 
   return (
-    <div className={`py-3 ${!isLast ? 'border-b border-slate-200' : ''}`} dir={isRTL ? "rtl" : "ltr"}>
+    <div className={`py-3 px-3 -mx-3 mb-2 rounded-lg transition-colors duration-200 hover:bg-yellow-50 cursor-pointer ${!isLast ? 'border-b border-slate-100' : ''}`} dir={isRTL ? "rtl" : "ltr"} onDoubleClick={onDoubleClick}>
       <div className="flex justify-between items-start">
         <div className="flex">
           <div className={isRTL ? "ml-2 mt-1.5" : "mr-2 mt-1.5"}>
