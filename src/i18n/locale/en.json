@@ -5,6 +5,7 @@
   "tickets": "Tickets",
   "analytics": "Analytics",
   "documents": "Documents",
+  "administrator": "Administrator",
   "language": "Language",
   "hrSupport": "HR Support",
   "employeeSystem": "Employee System",
@@ -199,16 +200,77 @@
       "cancel": "Cancel",
       "save": "Save Changes"
     },
+    "groupForm": {
+      "newTitle": "New Support Group",
+      "editTitle": "Edit Support Group",
+      "newSubtitle": "Fill in the details to create a new support group",
+      "editSubtitle": "Update the details of this support group",
+      "name": "Support Group Name",
+      "namePlaceholder": "e.g. HR Support Team",
+      "parentUnit": "Parent Unit Code",
+      "parentUnitPlaceholder": "e.g. MAIN-001",
+      "validFrom": "Valid From",
+      "validTo": "Valid To",
+      "cancel": "Cancel",
+      "create": "Create Group",
+      "saveChanges": "Save Changes",
+      "errors": {
+        "nameRequired": "Group name is required",
+        "nameTooShort": "Group name must be at least 3 characters",
+        "nameTooLong": "Group name must not exceed 100 characters",
+        "parentUnitRequired": "Parent unit is required",
+        "parentUnitInvalid": "Parent unit must contain only letters, numbers, and hyphens",
+        "parentUnitTooLong": "Parent unit must not exceed 50 characters",
+        "dateOrder": "Valid To must be after Valid From"
+      }
+    },
+    "memberForm": {
+      "addTitle": "Add Member",
+      "editTitle": "Edit Member",
+      "addSubtitle": "Assign a new member to {{group}}",
+      "editSubtitle": "Update member details in {{group}}",
+      "employeeId": "Employee ID",
+      "name": "Employee Name",
+      "namePlaceholder": "Full name",
+      "userType": "User Type",
+      "from": "Valid From",
+      "to": "Valid To",
+      "cancel": "Cancel",
+      "add": "Add Member",
+      "saveChanges": "Save Changes",
+      "userTypes": {
+        "Agent": "Agent",
+        "Manager": "Manager",
+        "Supervisor": "Supervisor"
+      },
+      "errors": {
+        "employeeIdRequired": "Employee ID is required",
+        "employeeIdInvalid": "Employee ID must contain only letters, numbers, and hyphens",
+        "employeeIdTooLong": "Employee ID must not exceed 20 characters",
+        "nameRequired": "Employee name is required",
+        "nameTooShort": "Name must be at least 2 characters",
+        "nameTooLong": "Name must not exceed 100 characters",
+        "dateOrder": "'To' date must be after 'From' date"
+      }
+    },
     "deleteConfirm": {
       "deleteTicket": "Delete Ticket",
       "deleteTickets": "Delete {{count}} Tickets",
       "deleteDocument": "Delete Document",
       "deleteDocuments": "Delete {{count}} Documents",
+      "deleteGroup": "Delete Group",
+      "deleteGroups": "Delete {{count}} Groups",
+      "deleteMember": "Remove Member",
+      "deleteMembers": "Remove {{count}} Members",
       "cannotUndo": "This action cannot be undone",
       "confirmTicket": "Are you sure you want to delete ticket <strong>{{itemName}}</strong>?",
       "confirmTickets": "Are you sure you want to delete these {{count}} tickets?",
       "confirmDocument": "Are you sure you want to delete <strong>\"{{itemName}}\"</strong>?",
       "confirmDocuments": "Are you sure you want to delete these {{count}} documents?",
+      "confirmGroup": "Are you sure you want to delete <strong>{{itemName}}</strong>?",
+      "confirmGroups": "Are you sure you want to delete these {{count}} groups?",
+      "confirmMember": "Are you sure you want to remove <strong>{{itemName}}</strong>?",
+      "confirmMembers": "Are you sure you want to remove these {{count}} members?",
       "cancel": "Cancel",
       "delete": "Delete"
     }
@@ -419,6 +481,98 @@
       "william_thomas": "William Thomas",
       "jessica_taylor": "Jessica Taylor",
       "robert_martinez": "Robert Martinez"
+    }
+  },
+  "administratorMenu": {
+    "title": "Administrator",
+    "subtitle": "System administration and configuration",
+    "tabs": {
+      "orgStructure": {
+        "label": "Organization Structure",
+        "welcome": "Welcome to Organization Structure",
+        "desc": "Manage your company hierarchy, departments, and reporting lines here.",
+        "supportGroups": {
+          "title": "Support Groups",
+          "newGroup": "New Group",
+          "totalGroups": "Total Groups",
+          "active": "Active",
+          "inactive": "Inactive",
+          "searchPlaceholder": "Search by parent unit code or support group name…",
+          "columns": {
+            "parentUnit": "Parent Unit Code",
+            "name": "Support Group Name",
+            "validFrom": "Valid From",
+            "validTo": "Valid To",
+            "status": "Status",
+            "action": "Action"
+          },
+          "overlay": {
+            "noGroups": "No support groups found",
+            "noGroupsSub": "Click <b>New Group</b> to create one"
+          }
+        },
+        "assignedUsers": {
+          "title": "Assigned Users",
+          "addMember": "Add Member",
+          "totalEmployees": "Total Employees",
+          "searchPlaceholder": "Search by record, employee ID, employee name, or user type…",
+          "columns": {
+            "record": "Record",
+            "employeeId": "Employee ID",
+            "name": "Employee Name",
+            "userType": "User Type",
+            "validFrom": "Valid From",
+            "validTo": "Valid To",
+            "status": "Status",
+            "action": "Action"
+          },
+          "overlay": {
+            "noMembers": "No members in this group",
+            "noMembersSub": "Click <b>Add Member</b> to assign users",
+            "noSelection": "No group selected",
+            "noSelectionSub": "Select a row from the Support Groups table above"
+          }
+        },
+        "alerts": {
+          "groupCreated": "Group Created",
+          "groupCreatedMsg": "\"{{name}}\" has been created successfully",
+          "groupUpdated": "Group Updated",
+          "groupUpdatedMsg": "\"{{name}}\" has been updated successfully",
+          "groupDeleted": "Group Deleted",
+          "groupDeletedMsg": "\"{{name}}\" has been deleted",
+          "memberAdded": "Member Added",
+          "memberAddedMsg": "\"{{name}}\" has been added successfully",
+          "memberUpdated": "Member Updated",
+          "memberUpdatedMsg": "\"{{name}}\" has been updated successfully",
+          "memberRemoved": "Member Removed",
+          "memberRemovedMsg": "\"{{name}}\" has been removed"
+        }
+      },
+      "employeeDirectory": {
+        "label": "Employee Directory",
+        "welcome": "Welcome to Employee Directory",
+        "desc": "View and manage employee records, roles, and personal information."
+      },
+      "ticketingRule": {
+        "label": "Ticketing Rule",
+        "welcome": "Welcome to Ticketing Rule",
+        "desc": "Configure ticket routing, assignment rules, priorities, and escalation paths."
+      },
+      "sla": {
+        "label": "SLA",
+        "welcome": "Welcome to SLA",
+        "desc": "Define and manage Service Level Agreements, response targets, and breach alerts."
+      },
+      "notificationEmail": {
+        "label": "Notification Email",
+        "welcome": "Welcome to Notification Email",
+        "desc": "Set up automated email notifications, templates, and delivery rules."
+      }
+    },
+    "userTypes": {
+      "Agent": "Agent",
+      "Manager": "Manager",
+      "Supervisor": "Supervisor"
     }
   },
   "documentsMenu": {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, ClockAlert, AlarmClock, Loader2, CheckCheck, ArchiveRestore, ArrowDown, Minus, ArrowUp, ShieldAlert ,TriangleAlert} from "lucide-react";
+import { Sparkles, ClockAlert, AlarmClock, Loader2, CheckCheck, ArchiveRestore, ArrowDown, Minus, ArrowUp, ShieldAlert ,TriangleAlert, UserCheck, UserX, User, UserCog} from "lucide-react";
 
 /**
  * Tag - A reusable component for displaying status and priority tags
@@ -24,11 +24,20 @@ export const COLOR_MAP = {
   COMPLETED: "#22c55e",
   CLOSED: "#6b7280",
   
+  // Org Structure specific statuses
+  ACTIVE: "#22c55e",
+  INACTIVE: "#ef4444",
+  
   // Priority colors
   LOW: "#22c55e",
   MEDIUM: "#3b82f6",
   HIGH: "#fc6900",
   CRITICAL: "#ef4444",
+  
+  // User type colors
+  AGENT: "#22c55e",
+  MANAGER: "#3b82f6",
+  SUPERVISOR: "#fc6900",
   
   // Special tags
   OVERDUE: "#ef4444",
@@ -44,27 +53,42 @@ export const ICON_MAP = {
   COMPLETED: CheckCheck,
   CLOSED: ArchiveRestore,
 
+  // Org Structure specific icons
+  ACTIVE: UserCheck,
+  INACTIVE: UserX,
+
   // Priority icons
   LOW: ArrowDown,
   MEDIUM: Minus,
   HIGH: ArrowUp,
   CRITICAL: ShieldAlert,
+  
+  // User type icons
+  AGENT: User,
+  MANAGER: UserCog,
+  SUPERVISOR: UserCog,
+  
   OVERDUE: TriangleAlert,
 };
 
 export const getValueColor = (value) => {
-  const normalized = value?.toUpperCase().replace(/_/g, " ") || "";
+  const stringValue = String(value || "");
+  const normalized = stringValue?.toUpperCase().replace(/_/g, " ") || "";
   return COLOR_MAP[normalized] || "#6b7280";
 };
 
 export const getValueIcon = (value) => {
-  const normalized = value?.toUpperCase().replace(/_/g, " ") || "";
+  const stringValue = String(value || "");
+  const normalized = stringValue?.toUpperCase().replace(/_/g, " ") || "";
   return ICON_MAP[normalized] || null;
 };
 
 const Tag = ({ type, value, t, isRTL = false, className = "", icon, showIcon = false }) => {
+  // Ensure value is a string before processing
+  const stringValue = String(value || "");
+  
   // Normalize the value for color mapping
-  const normalizedValue = value?.toUpperCase().replace(/_/g, ' ') || "";
+  const normalizedValue = stringValue?.toUpperCase().replace(/_/g, ' ') || "";
   
   // Get the color based on the value
   const color = COLOR_MAP[normalizedValue] || "#6b7280"; // Default gray
@@ -92,6 +116,9 @@ const Tag = ({ type, value, t, isRTL = false, className = "", icon, showIcon = f
       // Use the value as-is (with spaces) for translation keys
       translationKey = `ticketsPage.statuses.${value}`;
     }
+  } else if (type === 'userType') {
+    // For user types, just return the value as-is (no translation for now)
+    translationKey = null;
   } else {
     // For priorities, check if we're in ticket details page
     const isTicketDetailsPage = window.location.pathname.includes('/tickets/');
@@ -119,7 +146,7 @@ const Tag = ({ type, value, t, isRTL = false, className = "", icon, showIcon = f
         ? <span className="mr-1">{icon}</span>
         : showIcon && IconComp && <IconComp className="w-3.5 h-3.5 mr-1" />
       }
-      {t ? t(translationKey) : value}
+      {t ? t(translationKey) : stringValue}
     </div>
   );
 };

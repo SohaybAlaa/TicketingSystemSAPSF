@@ -13,6 +13,7 @@ import {
   LayoutGrid,
   Languages,
   LogOut,
+  Settings,
 } from "lucide-react";
 
 export default function MainLayout({ children }) {
@@ -97,6 +98,7 @@ export default function MainLayout({ children }) {
       if (pathname === `/admin/tickets`) return t("tickets");
       if (pathname === `/admin/analytics`) return t("analytics");
       if (pathname === `/admin/documents`) return t("documents");
+      if (pathname === `/admin/administrator`) return t("administrator");
       if (pathname === `/login`) return t("login.loginTitle");
       return "";
     };
@@ -267,6 +269,12 @@ export default function MainLayout({ children }) {
                   to: `/admin/documents`,
                   icon: ScrollText,
                   label: t("documents"),
+                  end: false,
+                },
+                {
+                  to: `/admin/administrator`,
+                  icon: Settings,
+                  label: t("administrator"),
                   end: false,
                 },
               ].map((item) => (

@@ -431,14 +431,16 @@ export async function getDashboardTrendsDB(userId, userTeam = null) {
   return dbQuery('getDashboardTrends', () => db.manyOrNone(`
     SELECT
       d.day,
-      (SELECT COUNT(DISTINCT t.ticket_id) FROM tickets t
+      (SELECT COUNT(DISTINCT al.ticket_id) FROM ticket_activity_log al
+        JOIN tickets t ON t.ticket_id = al.ticket_id
         WHERE t.assigned_to_user_id = $(userId)
-          AND t.created_at::date <= d.day
-          AND (t.resolved_at IS NULL OR t.resolved_at::date > d.day))::int AS assigned_to_me,
-      (SELECT COUNT(DISTINCT ticket_id) FROM tickets
-        WHERE assigned_to_team = $(userTeam)
-          AND internal_status NOT IN ('Completed','Closed')
-          AND created_at::date <= d.day)::int AS my_team_tickets,
+          AND t.internal_status NOT IN ('Completed','Closed')
+          AND al.changed_at::date = d.day)::int AS assigned_to_me,
+      (SELECT COUNT(DISTINCT al.ticket_id) FROM ticket_activity_log al
+        JOIN tickets t ON t.ticket_id = al.ticket_id
+        WHERE t.assigned_to_team = $(userTeam)
+          AND t.internal_status NOT IN ('Completed','Closed')
+          AND al.changed_at::date = d.day)::int AS my_team_tickets,
       (SELECT COUNT(DISTINCT ticket_id) FROM ticket_activity_log
         WHERE change_type = 'status' AND new_value = 'New'
           AND changed_at::date = d.day)::int AS new_tickets,

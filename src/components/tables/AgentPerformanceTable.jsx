@@ -2,6 +2,8 @@ import React, { useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { myTheme } from "@utils/agGridThemes";
+import { Users } from "lucide-react";
+import SectionHeader from "@ui/SectionHeader";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -111,12 +113,10 @@ const AgentPerformanceTable = ({ agentPerformance, isRTL, t }) => {
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6">
-      <div className="mb-6">
-        <h2 className="text-lg font-bold text-gray-900">
-          {t("analyticsMenu.agentPerformance.title", "Agent Performance")}
-        </h2>
-        <div className="h-1 w-12 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full mt-2"></div>
-      </div>
+      <SectionHeader 
+        icon={Users} 
+        title={t("analyticsMenu.agentPerformance.title", "Agent Performance")} 
+      />
       <div style={{ height: "367px", width: "100%" }}>
         <AgGridReact
           theme={myTheme}

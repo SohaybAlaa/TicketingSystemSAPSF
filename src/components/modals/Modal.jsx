@@ -9,8 +9,21 @@ import { X } from "lucide-react";
  * @param {string} title - Modal title
  * @param {ReactNode} children - Modal content
  */
-export default function Modal({ isOpen, onClose, title, children }) {
+export default function Modal({ isOpen, onClose, title, children, icon, subtitle }) {
   if (!isOpen) return null;
+
+  // Check if this is a delete modal by examining the icon content
+  const isDeleteModal = icon && icon.props && icon.props.children && 
+    (icon.props.children.props?.color === "#7f1d1d" || 
+     icon.props.children?.props?.color === "#7f1d1d");
+
+  const headerGradient = isDeleteModal 
+    ? "linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(239, 68, 68, 0.1) 40%, white 100%)"
+    : "linear-gradient(135deg, rgba(253, 199, 0, 0.3) 0%, rgba(253, 199, 0, 0.1) 40%, white 100%)";
+
+  const accentBarGradient = isDeleteModal
+    ? "linear-gradient(to bottom, #ef4444, #dc2626)"
+    : "linear-gradient(to bottom, #facc15, #f59e0b)";
 
   return createPortal(
     <div
@@ -57,23 +70,74 @@ export default function Modal({ isOpen, onClose, title, children }) {
         {/* Header */}
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "20px 24px",
+            background: headerGradient,
             borderBottom: "1px solid #e5e7eb",
+            position: "relative",
           }}
         >
-          <h2
+          {/* Accent bar */}
+          <div
             style={{
-              fontSize: "20px",
-              fontWeight: "600",
-              color: "#111827",
-              margin: 0,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "4px",
+              height: "101.3%",
+              background: accentBarGradient,
+              borderTopLeftRadius: "12px",
+              borderBottomLeftRadius: "12px",
+            }}
+          />
+          
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "20px 24px",
             }}
           >
-            {title}
-          </h2>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {icon && (
+              <div
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  backgroundColor: "#fef2f2",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {icon}
+              </div>
+            )}
+            <div>
+              <h2
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "600",
+                  color: "#111827",
+                  margin: 0,
+                }}
+              >
+                {title}
+              </h2>
+              {subtitle && (
+                <p
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    color: "#6b7280",
+                    margin: "4px 0 0 0",
+                  }}
+                >
+                  {subtitle}
+                </p>
+              )}
+            </div>
+          </div>
           <button
             onClick={onClose}
             style={{
@@ -96,6 +160,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
           >
             <X size={20} color="#6b7280" />
           </button>
+        </div>
         </div>
 
         {/* Body */}

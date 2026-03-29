@@ -6,7 +6,7 @@ import { Download, Inbox, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { checkAuth } from "@/utils/auth";
-import { renderToStaticMarkup } from "react-dom/server";
+import { buildGridOverlay, getRowStyle } from "@utils/agGridUtils.jsx";
 
 // Components
 import AdminLayout from "@components/layouts/AdminLayout";
@@ -16,6 +16,7 @@ import TicketsCountDisplay from "@ui/TicketsCountDisplay";
 
 // Utilities
 import { getColumnDefs, defaultColDef } from "@utils/columnDefs";
+import { SKELETON_ROWS } from "@components/ui/GridSkeleton";
 
 export default function Tickets() {
   const { t, i18n } = useTranslation();
@@ -560,53 +561,47 @@ export default function Tickets() {
         />
 
         {/* Table AG GRID */}
-        {isLoading ? (
-          <div className="flex items-center justify-center" style={{ height: "400px" }}>
-            <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-yellow-500 mb-4"></div>
-              <p className="text-gray-700 font-medium">{t("ticketsPage.loading", "Loading tickets...")}</p>
-            </div>
-          </div>
-        ) : (
-          <div
-            className="ag-theme-alpine mb-15"
-            style={{ width: "100%", height: "800px", marginBottom: "2rem" }}
-            dir={isRTL ? "rtl" : "ltr"}
-          >
-            <AgGridReact
-              key={gridKey}
-              getRowStyle={() => ({ cursor: "pointer" })}
-              rowSelection={rowSelection}
-              getRowHeight={() => 48}
-              ref={gridRef}
-              modules={[AllCommunityModule]}
-              rowData={filteredRowData}
-              columnDefs={colDefs}
-              defaultColDef={defaultColDef}
-              quickFilterText={quickFilterText}
-              pagination={true}
-              paginationPageSize={25}
-              paginationPageSizeSelector={[10, 25, 50, 100]}
-              gridOptions={{
-                theme: myTheme,
-                enableCellTextSelection: true,
-                ensureDomOrder: true,
-                enableRtl: isRTL,
-                overlayNoRowsTemplate: `
-                  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; color: #64748b;">
-                    ${renderToStaticMarkup(<Inbox size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />)}
-                    <span style="font-size: 16px; font-weight: 500; color: #475569;">${t("ticketsPage.noTicketsFound", "No tickets available")}</span>
-                  </div>
-                `,//The renderToStaticMarkup function converts the Lucide React <Inbox> component into an HTML string that can be used in the AG Grid's overlayNoRowsTemplate.
-              }}
-              onGridReady={onGridReady}
-              onSelectionChanged={onSelectionChanged}
-              onRowDoubleClicked={(event) => handleRowClick(event)}
-              onFilterChanged={onFilterChanged}
-              domLayout="autoHeight"
-            />
-          </div>
-        )}
+        <div
+          className="ag-theme-alpine mb-15"
+          style={{ width: "100%", marginBottom: "2rem" }}
+          dir={isRTL ? "rtl" : "ltr"}
+        >
+          <AgGridReact
+            key={gridKey}
+            getRowStyle={getRowStyle}
+            rowSelection={isLoading ? undefined : rowSelection}
+            getRowHeight={() => 48}
+            headerHeight={52}
+            suppressCellFocus
+            ref={gridRef}
+            modules={[AllCommunityModule]}
+            rowData={isLoading ? SKELETON_ROWS : filteredRowData}
+            columnDefs={colDefs}
+            defaultColDef={defaultColDef}
+            quickFilterText={isLoading ? '' : quickFilterText}
+            pagination={!isLoading}
+            paginationPageSize={25}
+            paginationPageSizeSelector={[10, 25, 50, 100]}
+            enableRtl={isRTL}
+            gridOptions={{
+              theme: myTheme,
+              enableCellTextSelection: true,
+              ensureDomOrder: true,
+              overlayNoRowsTemplate: buildGridOverlay({
+                icon: Inbox,
+                heading: t("ticketsPage.noTicketsFound", "No tickets available"),
+                sub: '',
+              }),
+            }}
+            onGridReady={onGridReady}
+            onSelectionChanged={onSelectionChanged}
+            onRowDoubleClicked={(event) => {
+              if (!event.data?._skeleton) handleRowClick(event);
+            }}
+            onFilterChanged={onFilterChanged}
+            domLayout="autoHeight"
+          />
+        </div>
       </AdminLayout>
     </>
   );

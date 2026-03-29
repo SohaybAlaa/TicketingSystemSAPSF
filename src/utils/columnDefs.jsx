@@ -1,6 +1,8 @@
 import { isSLAOverdue } from "../utils/helpers";
 import Tag from "@components/ui/Tag";
 import ActionCellRenderer from "../components/grid/ActionCellRenderer";
+import { SkeletonBar } from "@components/ui/GridSkeleton";
+import { formatDate, formatDateTime } from "@utils/dateUtils";
 
 /**
  * Get AG Grid column definitions
@@ -45,6 +47,10 @@ export const getColumnDefs = (
     filter: "agTextColumnFilter",
     tooltipField: "ticketId",
     maxWidth: 130,
+    cellRenderer: (params) => {
+      if (params.data?._skeleton) return <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} />;
+      return params.value;
+    },
   },
   {
     field: "title",
@@ -52,8 +58,13 @@ export const getColumnDefs = (
     filter: "agTextColumnFilter",
     tooltipField: "title",
     valueGetter: (params) => {
+      if (params.data?._skeleton) return '';
       const title = params.data.title;
       return t(`ticketTitles.${title}`, title);
+    },
+    cellRenderer: (params) => {
+      if (params.data?._skeleton) return <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} />;
+      return params.value;
     },
   },
   {
@@ -61,8 +72,13 @@ export const getColumnDefs = (
     headerName: t("ticketsPage.columns.employee"),
     filter: "agTextColumnFilter",
     valueGetter: (params) => {
+      if (params.data?._skeleton) return '';
       const employeeName = params.data.employee;
       return t(`employees.${employeeName}`, employeeName);
+    },
+    cellRenderer: (params) => {
+      if (params.data?._skeleton) return <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} />;
+      return params.value;
     },
   },
   {
@@ -71,8 +87,13 @@ export const getColumnDefs = (
     filter: "agTextColumnFilter",
     tooltipField: "category",
     valueGetter: (params) => {
+      if (params.data?._skeleton) return '';
       const category = params.data.category;
       return t(`categories.${category}`, category);
+    },
+    cellRenderer: (params) => {
+      if (params.data?._skeleton) return <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} />;
+      return params.value;
     },
   },
   {
@@ -92,6 +113,7 @@ export const getColumnDefs = (
       justifyContent: "center",
     },
     cellRenderer: (params) => {
+      if (params.data?._skeleton) return <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} centered />;
       return (
         <Tag 
           type="priority" 
@@ -119,6 +141,7 @@ export const getColumnDefs = (
       justifyContent: "center",
     },
     cellRenderer: (params) => {
+      if (params.data?._skeleton) return <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} centered />;
       return (
         <Tag 
           type="status" 
@@ -136,6 +159,7 @@ export const getColumnDefs = (
     filter: "agTextColumnFilter",
     minWidth: 170,
     valueGetter: (params) => {
+      if (params.data?._skeleton) return '';
       const assignedTo = params.data.assignedTo;
       // Try teamMembers first, then employees, fallback to original value
       const translated = t(
@@ -144,26 +168,44 @@ export const getColumnDefs = (
       );
       return translated;
     },
+    cellRenderer: (params) => {
+      if (params.data?._skeleton) return <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} />;
+      return params.value;
+    },
   },
   {
     field: "created",
     headerName: t("ticketsPage.columns.created"),
     filter: "agDateColumnFilter",
+    filterParams: {
+      comparator: (filterDate, cellValue) => {
+        if (!cellValue) return -1;
+        const cellDate = new Date(cellValue);
+        cellDate.setHours(0, 0, 0, 0);
+        if (cellDate < filterDate) return -1;
+        if (cellDate > filterDate) return 1;
+        return 0;
+      },
+    },
+    cellRenderer: (params) => {
+      if (params.data?._skeleton) return <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} />;
+      return formatDate(params.value);
+    },
   },
   {
     field: "slaDue",
     headerName: t("ticketsPage.columns.slaDue"),
     width: 150,
     filter: "agDateColumnFilter",
-    valueGetter: (params) => {
-      const slaDue = params.data.slaDue;
-      const deadlineDate = slaDue ? new Date(slaDue) : null;
-      const isOverdue = deadlineDate && new Date() > deadlineDate;
-      const isCompleted = params.data.status === "Completed" || params.data.status === "Closed";
-      if (isOverdue && !isCompleted) {
-        return `${slaDue} late OVERDUE متأخر متاخر`;
-      }
-      return slaDue;
+    filterParams: {
+      comparator: (filterDate, cellValue) => {
+        if (!cellValue) return -1;
+        const cellDate = new Date(cellValue);
+        cellDate.setHours(0, 0, 0, 0);
+        if (cellDate < filterDate) return -1;
+        if (cellDate > filterDate) return 1;
+        return 0;
+      },
     },
     cellStyle: {
       textAlign: "center",
@@ -172,6 +214,7 @@ export const getColumnDefs = (
       justifyContent: "center",
     },
     cellRenderer: (params) => {
+      if (params.data?._skeleton) return <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} centered />;
       const slaDeadline = params.data.slaDue;
       const now = new Date();
       const deadlineDate = slaDeadline ? new Date(slaDeadline) : null;
@@ -191,7 +234,7 @@ export const getColumnDefs = (
             }}
           >
             <span style={{ fontSize: "12px", color: "#6b7280" }}>
-              {slaDeadline}
+              {formatDateTime(slaDeadline)}
             </span>
             <span style={{ color: "#FF2C2C" }}>
               {t("ticketsPage.sla.overdue")}
@@ -202,7 +245,7 @@ export const getColumnDefs = (
 
       return (
         <span style={{ fontSize: "13px", color: "#374151" }}>
-          {slaDeadline}
+          {formatDateTime(slaDeadline)}
         </span>
       );
     },
@@ -218,7 +261,9 @@ export const getColumnDefs = (
       justifyContent: "center",
       overflow: "visible",
     },
-    cellRenderer: (params) => (
+    cellRenderer: (params) => {
+      if (params.data?._skeleton) return <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} centered />;
+      return (
       <ActionCellRenderer
         data={params.data}
         onStatusChange={handleStatusChange}
@@ -227,7 +272,8 @@ export const getColumnDefs = (
         onAssignToMe={handleAssignToMe}
         onAssignToOther={handleAssignToOther}
       />
-    ),
+      );
+    },
   },
 ];
 

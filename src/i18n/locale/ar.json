@@ -5,6 +5,7 @@
   "tickets": "التذاكر",
   "analytics": "الإحصائيات",
   "documents": "اللوائح",
+  "administrator": "المسؤول",
   "language": "اللغة",
   "hrSupport": "دعم الموارد البشرية",
   "employeeSystem": "نظام الموظفين",
@@ -199,16 +200,77 @@
       "cancel": "إلغاء",
       "save": "حفظ التغييرات"
     },
+    "groupForm": {
+      "newTitle": "مجموعة دعم جديدة",
+      "editTitle": "تعديل مجموعة الدعم",
+      "newSubtitle": "املأ التفاصيل لإنشاء مجموعة دعم جديدة",
+      "editSubtitle": "تحديث تفاصيل مجموعة الدعم",
+      "name": "اسم مجموعة الدعم",
+      "namePlaceholder": "مثال: فريق دعم الموارد البشرية",
+      "parentUnit": "رمز الوحدة الأم",
+      "parentUnitPlaceholder": "مثال: MAIN-001",
+      "validFrom": "صالح من",
+      "validTo": "صالح حتى",
+      "cancel": "إلغاء",
+      "create": "إنشاء مجموعة",
+      "saveChanges": "حفظ التغييرات",
+      "errors": {
+        "nameRequired": "اسم المجموعة مطلوب",
+        "nameTooShort": "يجب أن يكون اسم المجموعة 3 أحرف على الأقل",
+        "nameTooLong": "يجب ألا يتجاوز اسم المجموعة 100 حرف",
+        "parentUnitRequired": "رمز الوحدة الأم مطلوب",
+        "parentUnitInvalid": "يجب أن يحتوي رمز الوحدة الأم على أحرف وأرقام وشرطات فقط",
+        "parentUnitTooLong": "يجب ألا يتجاوز رمز الوحدة الأم 50 حرفاً",
+        "dateOrder": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية"
+      }
+    },
+    "memberForm": {
+      "addTitle": "إضافة عضو",
+      "editTitle": "تعديل العضو",
+      "addSubtitle": "تعيين عضو جديد إلى {{group}}",
+      "editSubtitle": "تحديث تفاصيل العضو في {{group}}",
+      "employeeId": "معرف الموظف",
+      "name": "اسم الموظف",
+      "namePlaceholder": "الاسم الكامل",
+      "userType": "نوع المستخدم",
+      "from": "صالح من",
+      "to": "صالح حتى",
+      "cancel": "إلغاء",
+      "add": "إضافة عضو",
+      "saveChanges": "حفظ التغييرات",
+      "userTypes": {
+        "Agent": "وكيل",
+        "Manager": "مدير",
+        "Supervisor": "مشرف"
+      },
+      "errors": {
+        "employeeIdRequired": "معرف الموظف مطلوب",
+        "employeeIdInvalid": "يجب أن يحتوي معرف الموظف على أحرف وأرقام وشرطات فقط",
+        "employeeIdTooLong": "يجب ألا يتجاوز معرف الموظف 20 حرفاً",
+        "nameRequired": "اسم الموظف مطلوب",
+        "nameTooShort": "يجب أن يكون الاسم حرفين على الأقل",
+        "nameTooLong": "يجب ألا يتجاوز الاسم 100 حرف",
+        "dateOrder": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية"
+      }
+    },
     "deleteConfirm": {
       "deleteTicket": "حذف التذكرة",
       "deleteTickets": "حذف {{count}} تذاكر",
       "deleteDocument": "حذف المستند",
       "deleteDocuments": "حذف {{count}} مستندات",
+      "deleteGroup": "حذف المجموعة",
+      "deleteGroups": "حذف {{count}} مجموعات",
+      "deleteMember": "إزالة العضو",
+      "deleteMembers": "إزالة {{count}} أعضاء",
       "cannotUndo": "لا يمكن التراجع عن هذا الإجراء",
       "confirmTicket": "هل أنت متأكد أنك تريد حذف التذكرة <strong>{{itemName}}</strong>؟",
       "confirmTickets": "هل أنت متأكد أنك تريد حذف هذه {{count}} تذاكر؟",
       "confirmDocument": "هل أنت متأكد أنك تريد حذف <strong>\"{{itemName}}\"</strong>؟",
       "confirmDocuments": "هل أنت متأكد أنك تريد حذف هذه {{count}} مستندات؟",
+      "confirmGroup": "هل أنت متأكد أنك تريد حذف <strong>{{itemName}}</strong>؟",
+      "confirmGroups": "هل أنت متأكد أنك تريد حذف هذه {{count}} مجموعات؟",
+      "confirmMember": "هل أنت متأكد أنك تريد إزالة <strong>{{itemName}}</strong>؟",
+      "confirmMembers": "هل أنت متأكد أنك تريد إزالة هذه {{count}} أعضاء؟",
       "cancel": "إلغاء",
       "delete": "حذف"
     }
@@ -421,6 +483,98 @@
       "robert_martinez": "روبرت مارتينيز"
     }
   },
+  "administratorMenu": {
+    "title": "لوحة التحكم",
+    "subtitle": "إدارة النظام والتكوين",
+    "tabs": {
+      "orgStructure": {
+        "label": "الهيكل التنظيمي",
+        "welcome": "مرحباً بك في الهيكل التنظيمي",
+        "desc": "إدارة التسلسل الهرمي للشركة والأقسام وخطوط الإبلاغ.",
+        "supportGroups": {
+          "title": "مجموعات الدعم",
+          "newGroup": "مجموعة جديدة",
+          "totalGroups": "إجمالي المجموعات",
+          "active": "نشط",
+          "inactive": "غير نشط",
+          "searchPlaceholder": "البحث برمز الوحدة الأم أو اسم مجموعة الدعم...",
+          "columns": {
+            "parentUnit": "رمز الوحدة الأم",
+            "name": "اسم مجموعة الدعم",
+            "validFrom": "صالح من",
+            "validTo": "صالح حتى",
+            "status": "الحالة",
+            "action": "الإجراء"
+          },
+          "overlay": {
+            "noGroups": "لا توجد مجموعات دعم",
+            "noGroupsSub": "انقر على <b>مجموعة جديدة</b> لإنشاء واحدة"
+          }
+        },
+        "assignedUsers": {
+          "title": "المستخدمون المعينون",
+          "addMember": "إضافة عضو",
+          "totalEmployees": "إجمالي الموظفين",
+          "searchPlaceholder": "البحث بالسجل أو معرف الموظف أو اسم الموظف أو نوع المستخدم...",
+          "columns": {
+            "record": "السجل",
+            "employeeId": "معرف الموظف",
+            "name": "اسم الموظف",
+            "userType": "نوع المستخدم",
+            "validFrom": "صالح من",
+            "validTo": "صالح حتى",
+            "status": "الحالة",
+            "action": "الإجراء"
+          },
+          "overlay": {
+            "noMembers": "لا يوجد أعضاء في هذه المجموعة",
+            "noMembersSub": "انقر على <b>إضافة عضو</b> لتعيين مستخدمين",
+            "noSelection": "لم يتم تحديد مجموعة",
+            "noSelectionSub": "حدد صفاً من جدول مجموعات الدعم أعلاه"
+          }
+        },
+        "alerts": {
+          "groupCreated": "تم إنشاء المجموعة",
+          "groupCreatedMsg": "تم إنشاء \"{{name}}\" بنجاح",
+          "groupUpdated": "تم تحديث المجموعة",
+          "groupUpdatedMsg": "تم تحديث \"{{name}}\" بنجاح",
+          "groupDeleted": "تم حذف المجموعة",
+          "groupDeletedMsg": "تم حذف \"{{name}}\"",
+          "memberAdded": "تمت إضافة العضو",
+          "memberAddedMsg": "تمت إضافة \"{{name}}\" بنجاح",
+          "memberUpdated": "تم تحديث العضو",
+          "memberUpdatedMsg": "تم تحديث \"{{name}}\" بنجاح",
+          "memberRemoved": "تمت إزالة العضو",
+          "memberRemovedMsg": "تمت إزالة \"{{name}}\""
+        }
+      },
+      "employeeDirectory": {
+        "label": "دليل الموظفين",
+        "welcome": "مرحباً بك في دليل الموظفين",
+        "desc": "عرض وإدارة سجلات الموظفين والأدوار والمعلومات الشخصية."
+      },
+      "ticketingRule": {
+        "label": "قواعد التذاكر",
+        "welcome": "مرحباً بك في قواعد التذاكر",
+        "desc": "تكوين توجيه التذاكر وقواعد التعيين والأولويات ومسارات التصعيد."
+      },
+      "sla": {
+        "label": "اتفاقية مستوى الخدمة",
+        "welcome": "مرحباً بك في اتفاقية مستوى الخدمة",
+        "desc": "تحديد وإدارة اتفاقيات مستوى الخدمة وأهداف الاستجابة وتنبيهات الخرق."
+      },
+      "notificationEmail": {
+        "label": "البريد الإلكتروني للإشعارات",
+        "welcome": "مرحباً بك في البريد الإلكتروني للإشعارات",
+        "desc": "إعداد الإشعارات الآلية عبر البريد الإلكتروني والقوالب وقواعد التسليم."
+      }
+    },
+    "userTypes": {
+      "Agent": "وكيل",
+      "Manager": "مدير",
+      "Supervisor": "مشرف"
+    }
+  },
   "documentsMenu": {
     "title": "مستندات سياسات الموارد البشرية",
     "subtitle": {
@@ -467,110 +621,110 @@
     }
   },
   "ticketDetails": {
-  "backToTickets": "العودة إلى التذاكر",
-  "ticketId": "رقم الطلب",
-  "copyTicketId": "نسخ رقم الطلب",
-  "updateTicket": "تحديث التذكرة",
-  "slaBreached": "تجاوز اتفاقية مستوى الخدمة",
-  "employee": "الموظف",
-  "assignedTo": "معين إلى",
-  "lastUpdate": "آخر تحديث",
-  "createdAt": "أنشئ في",
-  "genericDescription": "وصف تفصيلي لـ {{title}}. هذا وصف تجريبي.",
-  "tabs": {
-    "details": "التفاصيل",
-    "communication": "التواصل",
-    "attachments": "المرفقات",
-    "internalNotes": "الملاحظات الداخلية"
-  },
-  "rightColumn": {
-    "ticketInformation": "معلومات التذكرة",
-    "status": "الحالة",
-    "priority": "الأولوية",
+    "backToTickets": "العودة إلى التذاكر",
+    "ticketId": "رقم الطلب",
+    "copyTicketId": "نسخ رقم الطلب",
+    "updateTicket": "تحديث التذكرة",
+    "slaBreached": "تجاوز اتفاقية مستوى الخدمة",
+    "employee": "الموظف",
     "assignedTo": "معين إلى",
-    "unassigned": "غير معين",
-    "slaTracking": "تتبع اتفاقية مستوى الخدمة",
-    "responseDue": "موعد الاستجابة",
-    "resolutionDue": "موعد الحل",
-    "breached": "تجاوز",
-    "employeeDetails": "تفاصيل الموظف",
-    "name": "الاسم",
-    "email": "البريد الإلكتروني",
-    "department": "القسم",
-    "position": "المنصب",
-    "location": "الموقع"
+    "lastUpdate": "آخر تحديث",
+    "createdAt": "أنشئ في",
+    "genericDescription": "وصف تفصيلي لـ {{title}}. هذا وصف تجريبي.",
+    "tabs": {
+      "details": "التفاصيل",
+      "communication": "التواصل",
+      "attachments": "المرفقات",
+      "internalNotes": "الملاحظات الداخلية"
+    },
+    "rightColumn": {
+      "ticketInformation": "معلومات التذكرة",
+      "status": "الحالة",
+      "priority": "الأولوية",
+      "assignedTo": "معين إلى",
+      "unassigned": "غير معين",
+      "slaTracking": "تتبع اتفاقية مستوى الخدمة",
+      "responseDue": "موعد الاستجابة",
+      "resolutionDue": "موعد الحل",
+      "breached": "تجاوز",
+      "employeeDetails": "تفاصيل الموظف",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "department": "القسم",
+      "position": "المنصب",
+      "location": "الموقع"
+    },
+    "details": {
+      "description": "الوصف",
+      "category": "الفئة",
+      "channel": "القناة",
+      "statusHistory": "سجل الحالة",
+      "activityLog": "سجل النشاط",
+      "ticketCreated": "تم إنشاء التذكرة",
+      "statusChanged": "تغيير الحالة",
+      "priorityChanged": "تغيير الأولوية",
+      "assignmentChanged": "تغيير التعيين",
+      "changedBy": "بواسطة"
+    },
+    "communication": {
+      "noComments": "لا يوجد تواصل بعد",
+      "startConversation": "ابدأ المحادثة أدناه",
+      "addResponse": "إضافة رد للموظف",
+      "placeholder": "اكتب ردك هنا...",
+      "sendResponse": "إرسال الرد"
+    },
+    "attachments": {
+      "noAttachments": "لا توجد مرفقات",
+      "uploadFiles": "قم برفع الملفات للمشاركة.",
+      "download": "تحميل",
+      "uploading": "جاري الرفع...",
+      "uploadAttachment": "رفع مرفق"
+    },
+    "internalNotes": {
+      "noNotes": "لا توجد ملاحظات داخلية",
+      "addPrivateNotes": "أضف ملاحظات خاصة لفريق الموارد البشرية فقط",
+      "addInternalNote": "إضافة ملاحظة داخلية",
+      "placeholder": "أضف ملاحظة مرئية فقط لفريق الموارد البشرية...",
+      "addNote": "إضافة ملاحظة"
+    },
+    "notFound": {
+      "title": "التذكرة غير موجودة",
+      "description": "التذكرة التي تحاول الوصول إليها غير موجودة أو تم حذفها أو ليس لديك إذن لعرضها.",
+      "backToList": "العودة إلى القائمة",
+      "tryAgain": "حاول مرة أخرى",
+      "tip": "نصيحة: تحقق من الرابط أو ارجع إلى قائمة التذاكر."
+    },
+    "alerts": {
+      "ticketIdCopied": "تم نسخ رقم الطلب",
+      "copyFailed": "فشل نسخ رقم الطلب",
+      "statusUpdated": "تم تحديث الحالة محلياً إلى: {{status}}",
+      "priorityUpdated": "تم تحديث الأولوية محلياً إلى: {{priority}}",
+      "responseSent": "تم إرسال الرد بنجاح",
+      "noteAdded": "تمت إضافة الملاحظة الداخلية بنجاح",
+      "uploadSuccess": "تم الرفع بنجاح: {{filename}}",
+      "uploadFailed": "فشل الرفع: {{filename}}",
+      "invalidFileType": "نوع ملف غير صالح: {{filename}}. الأنواع المسموحة: {{types}}",
+      "fileTooLarge": "الملف كبير جداً: {{filename}}. الحد الأقصى للحجم هو {{maxSize}} ميجابايت",
+      "downloadSuccess": "تم التنزيل: {{filename}}",
+      "downloadFailed": "فشل تنزيل الملف",
+      "attachmentsFailed": "فشل تحميل المرفقات"
+    },
+    "statuses": {
+      "NEW": "جديد",
+      "UNDER_PROCESS": "قيد المعالجة",
+      "PENDING_EMPLOYEE": "بانتظار الموظف",
+      "PENDING_THIRD_PARTY": "بانتظار طرف ثالث",
+      "COMPLETED": "مكتمل",
+      "CLOSED": "مغلق"
+    },
+    "priorities": {
+      "LOW": "منخفض",
+      "MEDIUM": "متوسط",
+      "HIGH": "عالي",
+      "CRITICAL": "حرج"
+    }
   },
-  "details": {
-    "description": "الوصف",
-    "category": "الفئة",
-    "channel": "القناة",
-    "statusHistory": "سجل الحالة",
-    "activityLog": "سجل النشاط",
-    "ticketCreated": "تم إنشاء التذكرة",
-    "statusChanged": "تغيير الحالة",
-    "priorityChanged": "تغيير الأولوية",
-    "assignmentChanged": "تغيير التعيين",
-    "changedBy": "بواسطة"
-  },
-  "communication": {
-    "noComments": "لا يوجد تواصل بعد",
-    "startConversation": "ابدأ المحادثة أدناه",
-    "addResponse": "إضافة رد للموظف",
-    "placeholder": "اكتب ردك هنا...",
-    "sendResponse": "إرسال الرد"
-  },
-  "attachments": {
-    "noAttachments": "لا توجد مرفقات",
-    "uploadFiles": "قم برفع الملفات للمشاركة.",
-    "download": "تحميل",
-    "uploading": "جاري الرفع...",
-    "uploadAttachment": "رفع مرفق"
-  },
-  "internalNotes": {
-    "noNotes": "لا توجد ملاحظات داخلية",
-    "addPrivateNotes": "أضف ملاحظات خاصة لفريق الموارد البشرية فقط",
-    "addInternalNote": "إضافة ملاحظة داخلية",
-    "placeholder": "أضف ملاحظة مرئية فقط لفريق الموارد البشرية...",
-    "addNote": "إضافة ملاحظة"
-  },
-  "notFound": {
-    "title": "التذكرة غير موجودة",
-    "description": "التذكرة التي تحاول الوصول إليها غير موجودة أو تم حذفها أو ليس لديك إذن لعرضها.",
-    "backToList": "العودة إلى القائمة",
-    "tryAgain": "حاول مرة أخرى",
-    "tip": "نصيحة: تحقق من الرابط أو ارجع إلى قائمة التذاكر."
-  },
-  "alerts": {
-    "ticketIdCopied": "تم نسخ رقم الطلب",
-    "copyFailed": "فشل نسخ رقم الطلب",
-    "statusUpdated": "تم تحديث الحالة محلياً إلى: {{status}}",
-    "priorityUpdated": "تم تحديث الأولوية محلياً إلى: {{priority}}",
-    "responseSent": "تم إرسال الرد بنجاح",
-    "noteAdded": "تمت إضافة الملاحظة الداخلية بنجاح",
-    "uploadSuccess": "تم الرفع بنجاح: {{filename}}",
-    "uploadFailed": "فشل الرفع: {{filename}}",
-    "invalidFileType": "نوع ملف غير صالح: {{filename}}. الأنواع المسموحة: {{types}}",
-    "fileTooLarge": "الملف كبير جداً: {{filename}}. الحد الأقصى للحجم هو {{maxSize}} ميجابايت",
-    "downloadSuccess": "تم التنزيل: {{filename}}",
-    "downloadFailed": "فشل تنزيل الملف",
-    "attachmentsFailed": "فشل تحميل المرفقات"
-  },
-  "statuses": {
-    "NEW": "جديد",
-    "UNDER_PROCESS": "قيد المعالجة",
-    "PENDING_EMPLOYEE": "بانتظار الموظف",
-    "PENDING_THIRD_PARTY": "بانتظار طرف ثالث",
-    "COMPLETED": "مكتمل",
-    "CLOSED": "مغلق"
-  },
-  "priorities": {
-    "LOW": "منخفض",
-    "MEDIUM": "متوسط",
-    "HIGH": "عالي",
-    "CRITICAL": "حرج"
-  }
-},
- "error404": {
+  "error404": {
     "badge": "خطأ • 404",
     "title": "الصفحة غير موجودة",
     "heading": "عذراً! لم نتمكن من العثور على هذه الصفحة.",

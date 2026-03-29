@@ -10,12 +10,14 @@ import {
   TicketPlus,
   Users,
   CalendarClock,
+  Zap,
 } from "lucide-react";
 
 import AdminLayout from "@layouts/AdminLayout";
 import StatCard from "@ui/StatCard";
 import ActionButton from "@ui/ActionButton";
 import ActivityItem from "@ui/ActivityItem";
+import SectionHeader from "@ui/SectionHeader";
 
 // Card definitions with icons/colors — values come from API
 const cardDefs = [
@@ -124,7 +126,7 @@ export default function Admin() {
   const [recentActivity, setRecentActivity] = useState([]); // recent activity
   const [isLoading, setIsLoading] = useState(true); // loading state
 
-  // Fetch logged-in user data
+  // Fetch logged-in user data on every mount (navigating back re-mounts)
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -146,7 +148,7 @@ export default function Admin() {
         setIsLoading(true); // set loading state
         const userId = user.id; // get user id
         const userTeam = user.team || ''; // get user team
-        const response = await fetch(`/api/public/dashboard?userId=${userId}&team=${encodeURIComponent(userTeam)}`); // fetch dashboard data
+        const response = await fetch(`/api/public/dashboard?userId=${userId}&team=${encodeURIComponent(userTeam)}`, { cache: 'no-store' }); // fetch dashboard data, no cache
 
         if (!response.ok) { // if response is not ok
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -208,10 +210,7 @@ export default function Admin() {
 
       {/* Quick Actions */}
       <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm mt-15 mb-8">
-        <div className="mb-4">
-          <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-1.5">{t("dashboard.quickActions.title")}</h2>
-          <div className="w-8 h-1 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500" />
-        </div>
+        <SectionHeader icon={Zap} title={t("dashboard.quickActions.title")} />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <ActionButton onClick={() => navigate(`/admin/tickets`)}>
             {t("dashboard.quickActions.viewAllTickets")}
@@ -233,10 +232,7 @@ export default function Admin() {
 
       {/* Recent Activity */}
       <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <div className="mb-4">
-          <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-1.5">{t("dashboard.recentActivity.title")}</h2>
-          <div className="w-8 h-1 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500" />
-        </div>
+        <SectionHeader icon={CalendarClock} title={t("dashboard.recentActivity.title")} />
         <div>
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-8">

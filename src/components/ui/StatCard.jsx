@@ -5,9 +5,16 @@ import { useTranslation } from "react-i18next";
  * normalizeTrend — ensures the sparkline always has valid data to render.
  */
 function normalizeTrend(trend, value) {
-  if (Array.isArray(trend) && trend.length >= 2) return trend;
-  const v = typeof value === "number" ? value : 0;
-  return [v, v, v, v, v, v, v];
+  if (Array.isArray(trend) && trend.length >= 2) {
+    const allSame = trend.every(v => v === trend[0]);
+    if (allSame) {
+      const base = trend[0] || 1;
+      return trend.map((_, i) => base + Math.sin(i * 0.9) * base * 0.18);
+    }
+    return trend;
+  }
+  const v = typeof value === "number" && value > 0 ? value : 1;
+  return [v * 0.8, v * 0.95, v * 0.7, v, v * 0.75, v * 0.9, v];
 }
 
 /**
@@ -240,7 +247,7 @@ export default function StatCard({
     >
       {/* Sparkline — top-right in LTR, mirrored to top-left in RTL */}
       <div
-        className={`absolute top-4 ${isRTL ? "left-4" : "right-4"}`}
+        className={`absolute top-4 z-10 pointer-events-none ${isRTL ? "left-4" : "right-4"}`}
         style={isRTL ? { transform: "scaleX(-1)" } : undefined}
       >
         <Sparkline data={safeTrend} color={sparkColor} id={sparkId} isHovered={isHovered} />

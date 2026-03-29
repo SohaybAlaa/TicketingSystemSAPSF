@@ -11,6 +11,9 @@ import {
   Loader2,
   ClockAlert,
   Tags,
+  BarChart3,
+  Target,
+  Users,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import AdminLayout from "@layouts/AdminLayout"; // Layout wrapper
@@ -653,6 +656,7 @@ export default function Analytics() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8"> 
         {/* Card 1: Resolution Metrics */}
         <InfoMetricCard
+          icon={Target}
           title={t(
             "analyticsMenu.additionalMetrics.resolutionMetrics",
             "Resolution Metrics",
@@ -701,6 +705,7 @@ export default function Analytics() {
 
         {/* Card 2: SLA Metrics */}
         <InfoMetricCard
+          icon={ShieldAlert}
           title={t("analyticsMenu.additionalMetrics.slaMetrics", "SLA Metrics")}
           items={[
             {
@@ -736,6 +741,7 @@ export default function Analytics() {
 
         {/* Card 3: Workload Distribution */}
         <InfoMetricCard
+          icon={Users}
           title={t(
             "analyticsMenu.additionalMetrics.workloadDistribution",
             "Workload Distribution",
