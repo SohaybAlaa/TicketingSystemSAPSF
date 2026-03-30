@@ -339,3 +339,23 @@ export const MOCK_GROUPS = [
     ],
   },
 ];
+
+// Employee Directory 
+//   Fields:
+//   id, employeeId, name, entityCode, entityName, location,
+//   department, employeeClass, manager, email, mobileNumber
+
+export const MOCK_EMPLOYEES = [
+  { id:1,  employeeId:'EMP-0001', name:'Sara Al-Mansoori', entityCode:'E001', entityName:'HQ Corp',      location:'Riyadh',    department:'HR & People Ops', employeeClass:'Full-time',  manager:'Ahmad Khalil',    email:'sara.mansoori@hqcorp.com',  mobileNumber:'+966501234567' },
+  { id:2,  employeeId:'EMP-0002', name:'Khalid Jaber',     entityCode:'E002', entityName:'Regional Ltd', location:'Jeddah',    department:'Finance',          employeeClass:'Part-time',  manager:'Leila Nasser',    email:'k.jaber@regional.com',      mobileNumber:'+966502345678' },
+  { id:3,  employeeId:'EMP-0003', name:'Lina Tran',        entityCode:'E001', entityName:'HQ Corp',      location:'Riyadh',    department:'IT & Systems',     employeeClass:'Contractor', manager:'Omar Farouk',     email:'l.tran@hqcorp.com',         mobileNumber:'+966503456789' },
+  { id:4,  employeeId:'EMP-0004', name:'Marcus Reyes',     entityCode:'E002', entityName:'Regional Ltd', location:'Dammam',    department:'Operations',       employeeClass:'Full-time',  manager:'Leila Nasser',    email:'m.reyes@regional.com',      mobileNumber:'+966504567890' },
+  { id:5,  employeeId:'EMP-0005', name:'Nour Atassi',      entityCode:'E001', entityName:'HQ Corp',      location:'Riyadh',    department:'Legal',            employeeClass:'Full-time',  manager:'Ahmad Khalil',    email:'n.atassi@hqcorp.com',       mobileNumber:'+966505678901' },
+  { id:6,  employeeId:'EMP-0006', name:'James Okafor',     entityCode:'E003', entityName:'West Branch',  location:'Mecca',     department:'Sales',            employeeClass:'Full-time',  manager:'Fatima Al-Rashid',email:'j.okafor@westbranch.com',   mobileNumber:'+966506789012' },
+  { id:7,  employeeId:'EMP-0007', name:'Aisha Benali',     entityCode:'E001', entityName:'HQ Corp',      location:'Riyadh',    department:'Marketing',        employeeClass:'Full-time',  manager:'Ahmad Khalil',    email:'a.benali@hqcorp.com',       mobileNumber:'+966507890123' },
+  { id:8,  employeeId:'EMP-0008', name:'David Park',       entityCode:'E002', entityName:'Regional Ltd', location:'Jeddah',    department:'IT & Systems',     employeeClass:'Contractor', manager:'Omar Farouk',     email:'d.park@regional.com',       mobileNumber:'+966508901234' },
+  { id:9,  employeeId:'EMP-0009', name:'Rania Mahmoud',    entityCode:'E003', entityName:'West Branch',  location:'Mecca',     department:'Finance',          employeeClass:'Full-time',  manager:'Fatima Al-Rashid',email:'r.mahmoud@westbranch.com',  mobileNumber:'+966509012345' },
+  { id:10, employeeId:'EMP-0010', name:'Tom Fischer',      entityCode:'E001', entityName:'HQ Corp',      location:'Riyadh',    department:'Operations',       employeeClass:'Part-time',  manager:'Ahmad Khalil',    email:'t.fischer@hqcorp.com',      mobileNumber:'+966510123456' },
+  { id:11, employeeId:'EMP-0011', name:'Yara Saleh',       entityCode:'E002', entityName:'Regional Ltd', location:'Dammam',    department:'HR & People Ops',  employeeClass:'Full-time',  manager:'Leila Nasser',    email:'y.saleh@regional.com',      mobileNumber:'+966511234567' },
+  { id:12, employeeId:'EMP-0012', name:'Carlos Mendez',    entityCode:'E003', entityName:'West Branch',  location:'Mecca',     department:'Sales',            employeeClass:'Full-time',  manager:'Fatima Al-Rashid',email:'c.mendez@westbranch.com',   mobileNumber:'+966512345678' },
+]

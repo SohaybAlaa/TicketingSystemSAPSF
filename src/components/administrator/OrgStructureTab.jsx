@@ -110,21 +110,15 @@ export default function OrgStructureTab() {
   // Alert notifications: Stores active alerts to display to user
   const [alerts, setAlerts] = useState([])
 
-  // Helper: Add an alert notification that auto-dismisses after ALERT_AUTO_DISMISS_MS
+  // Helper: Add an alert notification that auto-dismisses based on type
   const pushAlert = useCallback((type, title, message) => {
-    const id = Date.now() // Use timestamp as unique ID
+    const id = Date.now() + Math.random()
     setAlerts(prev => [{ id, type, title, message }, ...prev])
+    const durations = { success: 3000, warning: 5000, error: 7000 }
+    setTimeout(() => {
+      setAlerts(prev => prev.filter(a => a.id !== id))
+    }, durations[type] || ALERT_AUTO_DISMISS_MS)
   }, [])
-
-  // Effect: Auto-dismiss alerts after delay (with cleanup to prevent memory leaks)
-  useEffect(() => {
-    if (alerts.length === 0) return
-    const oldestAlert = alerts[alerts.length - 1]
-    const timer = setTimeout(() => {
-      setAlerts(prev => prev.slice(0, -1))
-    }, ALERT_AUTO_DISMISS_MS)
-    return () => clearTimeout(timer) // Cleanup: clear timer if component unmounts or alerts change
-  }, [alerts])
 
   // Helper: Manually remove an alert by ID
   const removeAlert = useCallback((id) => {

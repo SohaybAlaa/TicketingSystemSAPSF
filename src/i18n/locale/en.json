@@ -253,6 +253,42 @@
         "dateOrder": "'To' date must be after 'From' date"
       }
     },
+    "employeeForm": {
+      "addTitle": "Add Employee",
+      "editTitle": "Edit Employee",
+      "addSubtitle": "Add a new employee to the directory",
+      "editSubtitle": "Update employee details",
+      "employeeId": "Employee ID",
+      "name": "Employee Name",
+      "namePlaceholder": "Full name",
+      "email": "Email",
+      "emailPlaceholder": "name@example.com",
+      "entityCode": "Entity Code",
+      "entityName": "Entity Name",
+      "department": "Department",
+      "employeeClass": "Employee Class",
+      "manager": "Manager",
+      "cancel": "Cancel",
+      "add": "Add Employee",
+      "saveChanges": "Save Changes",
+      "classes": {
+        "Full-time": "Full-time",
+        "Part-time": "Part-time",
+        "Contractor": "Contractor"
+      },
+      "errors": {
+        "employeeIdRequired": "Employee ID is required",
+        "employeeIdTooLong": "Employee ID must not exceed 20 characters",
+        "nameRequired": "Employee name is required",
+        "nameTooShort": "Name must be at least 2 characters",
+        "nameTooLong": "Name must not exceed 100 characters",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "entityCodeRequired": "Entity code is required",
+        "entityNameRequired": "Entity name is required",
+        "departmentRequired": "Department is required"
+      }
+    },
     "deleteConfirm": {
       "deleteTicket": "Delete Ticket",
       "deleteTickets": "Delete {{count}} Tickets",
@@ -262,6 +298,8 @@
       "deleteGroups": "Delete {{count}} Groups",
       "deleteMember": "Remove Member",
       "deleteMembers": "Remove {{count}} Members",
+      "deleteEmployee": "Delete Employee",
+      "deleteEmployees": "Delete {{count}} Employees",
       "cannotUndo": "This action cannot be undone",
       "confirmTicket": "Are you sure you want to delete ticket <strong>{{itemName}}</strong>?",
       "confirmTickets": "Are you sure you want to delete these {{count}} tickets?",
@@ -271,6 +309,8 @@
       "confirmGroups": "Are you sure you want to delete these {{count}} groups?",
       "confirmMember": "Are you sure you want to remove <strong>{{itemName}}</strong>?",
       "confirmMembers": "Are you sure you want to remove these {{count}} members?",
+      "confirmEmployee": "Are you sure you want to delete <strong>{{itemName}}</strong>?",
+      "confirmEmployees": "Are you sure you want to delete these {{count}} employees?",
       "cancel": "Cancel",
       "delete": "Delete"
     }
@@ -551,7 +591,41 @@
       "employeeDirectory": {
         "label": "Employee Directory",
         "welcome": "Welcome to Employee Directory",
-        "desc": "View and manage employee records, roles, and personal information."
+        "desc": "View and manage employee records, roles, and personal information.",
+        "title": "Employee directory",
+        "employeeDetails": "Employee Details",
+        "selectEmployee": "Select an Employee",
+        "selectEmployeeTip": "Click on any row in the table above to view employee details",
+        "searchPlaceholder": "Search...",
+        "addEmployee": "Add employee",
+        "totalEmployees": "Total Employees",
+        "departments": "Departments",
+        "entities": "Entities",
+        "managers": "Managers",
+        "columns": {
+          "employeeId": "Employee ID",
+          "name": "Name",
+          "entityCode": "Entity Code",
+          "entityName": "Entity Name",
+          "department": "Department",
+          "employeeClass": "Employee Class",
+          "manager": "Manager",
+          "email": "Email",
+          "mobileNumber": "Mobile Number",
+          "action": "Action"
+        },
+        "overlay": {
+          "noEmployees": "No employees found",
+          "noEmployeesSub": "Add your first employee or adjust your search filters"
+        },
+        "alerts": {
+          "created": "Employee added",
+          "createdMsg": "{{name}} has been added.",
+          "updated": "Employee updated",
+          "updatedMsg": "{{name}} has been updated.",
+          "deleted": "Employee removed",
+          "deletedMsg": "{{name}} has been removed."
+        }
       },
       "ticketingRule": {
         "label": "Ticketing Rule",

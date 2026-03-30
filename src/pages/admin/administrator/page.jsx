@@ -3,13 +3,14 @@ import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Network,
-  Users,
   SlidersHorizontal,
   Timer,
   BellDot,
+  BookUser,
 } from 'lucide-react'
 
 import OrgStructureTab from '@components/administrator/OrgStructureTab'
+import EmployeeDirectoryTab from '@components/administrator/EmployeeDirectoryTab'
 
 export default function Administrator() {
   // Get translation function (t) and i18n instance for multi-language support
@@ -29,7 +30,7 @@ export default function Administrator() {
     {
       id: 'employee-profile',
       label: t('administratorMenu.tabs.employeeDirectory.label'),
-      icon: Users,
+      icon: BookUser,
       welcome: t('administratorMenu.tabs.employeeDirectory.welcome'),
       desc: t('administratorMenu.tabs.employeeDirectory.desc'),
     },
@@ -135,8 +136,11 @@ export default function Administrator() {
           {/* Organization Structure — real content */}
           {activeTab === 'org-structure' && <OrgStructureTab />}
 
+          {/* Employee Directory — real content */}
+          {activeTab === 'employee-profile' && <EmployeeDirectoryTab />}
+
           {/* Other tabs — placeholder welcome cards */}
-          {activeTab !== 'org-structure' && activeData && (
+          {activeTab !== 'org-structure' && activeTab !== 'employee-profile' && activeData && (
             <div className="flex flex-col items-center justify-center py-16 gap-5 text-center">
               <div className="w-16 h-16 rounded-2xl bg-yellow-50 border border-yellow-200 flex items-center justify-center shadow-sm">
                 <activeData.icon className="w-8 h-8 text-yellow-500" />

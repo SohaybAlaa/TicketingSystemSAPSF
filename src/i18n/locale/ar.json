@@ -253,6 +253,42 @@
         "dateOrder": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية"
       }
     },
+    "employeeForm": {
+      "addTitle": "إضافة موظف",
+      "editTitle": "تعديل الموظف",
+      "addSubtitle": "إضافة موظف جديد إلى الدليل",
+      "editSubtitle": "تحديث تفاصيل الموظف",
+      "employeeId": "معرف الموظف",
+      "name": "اسم الموظف",
+      "namePlaceholder": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "name@example.com",
+      "entityCode": "رمز الكيان",
+      "entityName": "اسم الكيان",
+      "department": "القسم",
+      "employeeClass": "فئة الموظف",
+      "manager": "المدير",
+      "cancel": "إلغاء",
+      "add": "إضافة موظف",
+      "saveChanges": "حفظ التغييرات",
+      "classes": {
+        "Full-time": "بدوام كامل",
+        "Part-time": "بدوام جزئي",
+        "Contractor": "متعاقد"
+      },
+      "errors": {
+        "employeeIdRequired": "معرف الموظف مطلوب",
+        "employeeIdTooLong": "يجب ألا يتجاوز معرف الموظف 20 حرفاً",
+        "nameRequired": "اسم الموظف مطلوب",
+        "nameTooShort": "يجب أن يكون الاسم حرفين على الأقل",
+        "nameTooLong": "يجب ألا يتجاوز الاسم 100 حرف",
+        "emailRequired": "البريد الإلكتروني مطلوب",
+        "emailInvalid": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+        "entityCodeRequired": "رمز الكيان مطلوب",
+        "entityNameRequired": "اسم الكيان مطلوب",
+        "departmentRequired": "القسم مطلوب"
+      }
+    },
     "deleteConfirm": {
       "deleteTicket": "حذف التذكرة",
       "deleteTickets": "حذف {{count}} تذاكر",
@@ -262,6 +298,8 @@
       "deleteGroups": "حذف {{count}} مجموعات",
       "deleteMember": "إزالة العضو",
       "deleteMembers": "إزالة {{count}} أعضاء",
+      "deleteEmployee": "حذف الموظف",
+      "deleteEmployees": "حذف {{count}} موظفين",
       "cannotUndo": "لا يمكن التراجع عن هذا الإجراء",
       "confirmTicket": "هل أنت متأكد أنك تريد حذف التذكرة <strong>{{itemName}}</strong>؟",
       "confirmTickets": "هل أنت متأكد أنك تريد حذف هذه {{count}} تذاكر؟",
@@ -271,6 +309,8 @@
       "confirmGroups": "هل أنت متأكد أنك تريد حذف هذه {{count}} مجموعات؟",
       "confirmMember": "هل أنت متأكد أنك تريد إزالة <strong>{{itemName}}</strong>؟",
       "confirmMembers": "هل أنت متأكد أنك تريد إزالة هذه {{count}} أعضاء؟",
+      "confirmEmployee": "هل أنت متأكد أنك تريد حذف <strong>{{itemName}}</strong>؟",
+      "confirmEmployees": "هل أنت متأكد أنك تريد حذف هذه {{count}} موظفين؟",
       "cancel": "إلغاء",
       "delete": "حذف"
     }
@@ -551,7 +591,41 @@
       "employeeDirectory": {
         "label": "دليل الموظفين",
         "welcome": "مرحباً بك في دليل الموظفين",
-        "desc": "عرض وإدارة سجلات الموظفين والأدوار والمعلومات الشخصية."
+        "desc": "عرض وإدارة سجلات الموظفين والأدوار والمعلومات الشخصية.",
+        "title": "دليل الموظفين",
+        "employeeDetails": "تفاصيل الموظف",
+        "selectEmployee": "اختر موظفاً",
+        "selectEmployeeTip": "انقر على أي صف في الجدول أعلاه لعرض تفاصيل الموظف",
+        "searchPlaceholder": "البحث...",
+        "addEmployee": "إضافة موظف",
+        "totalEmployees": "إجمالي الموظفين",
+        "departments": "الأقسام",
+        "entities": "الكيانات",
+        "managers": "مديرين ",
+        "columns": {
+          "employeeId": "رقم الموظف",
+          "name": "الاسم",
+          "entityCode": "رمز الكيان",
+          "entityName": "اسم الكيان",
+          "department": "القسم",
+          "employeeClass": "فئة الموظف",
+          "manager": "المدير",
+          "email": "البريد الإلكتروني",
+          "mobileNumber": "رقم الهاتف المحمول",
+          "action": "الإجراء"
+        },
+        "overlay": {
+          "noEmployees": "لم يتم العثور على موظفين",
+          "noEmployeesSub": "أضف موظفك الأول أو اضبط مرشحات البحث"
+        },
+        "alerts": {
+          "created": "تمت إضافة الموظف",
+          "createdMsg": "تمت إضافة {{name}} بنجاح.",
+          "updated": "تم تحديث الموظف",
+          "updatedMsg": "تم تحديث {{name}} بنجاح.",
+          "deleted": "تم حذف الموظف",
+          "deletedMsg": "تم حذف {{name}}."
+        }
       },
       "ticketingRule": {
         "label": "قواعد التذاكر",
