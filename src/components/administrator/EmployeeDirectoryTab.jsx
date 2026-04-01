@@ -39,8 +39,8 @@ const COLUMN_CONFIG = [
 // - getValue: function that receives the employees array and returns the number to display
 const STATS_CONFIG = [
   { titleKey: 'totalEmployees', fallback: 'Total Employees', icon: BookUser,          iconBoxColor: '#eab308', getValue: (emps) => emps.length },
-  { titleKey: 'departments',    fallback: 'Departments',     icon: Building2,         iconBoxColor: '#3b82f6', getValue: (emps) => new Set(emps.map(e => e.department)).size },
-  { titleKey: 'entities',       fallback: 'Entities',        icon: Building,          iconBoxColor: '#22c55e', getValue: (emps) => new Set(emps.map(e => e.entityName)).size },
+  { titleKey: 'departments',    fallback: 'Departments',     icon: Building2,         iconBoxColor: '#22c55e', getValue: (emps) => new Set(emps.map(e => e.department)).size },
+  { titleKey: 'entities',       fallback: 'Entities',        icon: Building,          iconBoxColor: '#3b82f6', getValue: (emps) => new Set(emps.map(e => e.entityName)).size },
   { titleKey: 'managers',       fallback: 'Managers',        icon: BriefcaseBusiness, iconBoxColor: '#a855f7', getValue: (emps) => new Set(emps.map(e => e.manager).filter(Boolean)).size },
 ]
 

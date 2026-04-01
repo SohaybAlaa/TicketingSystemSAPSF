@@ -359,3 +359,114 @@ export const MOCK_EMPLOYEES = [
   { id:11, employeeId:'EMP-0011', name:'Yara Saleh',       entityCode:'E002', entityName:'Regional Ltd', location:'Dammam',    department:'HR & People Ops',  employeeClass:'Full-time',  manager:'Leila Nasser',    email:'y.saleh@regional.com',      mobileNumber:'+966511234567' },
   { id:12, employeeId:'EMP-0012', name:'Carlos Mendez',    entityCode:'E003', entityName:'West Branch',  location:'Mecca',     department:'Sales',            employeeClass:'Full-time',  manager:'Fatima Al-Rashid',email:'c.mendez@westbranch.com',   mobileNumber:'+966512345678' },
 ]
+
+// ticketing rule
+export const MOCK_TICKETING_RULES = [
+  {
+    id: 1,
+    entity: 'Acme Corp',
+    supportCategory: 'IT Support',
+    subcategory: 'Hardware',
+    employeeClass: 'Full-time',
+    priority: 'High',
+    group: 'Level 1 Support',
+    agent: 'John Smith',
+  },
+  {
+    id: 2,
+    entity: 'Acme Corp',
+    supportCategory: 'IT Support',
+    subcategory: 'Software',
+    employeeClass: 'Full-time',
+    priority: 'Medium',
+    group: 'Level 2 Support',
+    agent: 'Sara Lee',
+  },
+  {
+    id: 3,
+    entity: 'Globex',
+    supportCategory: 'HR',
+    subcategory: 'Payroll',
+    employeeClass: 'Contractor',
+    priority: 'Low',
+    group: 'HR Team',
+    agent: 'Mike Johnson',
+  },
+  {
+    id: 4,
+    entity: 'Globex',
+    supportCategory: 'Facilities',
+    subcategory: 'Maintenance',
+    employeeClass: 'Part-time',
+    priority: 'Medium',
+    group: 'Facilities Team',
+    agent: 'Anna White',
+  },
+  {
+    id: 5,
+    entity: 'Initech',
+    supportCategory: 'IT Support',
+    subcategory: 'Network',
+    employeeClass: 'Full-time',
+    priority: 'Critical',
+    group: 'Level 3 Support',
+    agent: 'David Brown',
+  },
+  {
+    id: 6,
+    entity: 'Initech',
+    supportCategory: 'HR',
+    subcategory: 'Onboarding',
+    employeeClass: 'Full-time',
+    priority: 'Low',
+    group: 'HR Team',
+    agent: 'Linda Green',
+  },
+  {
+    id: 7,
+    entity: 'Umbrella Ltd',
+    supportCategory: 'Finance',
+    subcategory: 'Expenses',
+    employeeClass: 'Contractor',
+    priority: 'High',
+    group: 'Finance Team',
+    agent: 'Chris Black',
+  },
+  {
+    id: 8,
+    entity: 'Cyberdyne',
+    supportCategory: 'Legal',
+    subcategory: 'Compliance',
+    employeeClass: 'Full-time',
+    priority: 'Critical',
+    group: 'Legal Team',
+    agent: 'Rachel Stone',
+  },
+  {
+    id: 9,
+    entity: 'Acme Corp',
+    supportCategory: 'Facilities',
+    subcategory: 'Maintenance',
+    employeeClass: 'Part-time',
+    priority: 'Low',
+    group: 'Facilities Team',
+    agent: '',
+  },
+  {
+    id: 10,
+    entity: 'Globex',
+    supportCategory: 'IT Support',
+    subcategory: 'Software',
+    employeeClass: 'Intern',
+    priority: 'Medium',
+    group: 'Level 1 Support',
+    agent: 'Nora Hassan',
+  },
+]
+
+export const ENTITY_OPTIONS         = ['Acme Corp', 'Globex', 'Initech', 'Umbrella Ltd', 'Cyberdyne']
+export const CATEGORY_OPTIONS       = ['IT Support', 'HR', 'Facilities', 'Finance', 'Legal']
+export const SUBCATEGORY_OPTIONS    = ['Hardware', 'Software', 'Network', 'Payroll', 'Onboarding', 'Maintenance', 'Expenses', 'Compliance']
+export const EMPLOYEE_CLASS_OPTIONS = ['Full-time', 'Part-time', 'Contractor', 'Intern']
+export const PRIORITY_OPTIONS       = ['Low', 'Medium', 'High', 'Critical']
+export const GROUP_OPTIONS          = ['Level 1 Support', 'Level 2 Support', 'Level 3 Support', 'HR Team', 'Finance Team', 'Facilities Team', 'Legal Team']

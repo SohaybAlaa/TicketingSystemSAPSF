@@ -35,7 +35,7 @@ export const COLOR_MAP = {
   CRITICAL: "#ef4444",
   
   // User type colors
-  AGENT: "#22c55e",
+  AGENT: "#9333ea",
   MANAGER: "#3b82f6",
   SUPERVISOR: "#fc6900",
   
@@ -117,8 +117,7 @@ const Tag = ({ type, value, t, isRTL = false, className = "", icon, showIcon = f
       translationKey = `ticketsPage.statuses.${value}`;
     }
   } else if (type === 'userType') {
-    // For user types, just return the value as-is (no translation for now)
-    translationKey = null;
+    translationKey = `administratorMenu.userTypes.${value}`;
   } else {
     // For priorities, check if we're in ticket details page
     const isTicketDetailsPage = window.location.pathname.includes('/tickets/');

@@ -26,26 +26,29 @@ export const formatDate = (dateString) => {
  */
 export const resolveRowStatus = (item) => {
   if (!item) return 'Inactive';
-  
-  // If the item has an endDate or expiryDate, check if it's still valid
-  if (item.endDate || item.expiryDate) {
-    const endDate = new Date(item.endDate || item.expiryDate);
-    const now = new Date();
-    return endDate >= now ? 'Active' : 'Inactive';
+
+  const now = new Date();
+
+  // Resolve end date from any known field name
+  const endRaw = item.validTo ?? item.to ?? item.endDate ?? item.expiryDate ?? null;
+  // Resolve start date from any known field name
+  const startRaw = item.validFrom ?? item.from ?? item.startDate ?? null;
+
+  if (endRaw) {
+    const endDate = new Date(endRaw);
+    if (!isNaN(endDate) && endDate < now) return 'Inactive';
   }
-  
-  // If the item has a startDate, check if it has started
-  if (item.startDate) {
-    const startDate = new Date(item.startDate);
-    const now = new Date();
-    return startDate <= now ? 'Active' : 'Inactive';
+
+  if (startRaw) {
+    const startDate = new Date(startRaw);
+    if (!isNaN(startDate) && startDate > now) return 'Inactive';
   }
-  
+
   // If the item has an isActive boolean property
   if (typeof item.isActive === 'boolean') {
     return item.isActive ? 'Active' : 'Inactive';
   }
-  
+
   // Default to Active if no date information is available
   return 'Active';
 };

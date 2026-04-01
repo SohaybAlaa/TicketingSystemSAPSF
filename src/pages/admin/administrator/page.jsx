@@ -11,6 +11,7 @@ import {
 
 import OrgStructureTab from '@components/administrator/OrgStructureTab'
 import EmployeeDirectoryTab from '@components/administrator/EmployeeDirectoryTab'
+import TicketingRulesTab from '@components/administrator/TicketingRuleTab'
 
 export default function Administrator() {
   // Get translation function (t) and i18n instance for multi-language support
@@ -36,10 +37,10 @@ export default function Administrator() {
     },
     {
       id: 'ticketing-rule',
-      label: t('administratorMenu.tabs.ticketingRule.label'),
+      label: t('administratorMenu.tabs.ticketingRules.label'),
       icon: SlidersHorizontal,
-      welcome: t('administratorMenu.tabs.ticketingRule.welcome'),
-      desc: t('administratorMenu.tabs.ticketingRule.desc'),
+      welcome: t('administratorMenu.tabs.ticketingRules.welcome'),
+      desc: t('administratorMenu.tabs.ticketingRules.desc'),
     },
     {
       id: 'sla',
@@ -138,9 +139,12 @@ export default function Administrator() {
 
           {/* Employee Directory — real content */}
           {activeTab === 'employee-profile' && <EmployeeDirectoryTab />}
+          
+          {/* Ticketing Rule — real content */}
+          {activeTab === 'ticketing-rule' && <TicketingRulesTab />}
 
           {/* Other tabs — placeholder welcome cards */}
-          {activeTab !== 'org-structure' && activeTab !== 'employee-profile' && activeData && (
+          {activeTab !== 'org-structure' && activeTab !== 'employee-profile' && activeTab !== 'ticketing-rule' && activeData && (
             <div className="flex flex-col items-center justify-center py-16 gap-5 text-center">
               <div className="w-16 h-16 rounded-2xl bg-yellow-50 border border-yellow-200 flex items-center justify-center shadow-sm">
                 <activeData.icon className="w-8 h-8 text-yellow-500" />

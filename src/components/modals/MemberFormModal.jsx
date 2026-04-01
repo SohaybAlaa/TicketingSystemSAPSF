@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import { UserPlus, UserCog } from "lucide-react";
+import DaisySelect from '@components/ui/DaisySelect';
 
 const USER_TYPES = ["Agent", "Manager", "Supervisor"];
 
@@ -188,18 +189,16 @@ export default function MemberFormModal({ isOpen, onClose, onSave, initial = nul
 
           <div>
             <label style={labelStyle}>{t("modals.memberForm.userType", "User Type")}</label>
-            <select
+            <DaisySelect
               value={form.userType}
-              onChange={(e) => set("userType", e.target.value)}
-              style={{ ...inputStyle(false), cursor: "pointer" }}
-              {...focusHandlers("userType")}
-            >
-              {USER_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {t(`modals.memberForm.userTypes.${type}`, type)}
-                </option>
-              ))}
-            </select>
+              options={USER_TYPES}
+              onChange={(val) => set("userType", val)}
+              hasError={!!errors.userType}
+              translationPrefix="modals.memberForm.userTypes"
+              t={t}
+              isRTL={isRTL}
+            />
+            {errors.userType && <p style={errorStyle}>{errors.userType}</p>}
           </div>
         </div>
 

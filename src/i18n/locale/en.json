@@ -16,6 +16,9 @@
     "title": "Klenka - HR Support System",
     "copyright": " 2025 All rights reserved."
   },
+  "common": {
+    "selectPlaceholder": "Select…"
+  },
   "adminName": "Emad Omar",
   "usernames": {
     "Emad Omar": "Emad Omar",
@@ -235,6 +238,7 @@
       "userType": "User Type",
       "from": "Valid From",
       "to": "Valid To",
+      "selectPlaceholder": "Select…",
       "cancel": "Cancel",
       "add": "Add Member",
       "saveChanges": "Save Changes",
@@ -253,6 +257,24 @@
         "dateOrder": "'To' date must be after 'From' date"
       }
     },
+    "ticketingRuleForm": {
+      "newTitle": "New Ticketing Rule",
+      "editTitle": "Edit Ticketing Rule",
+      "newSubtitle": "Fill in the details to create a new ticketing rule",
+      "editSubtitle": "Update the details of this ticketing rule",
+      "entity": "Entity",
+      "supportCategory": "Support Category",
+      "subcategory": "Subcategory",
+      "group": "Group",
+      "agent": "Agent",
+      "agentPlaceholder": "Agent name (optional)",
+      "priority": "Priority",
+      "employeeClass": "Employee Class",
+      "selectPlaceholder": "Select…",
+      "cancel": "Cancel",
+      "create": "Create Rule",
+      "saveChanges": "Save Changes"
+    },
     "employeeForm": {
       "addTitle": "Add Employee",
       "editTitle": "Edit Employee",
@@ -268,6 +290,7 @@
       "department": "Department",
       "employeeClass": "Employee Class",
       "manager": "Manager",
+      "selectPlaceholder": "Select…",
       "cancel": "Cancel",
       "add": "Add Employee",
       "saveChanges": "Save Changes",
@@ -352,7 +375,9 @@
       "Pending Employee": "Pending Employee",
       "Pending Third Party": "Pending Third Party",
       "Completed": "Completed",
-      "Closed": "Closed"
+      "Closed": "Closed",
+      "Active": "Active",
+      "Inactive": "Inactive"
     },
     "sla": {
       "overdue": "OVERDUE"
@@ -631,6 +656,52 @@
         "label": "Ticketing Rule",
         "welcome": "Welcome to Ticketing Rule",
         "desc": "Configure ticket routing, assignment rules, priorities, and escalation paths."
+      },
+      "ticketingRules": {
+        "label": "Ticketing Rules",
+        "welcome": "Welcome to Ticketing Rules",
+        "desc": "Configure ticket routing, assignment rules, priorities, and escalation paths.",
+        "title": "Ticketing Rules",
+        "searchPlaceholder": "Search rules...",
+        "addRule": "Add Rule",
+        "totalRules": "Total Rules",
+        "categories": "Categories",
+        "groups": "Groups",
+        "agents": "Agents",
+        "columns": {
+          "entity": "Entity",
+          "supportCategory": "Support Category",
+          "subcategory": "Subcategory",
+          "group": "Group",
+          "agent": "Agent",
+          "priority": "Priority",
+          "employeeClass": "Employee Class",
+          "action": "Action"
+        },
+        "overlay": {
+          "noRules": "No ticketing rules found",
+          "noRulesSub": "Add your first rule or adjust your search filters"
+        },
+        "alerts": {
+          "created": "Rule added",
+          "createdMsg": "New ticketing rule has been added.",
+          "updated": "Rule updated",
+          "updatedMsg": "Ticketing rule has been updated.",
+          "deleted": "Rule removed",
+          "deletedMsg": "{{supportCategory}} / {{subcategory}} rule has been removed."
+        },
+        "priorities": {
+          "Low": "Low",
+          "Medium": "Medium",
+          "High": "High",
+          "Critical": "Critical"
+        },
+        "employeeClasses": {
+          "Full-time": "Full-time",
+          "Part-time": "Part-time",
+          "Contractor": "Contractor",
+          "Intern": "Intern"
+        }
       },
       "sla": {
         "label": "SLA",

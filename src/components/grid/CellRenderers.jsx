@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import Tag from '@components/ui/Tag'
 import ActionIconButton from '@components/ui/ActionIconButton'
 import { Pencil, Trash2 } from 'lucide-react'
@@ -11,9 +12,11 @@ import { formatDate, resolveRowStatus } from '@utils/dateUtils'
 // Props: data - the row data object
 // Returns: Centered Tag component showing the row's status with an icon
 function StatusCellRendererBase({ data }) {
+  const { t, i18n } = useTranslation()
+  const isRTL = i18n.language === 'ar'
   return (
     <div className="flex items-center justify-center h-full w-full absolute inset-0">
-      <Tag type="status" value={resolveRowStatus(data)} showIcon />
+      <Tag type="status" value={resolveRowStatus(data)} showIcon t={t} isRTL={isRTL} />
     </div>
   )
 }
@@ -22,9 +25,11 @@ function StatusCellRendererBase({ data }) {
 // Props: value - the user type string
 // Returns: Centered Tag component showing the user type with an icon
 function UserTypeCellRendererBase({ value }) {
+  const { t, i18n } = useTranslation()
+  const isRTL = i18n.language === 'ar'
   return (
     <div className="flex items-center justify-center h-full w-full absolute inset-0">
-      <Tag type="userType" value={value} showIcon />
+      <Tag type="userType" value={value} showIcon t={t} isRTL={isRTL} />
     </div>
   )
 }
@@ -38,11 +43,11 @@ function DateCellRendererBase({ value }) {
 
 // Text Cell Renderer: Displays plain text content with skeleton loading support
 // Props: props.value - the text to display, props.data - row data, props.node - ag-Grid node info
-// Returns: SkeletonBar if row is loading (_skeleton flag), otherwise plain text
+// Returns: SkeletonBar if row is loading (_skeleton flag), otherwise plain text or "---" if empty
 // Note: This is the only renderer NOT wrapped with withSkeleton HOC (handles its own skeleton logic)
 function TextCellRendererRaw(props) {
   if (props.data?._skeleton) return <SkeletonBar rowIndex={props.node?.rowIndex ?? 0} centered />
-  return <span>{props.value}</span>
+  return <div className="flex items-center justify-center h-full w-full"><span>{props.value ? props.value : '---'}</span></div>
 }
 
 // Actions Cell Renderer: Displays edit and delete action buttons

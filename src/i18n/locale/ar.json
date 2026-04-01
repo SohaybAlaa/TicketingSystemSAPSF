@@ -16,6 +16,9 @@
     "title": "كلينكا - نظام الموارد البشرية ",
     "copyright": "جميع الحقوق محفوظة."
   },
+  "common": {
+    "selectPlaceholder": "اختر…"
+  },
   "adminName": "عماد عمر",
   "usernames": {
     "Emad Omar": "عماد عمر",
@@ -235,6 +238,7 @@
       "userType": "نوع المستخدم",
       "from": "صالح من",
       "to": "صالح حتى",
+      "selectPlaceholder": "اختر…",
       "cancel": "إلغاء",
       "add": "إضافة عضو",
       "saveChanges": "حفظ التغييرات",
@@ -253,6 +257,24 @@
         "dateOrder": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية"
       }
     },
+    "ticketingRuleForm": {
+      "newTitle": "قاعدة تذاكر جديدة",
+      "editTitle": "تعديل قاعدة التذاكر",
+      "newSubtitle": "املأ التفاصيل لإنشاء قاعدة تذاكر جديدة",
+      "editSubtitle": "تحديث تفاصيل قاعدة التذاكر",
+      "entity": "الجهة",
+      "supportCategory": "فئة الدعم",
+      "subcategory": "الفئة الفرعية",
+      "group": "المجموعة",
+      "agent": "الموظف",
+      "agentPlaceholder": "اسم الموظف (اختياري)",
+      "priority": "الأولوية",
+      "employeeClass": "فئة الموظف",
+      "selectPlaceholder": "اختر…",
+      "cancel": "إلغاء",
+      "create": "إنشاء القاعدة",
+      "saveChanges": "حفظ التغييرات"
+    },
     "employeeForm": {
       "addTitle": "إضافة موظف",
       "editTitle": "تعديل الموظف",
@@ -268,6 +290,7 @@
       "department": "القسم",
       "employeeClass": "فئة الموظف",
       "manager": "المدير",
+      "selectPlaceholder": "اختر…",
       "cancel": "إلغاء",
       "add": "إضافة موظف",
       "saveChanges": "حفظ التغييرات",
@@ -311,6 +334,8 @@
       "confirmMembers": "هل أنت متأكد أنك تريد إزالة هذه {{count}} أعضاء؟",
       "confirmEmployee": "هل أنت متأكد أنك تريد حذف <strong>{{itemName}}</strong>؟",
       "confirmEmployees": "هل أنت متأكد أنك تريد حذف هذه {{count}} موظفين؟",
+      "deleteRule": "حذف القاعدة",
+      "confirmRule": "هل أنت متأكد أنك تريد حذف القاعدة <strong>{{itemName}}</strong>؟",
       "cancel": "إلغاء",
       "delete": "حذف"
     }
@@ -352,7 +377,9 @@
       "Pending Employee": "بانتظار الموظف",
       "Pending Third Party": "بانتظار طرف ثالث",
       "Completed": "مكتمل",
-      "Closed": "مغلق"
+      "Closed": "مغلق",
+      "Active": "نشط",
+      "Inactive": "غير نشط"
     },
     "sla": {
       "overdue": "متأخر"
@@ -631,6 +658,52 @@
         "label": "قواعد التذاكر",
         "welcome": "مرحباً بك في قواعد التذاكر",
         "desc": "تكوين توجيه التذاكر وقواعد التعيين والأولويات ومسارات التصعيد."
+      },
+      "ticketingRules": {
+        "label": "قواعد التذاكر",
+        "welcome": "مرحباً بك في قواعد التذاكر",
+        "desc": "تكوين توجيه التذاكر وقواعد التعيين والأولويات ومسارات التصعيد.",
+        "title": "قواعد التذاكر",
+        "searchPlaceholder": "بحث في القواعد...",
+        "addRule": "إضافة قاعدة",
+        "totalRules": "إجمالي القواعد",
+        "categories": "الفئات",
+        "groups": "المجموعات",
+        "agents": "الموظفون",
+        "columns": {
+          "entity": "الجهة",
+          "supportCategory": "فئة الدعم",
+          "subcategory": "الفئة الفرعية",
+          "group": "المجموعة",
+          "agent": "الموظف",
+          "priority": "الأولوية",
+          "employeeClass": "فئة الموظف",
+          "action": "الإجراء"
+        },
+        "overlay": {
+          "noRules": "لا توجد قواعد تذاكر",
+          "noRulesSub": "أضف أول قاعدة أو عدّل فلاتر البحث"
+        },
+        "alerts": {
+          "created": "تمت إضافة القاعدة",
+          "createdMsg": "تمت إضافة قاعدة التذاكر الجديدة.",
+          "updated": "تم تحديث القاعدة",
+          "updatedMsg": "تم تحديث قاعدة التذاكر.",
+          "deleted": "تم حذف القاعدة",
+          "deletedMsg": "تم حذف قاعدة {{supportCategory}} / {{subcategory}}."
+        },
+        "priorities": {
+          "Low": "منخفضة",
+          "Medium": "متوسطة",
+          "High": "عالية",
+          "Critical": "حرجة"
+        },
+        "employeeClasses": {
+          "Full-time": "دوام كامل",
+          "Part-time": "دوام جزئي",
+          "Contractor": "متعاقد",
+          "Intern": "متدرب"
+        }
       },
       "sla": {
         "label": "اتفاقية مستوى الخدمة",

@@ -25,7 +25,7 @@ const CompactStatsCard = ({
   return (
     <div
       onClick={onClick}
-      className="rounded-xl border border-gray-200 px-5 py-4 flex items-center gap-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-102 hover:border-opacity-60 cursor-pointer"
+      className="rounded-xl border border-gray-200 px-5 py-4 flex items-center gap-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-102 hover:border-opacity-60 cursor-pointer mt-3 mb-2"
       style={{
         background: active
           ? `linear-gradient(135deg, ${iconBoxColor}40 0%, ${iconBoxColor}25 50%, #ffffff 100%)`
