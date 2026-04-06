@@ -34,12 +34,29 @@ export const resolveRowStatus = (item) => {
   // Resolve start date from any known field name
   const startRaw = item.validFrom ?? item.from ?? item.startDate ?? null;
 
-  if (endRaw) {
+  // Check if both dates exist
+  if (startRaw && endRaw) {
+    const startDate = new Date(startRaw);
+    const endDate = new Date(endRaw);
+    
+    // Active only if current date is between start and end dates (inclusive)
+    if (!isNaN(startDate) && !isNaN(endDate)) {
+      if (now >= startDate && now <= endDate) {
+        return 'Active';
+      } else {
+        return 'Inactive';
+      }
+    }
+  }
+
+  // If only end date exists, check if it's in the future
+  if (endRaw && !startRaw) {
     const endDate = new Date(endRaw);
     if (!isNaN(endDate) && endDate < now) return 'Inactive';
   }
 
-  if (startRaw) {
+  // If only start date exists, check if it's in the past
+  if (startRaw && !endRaw) {
     const startDate = new Date(startRaw);
     if (!isNaN(startDate) && startDate > now) return 'Inactive';
   }

@@ -170,7 +170,8 @@ export default function TicketingRuleFormModal({ isOpen, onClose, onSave, initia
         {/* Employee Class field - optional, uses dropUp positioning to avoid overflow */}
         <div>
           <label className={labelStyle}>{t('modals.ticketingRuleForm.employeeClass', 'Employee Class')}</label>
-          {sel('employeeClass', EMPLOYEE_CLASS_OPTIONS, !!errors.employeeClass, 'administratorMenu.tabs.ticketingRules.employeeClasses')} // 4th arg = translation prefix for option labels
+          {/* 4th arg = translation prefix for option labels */}
+          {sel('employeeClass', EMPLOYEE_CLASS_OPTIONS, !!errors.employeeClass, 'administratorMenu.tabs.ticketingRules.employeeClasses')} 
           {errors.employeeClass && <ErrMsg msg={errors.employeeClass} />}
         </div>
 

@@ -132,6 +132,7 @@ export async function getAllTicketsDB() {
         ticket_id,
         title,
         category,
+        subcategory,
         reason,
         employee_id,
         employee_name,
@@ -149,6 +150,10 @@ export async function getAllTicketsDB() {
         start_time,
         end_time,
         sap_external_code,
+        raised_by,
+        raised_by_id,
+        raised_by_name,
+        raised_by_email,
         created_at,
         updated_at,
         resolved_at,
@@ -168,30 +173,52 @@ export async function getTicketByIdDB(ticketId) {
 }
 
 /**
- * Create a new ticket - (We will use it later)
+ * Generate the next ticket_id based on category prefix
+ * Leave & Attendance → VT-XX, HR Policies → ST-XX, else → ST-XX
+ */
+export async function generateTicketIdDB(category) {
+  return dbQuery('generateTicketId', async () => {
+    let prefix = 'ST';
+    if (category === 'Leave & Attendance') prefix = 'VT';
+    else if (category === 'HR Policies') prefix = 'ST';
+
+    const result = await db.oneOrNone(`
+      SELECT ticket_id FROM tickets
+      WHERE ticket_id LIKE $(prefix) || '-%'
+      ORDER BY id DESC LIMIT 1
+    `, { prefix });
+
+    let nextNum = 1;
+    if (result) {
+      const parts = result.ticket_id.split('-');
+      nextNum = parseInt(parts[1], 10) + 1;
+    }
+    return `${prefix}-${String(nextNum).padStart(2, '0')}`;
+  });
+}
+
+/**
+ * Create a new ticket (raised by HR staff on behalf of an employee)
  */
 export async function createTicketDB(ticket) {
   return dbQuery('createTicket', async () => {
-    await db.none(`
+    const row = await db.one(`
       INSERT INTO tickets(
-        ticket_id, title, category, reason,
+        ticket_id, title, category, subcategory, reason,
         employee_id, employee_name, employee_email,
-        assigned_to_user_id, assigned_to_user_name, assigned_to_user_email,
-        assigned_to_team, vacation_type_id,
-        priority, internal_status, sap_status,
-        start_date, end_date, start_time, end_time,
-        sap_external_code, sla_deadline
+        priority, internal_status,
+        raised_by, raised_by_id, raised_by_name, raised_by_email,
+        sla_deadline
       ) VALUES(
-        $(ticket_id), $(title), $(category), $(reason),
+        $(ticket_id), $(title), $(category), $(subcategory), $(reason),
         $(employee_id), $(employee_name), $(employee_email),
-        $(assigned_to_user_id), $(assigned_to_user_name), $(assigned_to_user_email),
-        $(assigned_to_team), $(vacation_type_id),
-        $(priority), $(internal_status), $(sap_status),
-        $(start_date), $(end_date), $(start_time), $(end_time),
-        $(sap_external_code), $(sla_deadline)
+        $(priority), 'New',
+        $(raised_by), $(raised_by_id), $(raised_by_name), $(raised_by_email),
+        NOW() + $(sla_hours)::int * INTERVAL '1 hour'
       )
+      RETURNING *
     `, ticket);
-    return { ...ticket };
+    return row;
   });
 }
 

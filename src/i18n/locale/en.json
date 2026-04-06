@@ -210,8 +210,10 @@
       "editSubtitle": "Update the details of this support group",
       "name": "Support Group Name",
       "namePlaceholder": "e.g. HR Support Team",
-      "parentUnit": "Parent Unit Code",
-      "parentUnitPlaceholder": "e.g. MAIN-001",
+      "parentName": "Parent Name",
+      "selectParentName": "Select a parent department",
+      "externalCode": "External Code",
+      "externalCodePlaceholder": "e.g. HR-001",
       "validFrom": "Valid From",
       "validTo": "Valid To",
       "cancel": "Cancel",
@@ -221,9 +223,11 @@
         "nameRequired": "Group name is required",
         "nameTooShort": "Group name must be at least 3 characters",
         "nameTooLong": "Group name must not exceed 100 characters",
-        "parentUnitRequired": "Parent unit is required",
-        "parentUnitInvalid": "Parent unit must contain only letters, numbers, and hyphens",
-        "parentUnitTooLong": "Parent unit must not exceed 50 characters",
+        "parentNameRequired": "Parent name is required",
+        "externalCodeRequired": "External code is required",
+        "externalCodeInvalid": "External code must contain only letters, numbers, and hyphens",
+        "externalCodeTooLong": "External code must not exceed 50 characters",
+        "externalCodeDuplicate": "External code already exists",
         "dateOrder": "Valid To must be after Valid From"
       }
     },
@@ -255,6 +259,45 @@
         "nameTooShort": "Name must be at least 2 characters",
         "nameTooLong": "Name must not exceed 100 characters",
         "dateOrder": "'To' date must be after 'From' date"
+      }
+    },
+    "parentDepartments": {
+      "HR Department": "HR Department",
+      "IT Department": "IT Department",
+      "Finance Department": "Finance Department",
+      "Operations Department": "Operations Department",
+      "Security Department": "Security Department",
+      "Logistics Department": "Logistics Department",
+      "Marketing Department": "Marketing Department",
+      "Quality Assurance Department": "Quality Assurance Department",
+      "Communications Department": "Communications Department",
+      "Administration Department": "Administration Department"
+    },
+    "addTicket": {
+      "title": "Add Ticket",
+      "subtitle": "Create a new ticket on behalf of an employee",
+      "employeeName": "Employee Name",
+      "employeeNamePlaceholder": "e.g. John Smith",
+      "employeeId": "Employee ID",
+      "employeeIdPlaceholder": "e.g. EMP001",
+      "ticketTitle": "Title",
+      "titlePlaceholder": "Short description of the request",
+      "category": "Category",
+      "subcategory": "Subcategory",
+      "selectCategoryFirst": "Select category first",
+      "priority": "Priority",
+      "reason": "Reason",
+      "reasonPlaceholder": "Additional details or reason for this request...",
+      "cancel": "Cancel",
+      "create": "Create Ticket",
+      "creating": "Creating...",
+      "errors": {
+        "employeeNameRequired": "Employee name is required",
+        "employeeIdRequired": "Employee ID is required",
+        "categoryRequired": "Category is required",
+        "subcategoryRequired": "Subcategory is required",
+        "priorityRequired": "Priority is required",
+        "titleRequired": "Title is required"
       }
     },
     "ticketingRuleForm": {
@@ -342,6 +385,7 @@
     "title": "Ticket Management",
     "subtitle": "View and manage support tickets",
     "search": "Search...",
+    "addTicket": "Add Ticket",
     "export": "Export",
     "showing": "Showing",
     "of": "of",
@@ -415,7 +459,10 @@
       "bulkActionFailed": "Bulk Action Failed",
       "bulkAllFailed": "All {{count}} ticket(s) failed: {{error}}",
       "bulkPartialSuccess": "{{succeeded}} of {{total}} succeeded, {{failed}} failed",
-      "bulkPartialTitle": "Partial Success"
+      "bulkPartialTitle": "Partial Success",
+      "ticketCreatedTitle": "Ticket Created",
+      "ticketCreated": "Ticket {{ticketId}} has been created successfully",
+      "failedCreateTicket": "Failed to create ticket"
     }
   },
   "analyticsMenu": {
@@ -564,8 +611,9 @@
           "inactive": "Inactive",
           "searchPlaceholder": "Search by parent unit code or support group name…",
           "columns": {
-            "parentUnit": "Parent Unit Code",
+            "parentName": "Parent Name",
             "name": "Support Group Name",
+            "externalCode": "External Code",
             "validFrom": "Valid From",
             "validTo": "Valid To",
             "status": "Status",

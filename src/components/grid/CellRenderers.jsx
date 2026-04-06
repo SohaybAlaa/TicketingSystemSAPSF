@@ -50,6 +50,19 @@ function TextCellRendererRaw(props) {
   return <div className="flex items-center justify-center h-full w-full"><span>{props.value ? props.value : '---'}</span></div>
 }
 
+// Parent Name Cell Renderer: Displays translated parent department name
+// Props: value - the parent name key to translate
+// Returns: Centered bold text with translated parent name
+function ParentNameCellRendererBase({ value }) {
+  const { t } = useTranslation()
+  const translatedValue = t(`modals.parentDepartments.${value}`, value)
+  return (
+    <div className="flex items-center justify-center h-full w-full">
+      <span className="font-semibold">{translatedValue}</span>
+    </div>
+  )
+}
+
 // Actions Cell Renderer: Displays edit and delete action buttons
 // Props: data - the row data object, context - ag-Grid context with onEdit and onDelete callbacks
 // Returns: Two action buttons (Edit in blue, Delete in red) centered in the cell
@@ -70,4 +83,5 @@ export const StatusCellRenderer   = withSkeleton(StatusCellRendererBase,   true)
 export const UserTypeCellRenderer = withSkeleton(UserTypeCellRendererBase, true) // User type with skeleton support
 export const DateCellRenderer     = withSkeleton(DateCellRendererBase,     true) // Date with skeleton support
 export const ActionsCellRenderer  = withSkeleton(ActionsCellRendererBase,  true) // Actions with skeleton support
+export const ParentNameCellRenderer = withSkeleton(ParentNameCellRendererBase, true) // Parent name with skeleton support
 export const TextCellRenderer     = TextCellRendererRaw // Text renderer (handles its own skeleton logic)

@@ -210,8 +210,10 @@
       "editSubtitle": "تحديث تفاصيل مجموعة الدعم",
       "name": "اسم مجموعة الدعم",
       "namePlaceholder": "مثال: فريق دعم الموارد البشرية",
-      "parentUnit": "رمز الوحدة الأم",
-      "parentUnitPlaceholder": "مثال: MAIN-001",
+      "parentName": "اسم الوحدة",
+      "selectParentName": "اختر قسماً",
+      "externalCode": "الرمز الخارجي",
+      "externalCodePlaceholder": "مثال: HR-001",
       "validFrom": "صالح من",
       "validTo": "صالح حتى",
       "cancel": "إلغاء",
@@ -221,9 +223,11 @@
         "nameRequired": "اسم المجموعة مطلوب",
         "nameTooShort": "يجب أن يكون اسم المجموعة 3 أحرف على الأقل",
         "nameTooLong": "يجب ألا يتجاوز اسم المجموعة 100 حرف",
-        "parentUnitRequired": "رمز الوحدة الأم مطلوب",
-        "parentUnitInvalid": "يجب أن يحتوي رمز الوحدة الأم على أحرف وأرقام وشرطات فقط",
-        "parentUnitTooLong": "يجب ألا يتجاوز رمز الوحدة الأم 50 حرفاً",
+        "parentNameRequired": "اسم الوحدة مطلوب",
+        "externalCodeRequired": "الرمز الخارجي مطلوب",
+        "externalCodeInvalid": "يجب أن يحتوي الرمز الخارجي على أحرف وأرقام وشرطات فقط",
+        "externalCodeTooLong": "يجب ألا يتجاوز الرمز الخارجي 50 حرفاً",
+        "externalCodeDuplicate": "الرمز الخارجي موجود بالفعل",
         "dateOrder": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية"
       }
     },
@@ -246,15 +250,45 @@
         "Agent": "وكيل",
         "Manager": "مدير",
         "Supervisor": "مشرف"
-      },
+      }
+    },
+    "parentDepartments": {
+      "HR Department": "قسم الموارد البشرية",
+      "IT Department": "قسم تكنولوجيا المعلومات",
+      "Finance Department": "قسم المالية",
+      "Operations Department": "قسم العمليات",
+      "Security Department": "قسم الأمان",
+      "Logistics Department": "قسم الخدمات اللوجستية",
+      "Marketing Department": "قسم التسويق",
+      "Quality Assurance Department": "قسم ضمان الجودة",
+      "Communications Department": "قسم الاتصالات",
+      "Administration Department": "قسم الإدارة"
+    },
+    "addTicket": {
+      "title": "إضافة تذكرة",
+      "subtitle": "إنشاء تذكرة جديدة نيابة عن موظف",
+      "employeeName": "اسم الموظف",
+      "employeeNamePlaceholder": "مثال: أحمد محمد",
+      "employeeId": "رقم الموظف",
+      "employeeIdPlaceholder": "مثال: EMP001",
+      "ticketTitle": "العنوان",
+      "titlePlaceholder": "وصف مختصر للطلب",
+      "category": "التصنيف",
+      "subcategory": "التصنيف الفرعي",
+      "selectCategoryFirst": "اختر التصنيف أولاً",
+      "priority": "الأولوية",
+      "reason": "السبب",
+      "reasonPlaceholder": "تفاصيل إضافية أو سبب هذا الطلب...",
+      "cancel": "إلغاء",
+      "create": "إنشاء تذكرة",
+      "creating": "جاري الإنشاء...",
       "errors": {
-        "employeeIdRequired": "معرف الموظف مطلوب",
-        "employeeIdInvalid": "يجب أن يحتوي معرف الموظف على أحرف وأرقام وشرطات فقط",
-        "employeeIdTooLong": "يجب ألا يتجاوز معرف الموظف 20 حرفاً",
-        "nameRequired": "اسم الموظف مطلوب",
-        "nameTooShort": "يجب أن يكون الاسم حرفين على الأقل",
-        "nameTooLong": "يجب ألا يتجاوز الاسم 100 حرف",
-        "dateOrder": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية"
+        "employeeNameRequired": "اسم الموظف مطلوب",
+        "employeeIdRequired": "رقم الموظف مطلوب",
+        "categoryRequired": "التصنيف مطلوب",
+        "subcategoryRequired": "التصنيف الفرعي مطلوب",
+        "priorityRequired": "الأولوية مطلوبة",
+        "titleRequired": "العنوان مطلوب"
       }
     },
     "ticketingRuleForm": {
@@ -344,6 +378,7 @@
     "title": "إدارة التذاكر",
     "subtitle": "عرض وإدارة تذاكر الدعم",
     "search": "بحث...",
+    "addTicket": "إضافة تذكرة",
     "export": "تصدير",
     "showing": "عرض",
     "of": "من",
@@ -417,7 +452,10 @@
       "bulkActionFailed": "فشل الإجراء الجماعي",
       "bulkAllFailed": "فشلت جميع التذاكر ({{count}}): {{error}}",
       "bulkPartialSuccess": "نجح {{succeeded}} من {{total}}، فشل {{failed}}",
-      "bulkPartialTitle": "نجاح جزئي"
+      "bulkPartialTitle": "نجاح جزئي",
+      "ticketCreatedTitle": "تم إنشاء التذكرة",
+      "ticketCreated": "تم إنشاء التذكرة {{ticketId}} بنجاح",
+      "failedCreateTicket": "فشل إنشاء التذكرة"
     }
   },
   "analyticsMenu": {
@@ -564,10 +602,11 @@
           "totalGroups": "إجمالي المجموعات",
           "active": "نشط",
           "inactive": "غير نشط",
-          "searchPlaceholder": "البحث برمز الوحدة الأم أو اسم مجموعة الدعم...",
+          "searchPlaceholder": "البحث برمز الوحدة  أو اسم مجموعة الدعم...",
           "columns": {
-            "parentUnit": "رمز الوحدة الأم",
+            "parentName": "اسم الوحدة ",
             "name": "اسم مجموعة الدعم",
+            "externalCode": "الرمز الخارجي",
             "validFrom": "صالح من",
             "validTo": "صالح حتى",
             "status": "الحالة",

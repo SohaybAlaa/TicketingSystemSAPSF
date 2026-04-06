@@ -22,6 +22,7 @@ import {
   DateCellRenderer,
   ActionsCellRenderer,
   TextCellRenderer,
+  ParentNameCellRenderer,
 } from '@components/grid/CellRenderers'
 
 ModuleRegistry.registerModules([AllCommunityModule])
@@ -54,8 +55,9 @@ export default function OrgStructureTab() {
   // Column definitions for the Support Groups table
   // Recreated when language changes (dependency: [t]) to update translated headers
   const groupColumns = useMemo(() => [
-    { field: 'parentUnit', headerName: t('administratorMenu.tabs.orgStructure.supportGroups.columns.parentUnit'), flex: 1, minWidth: 140, cellRenderer: TextCellRenderer, cellStyle: { fontWeight: '600' } },
-    { field: 'name',       headerName: t('administratorMenu.tabs.orgStructure.supportGroups.columns.name'),       flex: 2, minWidth: 180, cellRenderer: TextCellRenderer, cellStyle: { fontWeight: '600' } },
+    { field: 'externalCode', headerName: t('administratorMenu.tabs.orgStructure.supportGroups.columns.externalCode'), flex: 1, minWidth: 140, cellRenderer: TextCellRenderer, cellStyle: { fontWeight: '600' } },
+    { field: 'parentName', headerName: t('administratorMenu.tabs.orgStructure.supportGroups.columns.parentName'), flex: 1.5, minWidth: 200, cellRenderer: ParentNameCellRenderer, cellStyle: { fontWeight: '600' } },
+    { field: 'name',       headerName: t('administratorMenu.tabs.orgStructure.supportGroups.columns.name'),       flex: 1.5, minWidth: 140, cellRenderer: TextCellRenderer, cellStyle: { fontWeight: '600' } },
     { field: 'validFrom',  headerName: t('administratorMenu.tabs.orgStructure.supportGroups.columns.validFrom'),  flex: 1, minWidth: 120, cellRenderer: DateCellRenderer },
     { field: 'validTo',    headerName: t('administratorMenu.tabs.orgStructure.supportGroups.columns.validTo'),    flex: 1, minWidth: 120, cellRenderer: DateCellRenderer },
     { headerName: t('administratorMenu.tabs.orgStructure.supportGroups.columns.status'), flex: 1, minWidth: 110, cellRenderer: StatusCellRenderer },

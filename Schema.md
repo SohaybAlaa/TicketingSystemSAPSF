@@ -10,7 +10,8 @@ CREATE TABLE tickets (
     ticket_id VARCHAR(50) UNIQUE NOT NULL,          -- Human-readable ticket ID (e.g. VT-01, EPT-01)
     title VARCHAR(255) NOT NULL,                    -- Short description of the request (e.g. Annual leave)
     category VARCHAR(100) NOT NULL,                 -- Ticket category (e.g. Leave & Attendance, HR Policies)
-    reason VARCHAR(100),                            -- Reason/sub-type (e.g. vacation, medical, inquiry)
+    subcategory VARCHAR(100),                        -- Subcategory within the category (e.g. vacation, medical, inquiry)
+    reason TEXT,                                     -- Free-text reason or additional details provided by the requester
 
     -- Employee info (no FK since employees are external)
     employee_id VARCHAR(50) NOT NULL,               -- SAP employee ID
@@ -27,6 +28,12 @@ CREATE TABLE tickets (
     assigned_to_team VARCHAR(100),                  -- HR team name (e.g. Alpha, Beta)
     assigned_to_department VARCHAR(100),            -- HR department (e.g. HR Operations, Benefits)
     vacation_type_id INT,                           -- SAP vacation type ID (nullable, used for leave tickets)
+
+    -- Who raised this ticket (employee themselves via self-service, or HR staff on their behalf)
+    raised_by VARCHAR(20) DEFAULT 'employee' CHECK (raised_by IN ('employee', 'hr_staff')),
+    raised_by_id VARCHAR(50),                         -- SAP user ID of whoever raised the ticket
+    raised_by_name VARCHAR(255),                      -- Full name of whoever raised the ticket
+    raised_by_email VARCHAR(255),                     -- Email of whoever raised the ticket
 
     -- Status & Priority 
 
@@ -60,43 +67,42 @@ CREATE TABLE tickets (
 
 -- Sample data inserts
 INSERT INTO tickets (
-    ticket_id, title, category, reason,
+    ticket_id, title, category, subcategory, reason,
     employee_id, employee_name, employee_email, employee_department, employee_position, employee_location,
     assigned_to_user_id, assigned_to_user_name, assigned_to_user_email, assigned_to_team, assigned_to_department,
     vacation_type_id, priority, internal_status, sap_status,
     start_date, end_date, start_time, end_time,
     sap_external_code, created_at, updated_at, resolved_at, sla_deadline
 )
-
 VALUES
--- VT-01: Vacation time request — leave dates in December, SLA = next day
-('VT-01', 'Annual leave request - December', 'Leave & Attendance', 'vacation',
- 'EMP001', 'John Smith', 'john.smith@company.com', 'Engineering', 'Software Engineer', 'New York',
- 'HR001', 'John Doe', 'john.doe@company.com', 'Alpha', 'HR Operations',
- 1, 'Medium', 'New', NULL,
- '2026-12-24', '2026-12-31', NULL, NULL,                          -- Full-day leave, no times needed
- 'EmployeeTime/externalCode=a12bb34cd56ef78gh90ij12kl345mno456',  -- SAP external code
- '2026-02-12 08:00:00 +0200', '2026-02-12 08:00:00 +0200', NULL,  -- created_at, updated_at, resolved_at
- '2026-02-13 08:00:00 +0200'),                                     -- SLA deadline: 24h after creation
+-- ==================== VT TICKETS ====================
+('VT-01', 'Summer vacation 2026', 'Leave & Attendance', 'vacation', 'Planning a summer getaway with family',
+ 'EMP001', 'Sarah Johnson', 'sarah.johnson@company.com', 'Engineering', 'Senior Developer', 'New York',
+ '101', 'John Doe', 'john.doe@company.com', 'Alpha', 'HR Operations',
+ 1, 'High', 'Pending Employee', 'pending',
+ '2026-07-15', '2026-07-29', NULL, NULL,
+ 'EmployeeTime/externalCode=a11aa11aa11a11a1a11aa1a111aaa111',
+ '2026-04-06 09:00:00 +0200', '2026-04-06 09:30:00 +0200', NULL,
+ '2026-04-13 09:00:00 +0200'),
 
--- EPT-01: Emergency/personal time — same-day partial leave, critical priority
-('EPT-01', 'Urgent medical appointment', 'Leave & Attendance', 'medical',
- 'EMP002', 'Sarah Johnson', 'sarah.johnson@company.com', 'Marketing', 'Marketing Coordinator', 'Los Angeles',
- 'HR002', 'Tommy Shelby', 'tommy.shelby@company.com', 'Beta', 'HR Operations',
- NULL, 'Critical', 'Under Process', 'pending',
- '2026-02-12', '2026-02-12', '10:00:00', '15:00:00',              -- Partial-day: 10am–3pm
- 'EmployeeTime/externalCode=b23cc45de67fg89hi01jk23lm456nop567',
- '2026-02-12 07:30:00 +0200', '2026-02-12 08:15:00 +0200', NULL,  -- created_at, updated_at, resolved_at
- '2026-02-12 19:30:00 +0200'),                                     -- SLA deadline: same day (12h)
+-- ==================== EPT TICKETS ====================
+('EPT-01', 'Dental emergency appointment', 'Leave & Attendance', 'medical', 'Sudden tooth abscess, needs immediate treatment',
+ 'EMP011', 'Jennifer Brown', 'jennifer.brown@company.com', 'Engineering', 'Backend Developer', 'New York',
+ '103', 'William Smith', 'william.smith@company.com', 'Alpha', 'HR Operations',
+ NULL, 'Critical', 'Completed', 'approved',
+ '2026-04-17', '2026-04-17', '10:00:00', '15:00:00',
+ 'EmployeeTime/externalCode=k11kk11kk11k11k1k11kk1k111kkk111',
+ '2026-04-06 08:30:00 +0200', '2026-04-06 09:00:00 +0200', '2026-04-06 09:15:00 +0200',
+ '2026-04-13 08:30:00 +0200'),
 
--- ST-01: General HR inquiry — no leave dates, no SAP submission
-('ST-01', 'Question about health insurance coverage', 'HR Policies', 'inquiry',
- 'EMP003', 'Michael Chen', 'michael.chen@company.com', 'Finance', 'Financial Controller', 'Chicago',
- 'HR003', 'William Smith', 'william.smith@company.com', 'Alpha', 'Benefits',
- NULL, 'Medium', 'Pending Employee', NULL,
- NULL, NULL, NULL, NULL, NULL,                                     -- No leave dates (not a leave ticket)
- '2026-02-11 16:00:00 +0200', '2026-02-11 16:30:00 +0200', NULL,  -- created_at, updated_at, resolved_at
- '2026-02-13 16:00:00 +0200');                                     -- SLA deadline: 48h after creation
+-- ==================== ST TICKETS ====================
+('ST-01', 'Payroll inquiry - missing bonus', 'HR Policies', 'inquiry', 'Expected Q1 bonus not reflected in March payslip',
+ 'EMP021', 'Yuki Tanaka', 'yuki.tanaka@company.com', 'Engineering', 'Frontend Developer', 'New York',
+ '101', 'John Doe', 'john.doe@company.com', 'Alpha', 'HR Operations',
+ NULL, 'High', 'Under Process', NULL,
+ NULL, NULL, NULL, NULL, NULL,
+ '2026-04-05 10:00:00 +0200', '2026-04-06 09:00:00 +0200', NULL,
+ '2026-04-12 10:00:00 +0200'),
 
 select * from tickets; -- Verify all inserted rows
 

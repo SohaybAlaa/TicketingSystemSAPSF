@@ -15,6 +15,7 @@ export default async function handler(req, res) {
       ticketId: row.ticket_id,
       title: row.title,
       category: row.category,
+      subcategory: row.subcategory,
       reason: row.reason,
       employee: row.employee_name || row.employee_id,
       employeeId: row.employee_id,
@@ -45,6 +46,10 @@ export default async function handler(req, res) {
       endTime: row.end_time,
       vacationTypeId: row.vacation_type_id,
       sapExternalCode: row.sap_external_code,
+      raisedBy: row.raised_by || 'employee',
+      raisedById: row.raised_by_id || null,
+      raisedByName: row.raised_by_name || null,
+      raisedByEmail: row.raised_by_email || null,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       resolvedAt: row.resolved_at

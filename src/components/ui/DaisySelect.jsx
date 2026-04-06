@@ -1,8 +1,11 @@
 // ChevronDown = small "v" arrow icon from lucide-react icon library
 import { ChevronDown } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 /**
- * DaisySelect — A reusable dropdown (select) component built with DaisyUI.
+ * DaisySelect — A reusable dropdown (select) component.
+ * Uses position:fixed + portal so the menu escapes any overflow container (modals, etc.)
  *
  * Props:
  * @param {string}   value       - The currently selected value (e.g. "Agent")
@@ -15,7 +18,11 @@ import { ChevronDown } from 'lucide-react'
  * @param {function} t           - The i18n translation function from react-i18next
  * @param {boolean}  isRTL       - If true, flips layout for Arabic (right-to-left) languages
  */
-export default function DaisySelect({ value, options, onChange, hasError, placeholder, translationPrefix, t, isRTL }) {
+export default function DaisySelect({ value, options, onChange, hasError, placeholder, translationPrefix, t, isRTL, disabled }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const triggerRef = useRef(null)
+  const menuRef = useRef(null)
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0, width: 0 })
 
   // If no custom placeholder is passed, use the translated default "Select…" / "اختر…"
   const displayPlaceholder = placeholder || t('common.selectPlaceholder', 'Select…')
@@ -25,23 +32,56 @@ export default function DaisySelect({ value, options, onChange, hasError, placeh
   // If nothing is selected (value is empty/null), label stays null → we show the placeholder instead
   const label = value ? (translationPrefix ? t(`${translationPrefix}.${value}`, value) : value) : null
 
-  // DaisyUI dropdowns open on focus and close on blur.
-  // Calling blur() on the focused element closes the dropdown after the user picks an option.
-  const close = () => { document.activeElement?.blur() }
+  // Calculate menu position from trigger button's bounding rect
+  const updatePosition = () => {
+    if (!triggerRef.current) return
+    const rect = triggerRef.current.getBoundingClientRect()
+    setMenuPos({
+      top: rect.bottom + 4,
+      left: rect.left,
+      width: rect.width,
+    })
+  }
+
+  // Toggle dropdown open/closed
+  const toggle = () => {
+    if (disabled) return
+    if (!isOpen) updatePosition()
+    setIsOpen(prev => !prev)
+  }
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!isOpen) return
+    const handleClickOutside = (e) => {
+      if (
+        triggerRef.current && !triggerRef.current.contains(e.target) &&
+        menuRef.current && !menuRef.current.contains(e.target)
+      ) {
+        setIsOpen(false)
+      }
+    }
+    // Close on scroll of any ancestor (modal body, etc.)
+    const handleScroll = () => setIsOpen(false)
+
+    document.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('scroll', handleScroll, true)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('scroll', handleScroll, true)
+    }
+  }, [isOpen])
 
   return (
-    // "dropdown dropdown-bottom" = DaisyUI dropdown that opens below the trigger button
-    // "w-full" = take full width of the parent container
-    <div className="dropdown dropdown-bottom w-full">
+    <div className="w-full relative">
 
       {/* ─── Trigger Button ─── */}
-      {/* This is what the user sees and clicks to open the dropdown */}
-      {/* tabIndex={0} makes it focusable (required for DaisyUI dropdown to work) */}
       <div
-        tabIndex={0}
+        ref={triggerRef}
         role="button"
+        onClick={toggle}
         className={`btn btn-sm btn-outline w-full justify-between px-3 py-2 h-auto min-h-0 rounded-xl font-medium text-sm transition-all duration-200
-          hover:border-yellow-400 hover:bg-yellow-50
+          ${disabled ? 'opacity-50 cursor-not-allowed bg-gray-50' : 'hover:border-yellow-400 hover:bg-yellow-50'}
           ${hasError ? 'border-red-400 bg-red-50/30' : 'border-gray-200'}
           ${isRTL ? 'flex-row-reverse' : ''}`}
       >
@@ -53,40 +93,52 @@ export default function DaisySelect({ value, options, onChange, hasError, placeh
         </span>
 
         {/* Dropdown arrow icon — moves to left side in RTL, right side in LTR */}
-        <ChevronDown size={15} className={`text-gray-400 ${isRTL ? 'order-first' : 'order-last'}`} />
+        <ChevronDown size={15} className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''} ${isRTL ? 'order-first' : 'order-last'}`} />
       </div>
 
-      {/* ─── Dropdown Menu (appears when trigger is focused/clicked) ─── */}
-      {/* "dropdown-content" = DaisyUI class that shows/hides this on focus */}
-      {/* "menu" = DaisyUI menu styling for the list items */}
-      {/* z-[1] = ensures dropdown appears above other content */}
-      <ul
-        tabIndex={0}
-        className={`dropdown-content menu bg-base-100 rounded-xl z-[1] w-full p-2 shadow-xl border border-gray-200 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}
-      >
-        {/* Loop through each option and render a clickable list item */}
-        {options.map(option => {
-          // Translate the option label if a namespace is provided, otherwise use raw value
-          const optionLabel = translationPrefix ? t(`${translationPrefix}.${option}`, option) : option
-          const isSelected = value === option
+      {/* ─── Dropdown Menu — portaled to document.body with position:fixed ─── */}
+      {/* This ensures the menu floats above modals, overflow containers, etc. */}
+      {isOpen && createPortal(
+        <div
+          ref={menuRef}
+          className={`bg-base-100 rounded-xl p-2 shadow-xl border border-gray-200 max-h-48 overflow-y-auto ${isRTL ? 'text-right' : 'text-left'}`}
+          style={{
+            position: 'fixed',
+            top: menuPos.top,
+            left: menuPos.left,
+            width: menuPos.width,
+            zIndex: 99999,
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          <ul className="flex flex-col gap-0.5 w-full">
+            {/* Loop through each option and render a clickable list item */}
+            {options.map(option => {
+              // Translate the option label if a namespace is provided, otherwise use raw value
+              const optionLabel = translationPrefix ? t(`${translationPrefix}.${option}`, option) : option
+              const isSelected = value === option
 
-          return (
-            <li
-              key={option}
-              // When clicked: update the parent form with the new value, then close the dropdown
-              onClick={() => {
-                onChange(option)
-                close()
-              }}
-            >
-              {/* Highlight the currently selected option with a yellow background */}
-              <a className={`font-medium ${isSelected ? 'bg-yellow-50 text-yellow-800' : ''}`}>
-                {optionLabel}
-              </a>
-            </li>
-          )
-        })}
-      </ul>
+              return (
+                <li
+                  key={option}
+                  // When clicked: update the parent form with the new value, then close the dropdown
+                  onClick={() => {
+                    onChange(option)
+                    setIsOpen(false)
+                  }}
+                >
+                  {/* Highlight the currently selected option with a yellow background */}
+                  <a className={`block px-3 py-1.5 font-medium w-full rounded-lg cursor-pointer hover:bg-yellow-50 transition-colors ${isSelected ? 'bg-yellow-50 text-yellow-800' : ''}`}>
+                    {optionLabel}
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </div>,
+        document.body
+      )}
     </div>
   )
 }

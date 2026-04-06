@@ -2,7 +2,7 @@ import { AllCommunityModule } from "ag-grid-community";
 import { myTheme } from "@utils/agGridThemes";
 import { AgGridReact } from "ag-grid-react";
 import React, { useState, useRef, useMemo, useEffect } from "react";
-import { Download, Inbox, X } from "lucide-react";
+import { Download, Inbox, X, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { checkAuth } from "@/utils/auth";
@@ -13,6 +13,7 @@ import AdminLayout from "@components/layouts/AdminLayout";
 import AlertNotification from "@ui/AlertNotification";
 import BulkActionsButton from "@ui/BulkActionsButton";
 import TicketsCountDisplay from "@ui/TicketsCountDisplay";
+import AddTicketModal from "@components/modals/AddTicketModal";
 
 // Utilities
 import { getColumnDefs, defaultColDef } from "@utils/columnDefs";
@@ -48,6 +49,9 @@ export default function Tickets() {
 
   // Search Input - always starts empty; active filter shown as chip inside the bar
   const [quickFilterText, setQuickFilterText] = useState("");
+
+  // Add Ticket modal
+  const [isAddTicketModalOpen, setIsAddTicketModalOpen] = useState(false);
 
   // Bulk action modals
   const [isBulkStatusModalOpen, setIsBulkStatusModalOpen] = useState(false);
@@ -412,6 +416,34 @@ export default function Tickets() {
     );
   };
 
+  const handleAddTicket = async (formData) => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    try {
+      const data = await apiRequest('/api/public/tickets/create', {
+        ...formData,
+        raisedById: user?.id || null,
+        raisedByName: adminName || null,
+        raisedByEmail: user?.email || `${user?.username}@company.com`,
+      });
+
+      if (data.success && data.ticket) {
+        setRowData((prev) => [data.ticket, ...prev]);
+        showAlert("success",
+          t("ticketsPage.alerts.ticketCreated", { ticketId: data.ticket.ticketId }),
+          t("ticketsPage.alerts.ticketCreatedTitle", "Ticket Created")
+        );
+        setIsAddTicketModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error creating ticket:', error);
+      showAlert("error", `${t("ticketsPage.alerts.failedCreateTicket", "Failed to create ticket")}: ${error.message}`, t("ticketsPage.alerts.error", "Error"));
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const handleBulkAction = (action) => {
     switch (action) {
       case "assignToMe":
@@ -542,6 +574,14 @@ export default function Tickets() {
             )}
 
             <button
+              onClick={() => setIsAddTicketModalOpen(true)}
+              className="action-button"
+            >
+              {t("ticketsPage.addTicket", "Add Ticket")}
+              <Plus size={16} />
+            </button>
+
+            <button
               onClick={handleExport}
               className="action-button"
             >
@@ -550,6 +590,14 @@ export default function Tickets() {
             </button>
           </div>
         </div>
+
+        {/* Add Ticket Modal */}
+        <AddTicketModal
+          isOpen={isAddTicketModalOpen}
+          onClose={() => setIsAddTicketModalOpen(false)}
+          onSave={handleAddTicket}
+          isProcessing={isProcessing}
+        />
 
         {/* Tickets count */}
         <TicketsCountDisplay

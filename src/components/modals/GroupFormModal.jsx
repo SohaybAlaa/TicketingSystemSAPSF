@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import { Boxes } from "lucide-react";
+import DaisySelect from "@components/ui/DaisySelect";
+import { MOCK_GROUPS } from "@data/mockData";
 
 /**
  * Group Form Modal — Create & Edit Support Groups
@@ -15,7 +17,10 @@ export default function GroupFormModal({ isOpen, onClose, onSave, initial = null
   const isRTL = i18n.language === "ar";
   const isEdit = !!initial;
 
-  const emptyForm = { name: "", validFrom: "", validTo: "", parentUnit: "" };
+  const emptyForm = { name: "", validFrom: "", validTo: "", parentName: "", externalCode: "" };
+  
+  // Get unique parent names from MOCK_GROUPS
+  const parentNameOptions = Array.from(new Set(MOCK_GROUPS.map(g => g.parentName))).sort();
 
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
@@ -26,10 +31,11 @@ export default function GroupFormModal({ isOpen, onClose, onSave, initial = null
       setForm(
         initial
           ? {
-              name:       initial.name       ?? "",
-              validFrom:  initial.validFrom  ?? "",
-              validTo:    initial.validTo    ?? "",
-              parentUnit: initial.parentUnit ?? "",
+              name:         initial.name         ?? "",
+              validFrom:    initial.validFrom    ?? "",
+              validTo:      initial.validTo      ?? "",
+              parentName:   initial.parentName   ?? "",
+              externalCode: initial.externalCode ?? "",
             }
           : emptyForm
       );
@@ -46,7 +52,8 @@ export default function GroupFormModal({ isOpen, onClose, onSave, initial = null
     const next = {};
     
     const trimmedName = form.name.trim();
-    const trimmedParentUnit = form.parentUnit.trim();
+    const trimmedParentName = form.parentName.trim();
+    const trimmedExternalCode = form.externalCode.trim();
     
     if (!trimmedName) {
       next.name = t("modals.groupForm.errors.nameRequired", "Group name is required");
@@ -56,12 +63,25 @@ export default function GroupFormModal({ isOpen, onClose, onSave, initial = null
       next.name = t("modals.groupForm.errors.nameTooLong", "Group name must not exceed 100 characters");
     }
     
-    if (!trimmedParentUnit) {
-      next.parentUnit = t("modals.groupForm.errors.parentUnitRequired", "Parent unit is required");
-    } else if (!/^[A-Z0-9-]+$/i.test(trimmedParentUnit)) {
-      next.parentUnit = t("modals.groupForm.errors.parentUnitInvalid", "Parent unit must contain only letters, numbers, and hyphens");
-    } else if (trimmedParentUnit.length > 50) {
-      next.parentUnit = t("modals.groupForm.errors.parentUnitTooLong", "Parent unit must not exceed 50 characters");
+    if (!trimmedParentName) {
+      next.parentName = t("modals.groupForm.errors.parentNameRequired", "Parent name is required");
+    }
+    
+    if (!trimmedExternalCode) {
+      next.externalCode = t("modals.groupForm.errors.externalCodeRequired", "External code is required");
+    } else if (!/^[A-Z0-9-]+$/i.test(trimmedExternalCode)) {
+      next.externalCode = t("modals.groupForm.errors.externalCodeInvalid", "External code must contain only letters, numbers, and hyphens");
+    } else if (trimmedExternalCode.length > 50) {
+      next.externalCode = t("modals.groupForm.errors.externalCodeTooLong", "External code must not exceed 50 characters");
+    } else {
+      // Check for duplicate external code (excluding current item if editing)
+      const isDuplicate = MOCK_GROUPS.some(g => 
+        g.externalCode === trimmedExternalCode && 
+        (!isEdit || g.id !== initial.id)
+      );
+      if (isDuplicate) {
+        next.externalCode = t("modals.groupForm.errors.externalCodeDuplicate", "External code already exists");
+      }
     }
     
     if (form.validFrom && form.validTo && form.validFrom > form.validTo) {
@@ -159,21 +179,40 @@ export default function GroupFormModal({ isOpen, onClose, onSave, initial = null
           {errors.name && <p style={errorStyle}>{errors.name}</p>}
         </div>
 
-        {/* Parent Unit Code */}
+        {/* Parent Name Dropdown */}
         <div>
           <label style={labelStyle}>
-            {t("modals.groupForm.parentUnit", "Parent Unit Code")}
+            {t("modals.groupForm.parentName", "Parent Name")}
+            <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+          </label>
+          <DaisySelect
+            value={form.parentName}
+            options={parentNameOptions}
+            onChange={(val) => set("parentName", val)}
+            hasError={!!errors.parentName}
+            placeholder={t("modals.groupForm.selectParentName", "Select a parent department")}
+            translationPrefix="modals.parentDepartments"
+            t={t}
+            isRTL={isRTL}
+          />
+          {errors.parentName && <p style={errorStyle}>{errors.parentName}</p>}
+        </div>
+
+        {/* External Code */}
+        <div>
+          <label style={labelStyle}>
+            {t("modals.groupForm.externalCode", "External Code")}
             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
           <input
-            value={form.parentUnit}
-            onChange={(e) => set("parentUnit", e.target.value)}
-            placeholder={t("modals.groupForm.parentUnitPlaceholder", "e.g. MAIN-001")}
-            style={inputStyle(!!errors.parentUnit)}
+            value={form.externalCode}
+            onChange={(e) => set("externalCode", e.target.value)}
+            placeholder={t("modals.groupForm.externalCodePlaceholder", "e.g. HR-001")}
+            style={inputStyle(!!errors.externalCode)}
             onFocus={(e) => { e.target.style.borderColor = "#fbbf24"; e.target.style.boxShadow = "0 0 0 3px rgba(251,191,36,0.15)"; }}
-            onBlur={(e)  => { e.target.style.borderColor = errors.parentUnit ? "#ef4444" : "#e5e7eb"; e.target.style.boxShadow = "none"; }}
+            onBlur={(e)  => { e.target.style.borderColor = errors.externalCode ? "#ef4444" : "#e5e7eb"; e.target.style.boxShadow = "none"; }}
           />
-          {errors.parentUnit && <p style={errorStyle}>{errors.parentUnit}</p>}
+          {errors.externalCode && <p style={errorStyle}>{errors.externalCode}</p>}
         </div>
 
         {/* Valid From / Valid To */}
