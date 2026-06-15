@@ -21,6 +21,7 @@ const CompactStatsCard = ({
   iconBoxColor = "#6366f1",
   onClick,
   active = false,
+  iconClassName = "icon-flip",
 }) => {
   return (
     <div
@@ -64,7 +65,7 @@ const CompactStatsCard = ({
           border: `1px solid ${iconBoxColor}40`,
         }}
       >
-        <Icon className="icon-flip w-6 h-6" style={{ color: iconBoxColor }} />
+        <Icon className={`${iconClassName} w-6 h-6`} style={{ color: iconBoxColor }} />
       </div>
 
       {/* Title and Value on same line */}

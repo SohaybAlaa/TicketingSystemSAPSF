@@ -18,6 +18,7 @@ import AddTicketModal from "@components/modals/AddTicketModal";
 // Utilities
 import { getColumnDefs, defaultColDef } from "@utils/columnDefs";
 import { SKELETON_ROWS } from "@components/ui/GridSkeleton";
+import { MOCK_SLA_CONFIGURATIONS } from "@data/mockData";
 
 export default function Tickets() {
   const { t, i18n } = useTranslation();
@@ -52,6 +53,23 @@ export default function Tickets() {
 
   // Add Ticket modal
   const [isAddTicketModalOpen, setIsAddTicketModalOpen] = useState(false);
+
+  // Derive categories + subcategory map from SLA Assignment data
+  const { slaCategories, slaSubcategoryMap } = useMemo(() => {
+    const map = {};
+    for (const cfg of MOCK_SLA_CONFIGURATIONS) {
+      const cat = cfg.supportCategory;
+      const sub = cfg.subcategory;
+      if (!map[cat]) map[cat] = new Set();
+      map[cat].add(sub);
+    }
+    return {
+      slaCategories: Object.keys(map),
+      slaSubcategoryMap: Object.fromEntries(
+        Object.entries(map).map(([k, v]) => [k, [...v]])
+      ),
+    };
+  }, []);
 
   // Bulk action modals
   const [isBulkStatusModalOpen, setIsBulkStatusModalOpen] = useState(false);
@@ -421,14 +439,41 @@ export default function Tickets() {
     setIsProcessing(true);
 
     try {
+      const { attachments, ...ticketFields } = formData;
+
       const data = await apiRequest('/api/public/tickets/create', {
-        ...formData,
+        ...ticketFields,
         raisedById: user?.id || null,
         raisedByName: adminName || null,
         raisedByEmail: user?.email || `${user?.username}@company.com`,
       });
 
       if (data.success && data.ticket) {
+        // Upload attachments (if any) after ticket is created
+        if (attachments?.length) {
+          const uploadResults = await Promise.allSettled(
+            attachments.map(file =>
+              fetch('/api/public/shared/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  filename: file.name,
+                  content: file.base64,
+                  uploadType: 'ticket',
+                  ticketId: data.ticket.ticketId,
+                  uploadedByType: 'hr_staff',
+                  uploadedByName: adminName || 'HR Admin',
+                  uploadedById: user?.id || null,
+                }),
+              })
+            )
+          );
+          const failed = uploadResults.filter(r => r.status === 'rejected').length;
+          if (failed > 0) {
+            console.warn(`${failed} attachment(s) failed to upload for ticket ${data.ticket.ticketId}`);
+          }
+        }
+
         setRowData((prev) => [data.ticket, ...prev]);
         showAlert("success",
           t("ticketsPage.alerts.ticketCreated", { ticketId: data.ticket.ticketId }),
@@ -597,6 +642,8 @@ export default function Tickets() {
           onClose={() => setIsAddTicketModalOpen(false)}
           onSave={handleAddTicket}
           isProcessing={isProcessing}
+          categories={slaCategories}
+          subcategoryMap={slaSubcategoryMap}
         />
 
         {/* Tickets count */}

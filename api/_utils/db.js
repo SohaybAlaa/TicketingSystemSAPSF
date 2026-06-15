@@ -468,18 +468,25 @@ export async function getDashboardTrendsDB(userId, userTeam = null) {
         WHERE t.assigned_to_team = $(userTeam)
           AND t.internal_status NOT IN ('Completed','Closed')
           AND al.changed_at::date = d.day)::int AS my_team_tickets,
-      (SELECT COUNT(DISTINCT ticket_id) FROM ticket_activity_log
-        WHERE change_type = 'status' AND new_value = 'New'
-          AND changed_at::date = d.day)::int AS new_tickets,
-      (SELECT COUNT(DISTINCT ticket_id) FROM ticket_activity_log
-        WHERE change_type = 'status' AND new_value = 'Under Process'
-          AND changed_at::date = d.day)::int AS under_process,
+      (SELECT COUNT(DISTINCT al.ticket_id) FROM ticket_activity_log al
+        JOIN tickets t ON t.ticket_id = al.ticket_id
+        WHERE al.change_type = 'status' AND al.new_value = 'New'
+          AND t.assigned_to_user_id = $(userId)
+          AND al.changed_at::date = d.day)::int AS new_tickets,
+      (SELECT COUNT(DISTINCT al.ticket_id) FROM ticket_activity_log al
+        JOIN tickets t ON t.ticket_id = al.ticket_id
+        WHERE al.change_type = 'status' AND al.new_value = 'Under Process'
+          AND t.assigned_to_user_id = $(userId)
+          AND al.changed_at::date = d.day)::int AS under_process,
       (SELECT COUNT(*) FROM tickets
         WHERE sla_deadline::date < d.day
+          AND assigned_to_user_id = $(userId)
           AND internal_status NOT IN ('Completed','Closed'))::int AS sla_breached,
-      (SELECT COUNT(DISTINCT ticket_id) FROM ticket_activity_log
-        WHERE change_type = 'status' AND new_value IN ('Completed','Closed')
-          AND changed_at::date = d.day)::int AS closed_30_days
+      (SELECT COUNT(DISTINCT al.ticket_id) FROM ticket_activity_log al
+        JOIN tickets t ON t.ticket_id = al.ticket_id
+        WHERE al.change_type = 'status' AND al.new_value IN ('Completed','Closed')
+          AND t.assigned_to_user_id = $(userId)
+          AND al.changed_at::date = d.day)::int AS closed_30_days
     FROM (
       SELECT generate_series(
         NOW()::date - 6 * INTERVAL '1 day',
@@ -506,14 +513,16 @@ export async function getDashboardStatsDB(userId, userTeam = null) {
           AND assigned_to_team = $(userTeam)
           AND internal_status NOT IN ('Completed', 'Closed')
       )::int AS my_team_tickets,
-      COUNT(*) FILTER (WHERE internal_status = 'New')::int AS new_tickets,
-      COUNT(*) FILTER (WHERE internal_status = 'Under Process')::int AS under_process,
+      COUNT(*) FILTER (WHERE internal_status = 'New' AND assigned_to_user_id = $(userId))::int AS new_tickets,
+      COUNT(*) FILTER (WHERE internal_status = 'Under Process' AND assigned_to_user_id = $(userId))::int AS under_process,
       COUNT(*) FILTER (
         WHERE sla_deadline < NOW()
+          AND assigned_to_user_id = $(userId)
           AND internal_status NOT IN ('Completed', 'Closed')
       )::int AS sla_breached,
       COUNT(*) FILTER (
         WHERE internal_status IN ('Completed', 'Closed')
+          AND assigned_to_user_id = $(userId)
           AND updated_at >= NOW() - INTERVAL '30 days'
       )::int AS closed_30_days
     FROM tickets

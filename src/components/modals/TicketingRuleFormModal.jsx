@@ -156,8 +156,14 @@ export default function TicketingRuleFormModal({ isOpen, onClose, onSave, initia
                   key={p}
                   type="button"
                   onClick={() => set('priority', p)}
-                  className="rounded-full transition-all duration-150 focus:outline-none"
+                  className="rounded-full transition-all duration-150 focus:outline-none hover:scale-110"
                   style={selected ? { boxShadow: `0 0 0 2px #fff, 0 0 0 4px ${color}` } : { opacity: 0.5 }} // selected = colored ring, unselected = faded
+                  onMouseEnter={(e) => {
+                    if (!selected) e.currentTarget.style.opacity = '0.8'
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!selected) e.currentTarget.style.opacity = '0.5'
+                  }}
                 >
                   <Tag type="priority" value={p} showIcon t={t} isRTL={isRTL} />
                 </button>
@@ -167,11 +173,32 @@ export default function TicketingRuleFormModal({ isOpen, onClose, onSave, initia
           {errors.priority && <ErrMsg msg={errors.priority} />}
         </div>
 
-        {/* Employee Class field - optional, uses dropUp positioning to avoid overflow */}
+        {/* Employee Class field - optional, tag button selector */}
         <div>
           <label className={labelStyle}>{t('modals.ticketingRuleForm.employeeClass', 'Employee Class')}</label>
-          {/* 4th arg = translation prefix for option labels */}
-          {sel('employeeClass', EMPLOYEE_CLASS_OPTIONS, !!errors.employeeClass, 'administratorMenu.tabs.ticketingRules.employeeClasses')} 
+          <div className={`flex flex-wrap gap-2 mt-1 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
+            {EMPLOYEE_CLASS_OPTIONS.map(opt => {
+              const selected = form.employeeClass === opt
+              const color = getValueColor(opt)
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => set('employeeClass', opt)}
+                  className="rounded-full transition-all duration-150 focus:outline-none hover:scale-110"
+                  style={selected ? { boxShadow: `0 0 0 2px #fff, 0 0 0 4px ${color}` } : { opacity: 0.5 }}
+                  onMouseEnter={(e) => {
+                    if (!selected) e.currentTarget.style.opacity = '0.8'
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!selected) e.currentTarget.style.opacity = '0.5'
+                  }}
+                >
+                  <Tag type="employeeClass" value={opt} showIcon t={t} isRTL={isRTL} />
+                </button>
+              )
+            })}
+          </div>
           {errors.employeeClass && <ErrMsg msg={errors.employeeClass} />}
         </div>
 

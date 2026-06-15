@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { formatDateTime } from "@utils/formatDateTime";
 import Tag from "@components/ui/Tag";
+import { TEAMS } from "@data/mockData";
 import AlertNotification from "@ui/AlertNotification";
 import TicketNotFound from "@components/ticketDetails/TicketNotFound";
 import TicketLeftColumn from "@components/ticketDetails/TicketLeftColumnTabs/LeftColumnTabs";
@@ -47,6 +48,8 @@ export default function Tickets({ ticketid }) {
   const [newNote, setNewNote] = useState("");
   const [localStatus, setLocalStatus] = useState("");
   const [localPriority, setLocalPriority] = useState("");
+  const [localTeam, setLocalTeam] = useState("");
+  const [localMember, setLocalMember] = useState("");
 
   // Combine API and Local Data
   const comments = [...apiComments, ...localComments];
@@ -87,6 +90,33 @@ export default function Tickets({ ticketid }) {
     setLocalStatus(ticket?.status || "");
     setLocalPriority(ticket?.priority || "");
   }, [ticket?.status, ticket?.priority]);
+
+  // Sync local assignment with ticket data
+  useEffect(() => {
+    const assignedName = ticket?.assigned_user_name || "";
+
+    // Is it assigned to a whole team?
+    const matchedTeam = TEAMS.find(
+      (team) => team.teamName === assignedName || team.teamId === assignedName
+    );
+    if (matchedTeam) {
+      setLocalTeam(matchedTeam.teamId);
+      setLocalMember("");
+      return;
+    }
+
+    // Is it assigned to a specific agent within a team?
+    const memberTeam = TEAMS.find((team) => team.members.includes(assignedName));
+    if (memberTeam) {
+      setLocalTeam(memberTeam.teamId);
+      setLocalMember(assignedName);
+      return;
+    }
+
+    // Unmatched / unassigned
+    setLocalTeam("");
+    setLocalMember("");
+  }, [ticket?.assigned_user_name]);
 
   // API FUNCTIONS
   const fetchAttachments = async () => {
@@ -168,13 +198,45 @@ export default function Tickets({ ticketid }) {
     );
   };
 
+  // Step 1: pick a team (resets agent selection to team-only)
+  const handleTeamSelect = (teamId) => {
+    setLocalTeam(teamId);
+    setLocalMember("");
+    closeDropdown();
+  };
+
+  // Step 2: pick an agent ("" = assign to team only)
+  const handleMemberSelect = (member) => {
+    setLocalMember(member);
+    closeDropdown();
+
+    const assigneeLabel = member
+      ? t(`teamMembers.${member}`, t(`employees.${member}`, member))
+      : t(`teams.${localTeam}`, localTeam);
+
+    showAlert(
+      "success",
+      t("ticketDetails.alerts.assigneeSelected", {
+        assignee: assigneeLabel,
+        defaultValue: `Assigned to ${assigneeLabel}`,
+      })
+    );
+  };
+
   const handleUpdateTicket = async () => {
     try {
-      // Check if status or priority has changed
+      // Resolve the assignee name to persist (agent name, or team name if team-only)
+      const resolvedAssignee = localMember
+        ? localMember
+        : TEAMS.find((team) => team.teamId === localTeam)?.teamName || "";
+
+      // Check if status, priority, or assignment has changed
       const statusChanged = localStatus !== ticket.status;
       const priorityChanged = localPriority !== ticket.priority;
+      const assignmentChanged =
+        !!resolvedAssignee && resolvedAssignee !== (ticket.assigned_user_name || "");
 
-      if (!statusChanged && !priorityChanged) {
+      if (!statusChanged && !priorityChanged && !assignmentChanged) {
         showAlert("info", t("ticketDetails.alerts.noChanges", "No changes to save"));
         return;
       }
@@ -215,11 +277,32 @@ export default function Tickets({ ticketid }) {
         }
       }
 
+      // Update assignment if changed
+      if (assignmentChanged) {
+        const assignResponse = await fetch('/api/public/tickets/assign', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ticketId: ticketid,
+            userId: null,
+            userName: resolvedAssignee,
+            userEmail: `${resolvedAssignee.toLowerCase().replace(/\s+/g, '.')}@company.com`,
+          }),
+        });
+
+        if (!assignResponse.ok) {
+          throw new Error('Failed to update assignment');
+        }
+      }
+
       // Update local ticket state
       setTicket(prev => ({
         ...prev,
         status: localStatus,
-        priority: localPriority
+        priority: localPriority,
+        assigned_user_name: assignmentChanged ? resolvedAssignee : prev.assigned_user_name,
       }));
 
       showAlert(
@@ -622,8 +705,12 @@ export default function Tickets({ ticketid }) {
             ticket={ticket}
             localStatus={localStatus}
             localPriority={localPriority}
+            localTeam={localTeam}
+            localMember={localMember}
             handleStatusChange={handleStatusChange}
             handlePriorityChange={handlePriorityChange}
+            handleTeamSelect={handleTeamSelect}
+            handleMemberSelect={handleMemberSelect}
           />
         </div>
       </div>

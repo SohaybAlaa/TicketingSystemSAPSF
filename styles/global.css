@@ -140,6 +140,20 @@ p {
   @apply absolute opacity-0 w-0 h-0;
 }
 
+/* SLA Group separator border */
+.ag-row.sla-group-last {
+  border-bottom: 3px solid #cbd5e1 !important;
+}
+
+/* SLA ID cell — smooth transition + hover effect */
+.ag-cell.sla-id-cell {
+  transition: background 0.2s ease !important;
+}
+.ag-cell.sla-id-cell:hover,
+.ag-cell.sla-id-cell.sla-id-hovered {
+  background: #fffbeb !important;
+}
+
 /* Custom black scrollbar styling */
 * {
   scrollbar-width: thin;

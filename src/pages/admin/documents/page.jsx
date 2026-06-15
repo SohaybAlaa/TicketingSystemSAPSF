@@ -18,6 +18,7 @@ import StatisticsCardGrid from "@ui/StatisticsCardGrid";
 import SearchFilterBar from "@ui/SearchFilterBar";
 import DocumentsGrid from "@components/documents/DocumentsGrid";
 import DocumentsList from "@components/documents/DocumentsList";
+import EmptyState from "@ui/EmptyState";
 import { myTheme } from "@utils/agGridThemes";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -493,28 +494,13 @@ const Documents = () => {
           <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : filteredDocs.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center mt-6">
-          <FolderOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-gray-900 mb-2">
-            {t("documentsMenu.empty.title")}
-          </h3>
-          {isSearching ? (
-            <p
-              className={`text-gray-600 ${
-                isRTL ? "leading-relaxed" : ""
-              }`}
-            >
-              {t("documentsMenu.empty.noResults")}
-            </p>
-          ) : (
-            <p
-              className={`text-gray-600 ${
-                isRTL ? "leading-relaxed" : ""
-              }`}
-            >
-              {t("documentsMenu.empty.noDocuments")}
-            </p>
-          )}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mt-6">
+          <EmptyState
+            icon={FolderOpen}
+            title={t("documentsMenu.empty.title")}
+            description={isSearching ? t("documentsMenu.empty.noResults") : t("documentsMenu.empty.noDocuments")}
+            semiDescription={isSearching && searchQuery ? `"${searchQuery}"` : undefined}
+          />
         </div>
       ) : viewMode === "list" ? (
         <DocumentsList

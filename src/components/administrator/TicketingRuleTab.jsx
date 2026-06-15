@@ -36,31 +36,36 @@ export default function TicketingRulesTab() {
       headerName: t('administratorMenu.tabs.ticketingRules.columns.entity', 'Entity'),
       flex: 1.2, minWidth: 130,
       cellRenderer: TextCellRenderer,
+      cellStyle: { fontWeight: '700' },
+    },
+    {
+      field: 'employeeClass',
+      headerName: t('administratorMenu.tabs.ticketingRules.columns.employeeClass', 'Employee Class'),
+      flex: 1.2, minWidth: 145,
+      headerClass: 'ag-header-cell-center',
+      cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
+      cellRenderer: (params) => <Tag type="employeeClass" value={params.value} showIcon t={t} isRTL={isRTL} />,
     },
     {
       field: 'supportCategory',
       headerName: t('administratorMenu.tabs.ticketingRules.columns.supportCategory', 'Support Category'),
       flex: 1.4, minWidth: 155,
       cellRenderer: TextCellRenderer,
+      cellStyle: { fontWeight: '600' },
     },
     {
       field: 'subcategory',
       headerName: t('administratorMenu.tabs.ticketingRules.columns.subcategory', 'Subcategory'),
       flex: 1.2, minWidth: 130,
       cellRenderer: TextCellRenderer,
+      cellStyle: { fontWeight: '600' },
     },
     {
       field: 'group',
       headerName: t('administratorMenu.tabs.ticketingRules.columns.group', 'Group'),
       flex: 1.4, minWidth: 150,
       cellRenderer: TextCellRenderer,
-    },
-    {
-      field: 'agent',
-      headerName: t('administratorMenu.tabs.ticketingRules.columns.agent', 'Agent'),
-      flex: 1.2, minWidth: 130,
-      cellRenderer: TextCellRenderer,
-      cellStyle: { fontWeight: '600' },
+      cellStyle: { fontWeight: '500' },
     },
     {
       field: 'priority',
@@ -72,20 +77,13 @@ export default function TicketingRulesTab() {
       cellRenderer: (params) => <Tag type="priority" value={params.value} t={t} isRTL={isRTL} />,
     },
     {
-      field: 'employeeClass',
-      headerName: t('administratorMenu.tabs.ticketingRules.columns.employeeClass', 'Employee Class'),
-      flex: 1.2, minWidth: 145,
-      // Translate employee class values dynamically
-      cellRenderer: (params) => t(`administratorMenu.tabs.ticketingRules.employeeClasses.${params.value}`, params.value),
-    },
-    {
       headerName: t('administratorMenu.tabs.ticketingRules.columns.action', 'Action'),
       flex: 0.5, minWidth: 100,
       sortable: false, filter: false, suppressMovable: true,
       // Render edit/delete action buttons
       cellRenderer: ActionsCellRenderer,
     },
-  ], [t])
+  ], [t, isRTL])
 
   // Empty state overlay when no rules match search/filter
   const OVERLAY_NO_RULES = useMemo(() => buildGridOverlay({
@@ -188,6 +186,7 @@ export default function TicketingRulesTab() {
         <SectionHeader
           icon={SlidersHorizontal}
           title={t('administratorMenu.tabs.ticketingRules.title', 'Ticketing Rules')}
+          description={t('administratorMenu.tabs.ticketingRules.description', 'Configure ticket routing and assignment rules')}
         />
         <div className="flex items-center gap-4">
           <GridSearchBar
@@ -199,7 +198,7 @@ export default function TicketingRulesTab() {
           {/* Add Rule Button with icon rotation on hover */}
           <button
             onClick={() => setRuleModal('new')}
-            className={`action-button ${isRTL ? 'flex-row-reverse' : ''}`}
+            className={`action-button !w-52 ${isRTL ? 'flex-row-reverse' : ''}`}
             onMouseEnter={e => {
               const i = e.currentTarget.querySelector('.icon-spin')
               if (i) { i.style.transition = 'transform 1s ease'; i.style.transform = 'rotate(360deg)' }
@@ -239,7 +238,7 @@ export default function TicketingRulesTab() {
           title={t('administratorMenu.tabs.ticketingRules.agents', 'Agents')}
           value={new Set(rules.map(r => r.agent).filter(Boolean)).size}
           icon={UserCog}
-          iconBoxColor="#8b5cf6"
+          iconBoxColor="#FF6E00"
         />
       </div>
 

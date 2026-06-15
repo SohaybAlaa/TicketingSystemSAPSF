@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Plus, UserCog, Calendar } from "lucide-react";
+import EmptyState from "@components/ui/EmptyState";
 import { formatDateTime } from "@utils/formatDateTime";
 
 const noteColors = [
@@ -54,17 +55,12 @@ export default function InternalNotesTab({
       })}
 
       {internalNotes.length === 0 && (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Plus className="w-8 h-8 text-yellow-600" />
-          </div>
-          <p>
-            {t("ticketDetails.internalNotes.noNotes")}
-          </p>
-          <p className="!text-sm !text-gray-400 mt-1">
-            {t("ticketDetails.internalNotes.addPrivateNotes")}
-          </p>
-        </div>
+        <EmptyState
+          icon={UserCog}
+          title={t("ticketDetails.internalNotes.noNotes")}
+          description={t("ticketDetails.internalNotes.addPrivateNotes")}
+          className="py-12"
+        />
       )}
 
       {/* Add Note */}

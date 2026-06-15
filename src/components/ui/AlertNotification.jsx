@@ -86,7 +86,7 @@ export default function AlertNotification({ alerts, onClose }) {
         `}
       </style>
       <div
-        className={`fixed top-4 z-50 w-96 max-w-full ${
+        className={`fixed top-4 z-[9999] w-96 max-w-full ${
           isRTL ? "left-4" : "right-4"
         }`}
       >

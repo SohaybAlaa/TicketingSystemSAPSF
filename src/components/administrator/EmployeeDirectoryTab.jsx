@@ -10,11 +10,12 @@ import AlertNotification from '@components/ui/AlertNotification'
 import DeleteConfirmModal from '@components/modals/DeleteConfirmModal'
 import EmployeeFormModal from '@components/modals/EmployeeFormModal'
 import ModernSeparator from '@components/ui/ModernSeparator'
-import EmployeeDetailCard from '@components/administrator/EmployeeDetailCard'
+import EmployeeDetailCard from '@components/administrator/employeeDirectory/EmployeeDetailCard'
 import { MOCK_EMPLOYEES } from '@data/mockData'
 import { UserPlus, Building2, Contact, BookUser, Building, BriefcaseBusiness, Users } from 'lucide-react'
 import { buildGridOverlay, defaultColDef, getRowStyle } from '@utils/agGridUtils.jsx'
 import { ActionsCellRenderer, TextCellRenderer } from '@components/grid/CellRenderers'
+import Tag from '@components/ui/Tag'
 ModuleRegistry.registerModules([AllCommunityModule])
 
 // Each object defines one column in the AG Grid table.
@@ -41,7 +42,7 @@ const STATS_CONFIG = [
   { titleKey: 'totalEmployees', fallback: 'Total Employees', icon: BookUser,          iconBoxColor: '#eab308', getValue: (emps) => emps.length },
   { titleKey: 'departments',    fallback: 'Departments',     icon: Building2,         iconBoxColor: '#22c55e', getValue: (emps) => new Set(emps.map(e => e.department)).size },
   { titleKey: 'entities',       fallback: 'Entities',        icon: Building,          iconBoxColor: '#3b82f6', getValue: (emps) => new Set(emps.map(e => e.entityName)).size },
-  { titleKey: 'managers',       fallback: 'Managers',        icon: BriefcaseBusiness, iconBoxColor: '#a855f7', getValue: (emps) => new Set(emps.map(e => e.manager).filter(Boolean)).size },
+  { titleKey: 'managers',       fallback: 'Managers',        icon: BriefcaseBusiness, iconBoxColor: '#FF6E00', getValue: (emps) => new Set(emps.map(e => e.manager).filter(Boolean)).size },
 ]
 
 // Main component that renders the full Employee Directory page:
@@ -58,8 +59,17 @@ export default function EmployeeDirectoryTab() {
       headerName: t(`administratorMenu.tabs.employeeDirectory.columns.${labelKey}`, fallback),
       flex,
       minWidth,
-      cellRenderer: TextCellRenderer,
-      ...(bold && { cellStyle: { fontWeight: '600' } }),
+      ...(field === 'employeeClass'
+        ? {
+            headerClass: 'ag-header-cell-center',
+            cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
+            cellRenderer: (params) => <Tag type="employeeClass" value={params.value} showIcon t={t} isRTL={isRTL} />,
+          }
+        : {
+            cellRenderer: TextCellRenderer,
+            ...(bold && { cellStyle: { fontWeight: '600' } }),
+          }
+      ),
     })),
     {
       headerName: t('administratorMenu.tabs.employeeDirectory.columns.action', 'Action'),
@@ -197,6 +207,7 @@ export default function EmployeeDirectoryTab() {
         <SectionHeader
           icon={BookUser}
           title={t('administratorMenu.tabs.employeeDirectory.title', 'Employee directory')}
+          description={t('administratorMenu.tabs.employeeDirectory.description', 'View and manage employee records and information')}
         />
         <div className="flex items-center gap-4">
           <GridSearchBar
@@ -210,7 +221,7 @@ export default function EmployeeDirectoryTab() {
           />
           <button
             onClick={() => setEmployeeModal('new')}
-            className={`action-button ${isRTL ? 'flex-row-reverse' : ''}`}
+            className={`action-button !w-52 ${isRTL ? 'flex-row-reverse' : ''}`}
             onMouseEnter={e => {
               const i = e.currentTarget.querySelector('.icon-spin')
               if (i) { i.style.transition = 'transform 1s ease'; i.style.transform = 'rotate(360deg)' }

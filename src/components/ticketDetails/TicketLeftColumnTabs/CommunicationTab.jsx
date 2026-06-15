@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Send, User, UserCog, Calendar } from "lucide-react";
+import EmptyState from "@components/ui/EmptyState";
 import { formatDateTime } from "@utils/formatDateTime";
 
 export default function CommunicationTab({
@@ -64,17 +65,12 @@ export default function CommunicationTab({
       ))}
 
       {comments.length === 0 && (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Send className="w-8 h-8 text-gray-400" />
-          </div>
-          <p className="!text-gray-500 !font-medium">
-            {t("ticketDetails.communication.noComments")}
-          </p>
-          <p className="!text-sm !text-gray-400 mt-1">
-            {t("ticketDetails.communication.startConversation")}
-          </p>
-        </div>
+        <EmptyState
+          icon={Send}
+          title={t("ticketDetails.communication.noComments")}
+          description={t("ticketDetails.communication.startConversation")}
+          className="py-12"
+        />
       )}
 
       {/* Add Comment */}

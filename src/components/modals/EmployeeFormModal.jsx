@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import { UserPlus, UserCog } from "lucide-react";
+import Tag, { getValueColor } from '@components/ui/Tag';
 
-// The three possible employment types shown in the Employee Class dropdown
-const EMPLOYEE_CLASSES = ["Full-time", "Part-time", "Contractor"];
+// The four possible employment types shown in the Employee Class selector
+const EMPLOYEE_CLASSES = ["Full-time", "Part-time", "Contractor", "Intern"];
 
 // Form layout config. Each sub-array is one row in the form.
 // A row with 2 fields renders side-by-side (2-column grid);
@@ -19,10 +20,12 @@ const EMPLOYEE_CLASSES = ["Full-time", "Part-time", "Contractor"];
 const FIELD_ROWS = [
   [
     { key: "employeeId",    labelKey: "employeeId",    fallback: "Employee ID",    required: true, placeholder: "e.g. EMP-0001" },
-    { key: "employeeClass", labelKey: "employeeClass", fallback: "Employee Class", type: "select", options: EMPLOYEE_CLASSES },
   ],
   [
     { key: "name",          labelKey: "name",          fallback: "Employee Name",  required: true, placeholder: "Full name" },
+  ],
+  [
+    { key: "employeeClass", labelKey: "employeeClass", fallback: "Employee Class", type: "tagSelector", options: EMPLOYEE_CLASSES },
   ],
   [
     { key: "email",         labelKey: "email",         fallback: "Email",          required: true, placeholder: "name@example.com", type: "email" },
@@ -43,7 +46,7 @@ const FIELD_ROWS = [
 
 // Reusable field component used by every form row.
 // Renders: label → input (or select dropdown) → error message (if any).
-function FormField({ fieldDef, value, error, onChange, t, inputStyle, labelStyle, errorStyle, focusHandlers }) {
+function FormField({ fieldDef, value, error, onChange, t, inputStyle, labelStyle, errorStyle, focusHandlers, isRTL }) {
   const { key, labelKey, fallback, required, placeholder, type, options } = fieldDef;
   return (
     <div>
@@ -51,7 +54,34 @@ function FormField({ fieldDef, value, error, onChange, t, inputStyle, labelStyle
         {t(`modals.employeeForm.${labelKey}`, fallback)}
         {required && <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>}
       </label>
-      {type === "select" ? (
+      {/* Tag selector: displays options as colored pill buttons with hover effects */}
+      {type === "tagSelector" ? (
+        <div className={`flex flex-wrap gap-2 mt-1 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
+          {options.map(opt => {
+            const selected = value === opt
+            const color = getValueColor(opt) // Get color based on option value
+            return (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => onChange(key, opt)}
+                className="rounded-full transition-all duration-150 focus:outline-none hover:scale-110"
+                // Selected: colored border outline, Unselected: faded appearance
+                style={selected ? { boxShadow: `0 0 0 2px #fff, 0 0 0 4px ${color}` } : { opacity: 0.5 }}
+                // Hover effect: brighten unselected buttons
+                onMouseEnter={(e) => {
+                  if (!selected) e.currentTarget.style.opacity = '0.8'
+                }}
+                onMouseLeave={(e) => {
+                  if (!selected) e.currentTarget.style.opacity = '0.5'
+                }}
+              >
+                <Tag type="employeeClass" value={opt} showIcon t={t} isRTL={isRTL} />
+              </button>
+            )
+          })}
+        </div>
+      ) : type === "select" ? (
         <select
           value={value}
           onChange={(e) => onChange(key, e.target.value)}
@@ -202,7 +232,7 @@ export default function EmployeeFormModal({ isOpen, onClose, onSave, initial = n
   });
 
   // Shared style props passed to every FormField to avoid repetition
-  const fieldProps = { t, inputStyle, labelStyle, errorStyle, focusHandlers };
+  const fieldProps = { t, inputStyle, labelStyle, errorStyle, focusHandlers, isRTL };
 
   return (
     <Modal

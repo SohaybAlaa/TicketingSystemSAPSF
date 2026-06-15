@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Download, Plus, User, UserCog, FileText, Calendar, Image, File } from "lucide-react";
+import EmptyState from "@components/ui/EmptyState";
 import { formatDateTime } from "@utils/formatDateTime";
 
 const getFileIcon = (type) => {
@@ -93,17 +94,12 @@ export default function AttachmentsTab({
           ))}
 
           {actualAttachments.length === 0 && !isUploading && (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Download className="w-8 h-8 text-gray-600" />
-              </div>
-              <p className="!text-gray-900 !font-medium">
-                {t("ticketDetails.attachments.noAttachments")}
-              </p>
-              <p className="!text-sm !text-gray-400 mt-1">
-                {t("ticketDetails.attachments.uploadFiles")}
-              </p>
-            </div>
+            <EmptyState
+              icon={Download}
+              title={t("ticketDetails.attachments.noAttachments")}
+              description={t("ticketDetails.attachments.uploadFiles")}
+              className="py-12"
+            />
           )}
         </>
       )}

@@ -18,6 +18,7 @@ import StatCard from "@ui/StatCard";
 import ActionButton from "@ui/ActionButton";
 import ActivityItem from "@ui/ActivityItem";
 import SectionHeader from "@ui/SectionHeader";
+import EmptyState from "@ui/EmptyState";
 
 // Card definitions with icons/colors — values come from API
 const cardDefs = [
@@ -240,10 +241,10 @@ export default function Admin() {
               <p className="text-gray-700 font-medium">{t("dashboard.recentActivity.loading")}</p>
             </div>
           ) : recentActivity.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10">
-              <CalendarClock className="w-12 h-12 text-gray-300 mb-3" />
-              <p className="text-gray-400 font-medium">{t("dashboard.recentActivity.noActivity")}</p>
-            </div>
+            <EmptyState
+              icon={CalendarClock}
+              title={t("dashboard.recentActivity.noActivity")}
+            />
           ) : (
             recentActivity.map((item, index) => ( // map recentActivity to ActivityItem
               <ActivityItem

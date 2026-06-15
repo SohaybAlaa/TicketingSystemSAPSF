@@ -7,11 +7,15 @@ import {
   Timer,
   BellDot,
   BookUser,
+  Settings,
 } from 'lucide-react'
 
 import OrgStructureTab from '@components/administrator/OrgStructureTab'
 import EmployeeDirectoryTab from '@components/administrator/EmployeeDirectoryTab'
 import TicketingRulesTab from '@components/administrator/TicketingRuleTab'
+import SLARuleTab from '@components/administrator/SLARuleTab'
+import SLAAssignmentTab from '@components/administrator/SLAAssignmentTab'
+import NotificationRulesTab from '@components/administrator/NotificationRulesTab'
 
 export default function Administrator() {
   // Get translation function (t) and i18n instance for multi-language support
@@ -43,14 +47,21 @@ export default function Administrator() {
       desc: t('administratorMenu.tabs.ticketingRules.desc'),
     },
     {
-      id: 'sla',
-      label: t('administratorMenu.tabs.sla.label'),
+      id: 'sla-rules',
+      label: t('administratorMenu.tabs.slaRules.label'),
       icon: Timer,
-      welcome: t('administratorMenu.tabs.sla.welcome'),
-      desc: t('administratorMenu.tabs.sla.desc'),
+      welcome: t('administratorMenu.tabs.slaRules.welcome'),
+      desc: t('administratorMenu.tabs.slaRules.desc'),
     },
     {
-      id: 'notification-email',
+      id: 'sla-assignment',
+      label: t('administratorMenu.tabs.slaAssignment.label'),
+      icon: Settings,
+      welcome: t('administratorMenu.tabs.slaAssignment.welcome'),
+      desc: t('administratorMenu.tabs.slaAssignment.desc'),
+    },
+    {
+      id: 'notification-rules',
       label: t('administratorMenu.tabs.notificationEmail.label'),
       icon: BellDot,
       welcome: t('administratorMenu.tabs.notificationEmail.welcome'),
@@ -86,7 +97,7 @@ export default function Administrator() {
       subtitle={t('administratorMenu.subtitle')}
     >
       {/* Tab Container */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-clip">
 
         {/* Mobile Tab Navigation - 2x3 Grid */}
         <div className="grid grid-cols-2 gap-2 p-4 bg-gray-50 md:hidden">
@@ -143,8 +154,17 @@ export default function Administrator() {
           {/* Ticketing Rule — real content */}
           {activeTab === 'ticketing-rule' && <TicketingRulesTab />}
 
+          {/* SLA Rules — real content */}
+          {activeTab === 'sla-rules' && <SLARuleTab />}
+
+          {/* SLA Assignment — real content */}
+          {activeTab === 'sla-assignment' && <SLAAssignmentTab />}
+
+          {/* Notification Email — real content */}
+          {activeTab === 'notification-rules' && <NotificationRulesTab />}
+
           {/* Other tabs — placeholder welcome cards */}
-          {activeTab !== 'org-structure' && activeTab !== 'employee-profile' && activeTab !== 'ticketing-rule' && activeData && (
+          {activeTab !== 'org-structure' && activeTab !== 'employee-profile' && activeTab !== 'ticketing-rule' && activeTab !== 'sla-rules' && activeTab !== 'sla-assignment' && activeTab !== 'notification-rules' && activeData && (
             <div className="flex flex-col items-center justify-center py-16 gap-5 text-center">
               <div className="w-16 h-16 rounded-2xl bg-yellow-50 border border-yellow-200 flex items-center justify-center shadow-sm">
                 <activeData.icon className="w-8 h-8 text-yellow-500" />

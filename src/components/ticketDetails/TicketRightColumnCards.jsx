@@ -6,21 +6,46 @@ import {
   AlertTriangle,
   User,
   UserCog,
+  Users,
   Building2,
   Mail,
   MapPin,
   Calendar,
 } from "lucide-react";
 import Tag from "@components/ui/Tag";
+import { TEAMS } from "@data/mockData";
 
 export default function TicketRightColumnCards({
   ticket,
   localStatus,
   localPriority,
+  localTeam,
+  localMember,
   handleStatusChange,
   handlePriorityChange,
+  handleTeamSelect,
+  handleMemberSelect,
 }) {
   const { t } = useTranslation();
+
+  const currentTeam = TEAMS.find((team) => team.teamId === localTeam);
+
+  const teamLabel = currentTeam
+    ? t(`teams.${currentTeam.teamId}`, currentTeam.teamName)
+    : "";
+
+  // Header display: agent name (with team as subtitle) or team-only name
+  const assigneeName = localMember
+    ? t(`teamMembers.${localMember}`, t(`employees.${localMember}`, localMember))
+    : currentTeam
+      ? teamLabel
+      : t("ticketDetails.rightColumn.unassigned");
+
+  const assigneeSubtitle = localMember
+    ? teamLabel
+    : currentTeam
+      ? t("ticketDetails.rightColumn.teamOnly")
+      : "";
 
   const formatDateTime = (dateString) => {
     if (!dateString) {
@@ -151,28 +176,139 @@ export default function TicketRightColumnCards({
           </div>
 
           <div className="pt-4 border-t border-gray-200">
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
               {t("ticketDetails.rightColumn.assignedTo")}
             </label>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center shadow-md">
-                <UserCog className="w-5 h-5 text-white" />
+
+            {/* Current Assignee Display (old style) */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
+                {localMember ? (
+                  <UserCog className="w-5 h-5 text-white" />
+                ) : (
+                  <Users className="w-5 h-5 text-white" />
+                )}
               </div>
-              <div>
-                <p>
-                  {ticket.assigned_user_name
-                    ? t(`employees.${ticket.assigned_user_name}`, {
-                        defaultValue: ticket.assigned_user_name,
-                      })
-                    : t("ticketDetails.rightColumn.unassigned")}
+              <div className="min-w-0">
+                <p className="font-semibold text-gray-800 truncate">
+                  {assigneeName}
                 </p>
-                <p className="!text-sm !text-gray-600">
-                  {t(`groups.${ticket.assigned_group_name}`, {
-                    defaultValue: ticket.assigned_group_name,
-                  })}
-                </p>
+                {assigneeSubtitle && (
+                  <p className="text-sm text-gray-500 truncate">
+                    {assigneeSubtitle}
+                  </p>
+                )}
               </div>
             </div>
+
+            {/* Team Dropdown */}
+            <div className="dropdown dropdown-bottom w-full mb-3">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-outline w-full justify-between px-4 py-3 h-auto min-h-0 border-2 border-gray-300 rounded-xl hover:border-yellow-400 hover:bg-yellow-50 focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-200 font-medium"
+              >
+                <span className="flex items-center gap-2 truncate">
+                  <Users className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                  <span className="truncate">
+                    {currentTeam
+                      ? teamLabel
+                      : t("ticketDetails.rightColumn.selectTeam")}
+                  </span>
+                </span>
+                <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
+              </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu bg-base-100 rounded-xl z-[1] w-full p-2 shadow-xl border border-gray-200 mt-2"
+              >
+                {TEAMS.map((team) => (
+                  <li
+                    key={team.teamId}
+                    onClick={() => handleTeamSelect(team.teamId)}
+                  >
+                    <a
+                      className={`font-medium justify-between ${
+                        localTeam === team.teamId
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "hover:bg-yellow-50"
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <Users className="w-4 h-4" />
+                        {t(`teams.${team.teamId}`, team.teamName)}
+                      </span>
+                      <span className="text-[11px] text-gray-400">
+                        {team.members.length}{" "}
+                        {t("ticketDetails.rightColumn.members")}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Agent Dropdown */}
+            {currentTeam && (
+              <div className="dropdown dropdown-bottom w-full">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-outline w-full justify-between px-4 py-3 h-auto min-h-0 border-2 border-gray-300 rounded-xl hover:border-yellow-400 hover:bg-yellow-50 focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-200 font-medium"
+                >
+                  <span className="flex items-center gap-2 truncate">
+                    {localMember ? (
+                      <UserCog className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                    ) : (
+                      <Users className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                    )}
+                    <span className="truncate">
+                      {localMember
+                        ? t(`teamMembers.${localMember}`, localMember)
+                        : t("ticketDetails.rightColumn.teamOnly")}
+                    </span>
+                  </span>
+                  <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu bg-base-100 rounded-xl z-[1] w-full p-2 shadow-xl border border-gray-200 mt-2 max-h-60 flex-nowrap overflow-y-auto"
+                >
+                  {/* Team Only Option */}
+                  <li onClick={() => handleMemberSelect("")}>
+                    <a
+                      className={`font-medium ${
+                        !localMember
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "hover:bg-yellow-50"
+                      }`}
+                    >
+                      <Users className="w-4 h-4" />
+                      {t("ticketDetails.rightColumn.teamOnly")}
+                    </a>
+                  </li>
+
+                  {/* Member Options */}
+                  {currentTeam.members.map((member) => (
+                    <li
+                      key={member}
+                      onClick={() => handleMemberSelect(member)}
+                    >
+                      <a
+                        className={`font-medium ${
+                          localMember === member
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "hover:bg-yellow-50"
+                        }`}
+                      >
+                        <UserCog className="w-4 h-4" />
+                        {t(`teamMembers.${member}`, member)}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>

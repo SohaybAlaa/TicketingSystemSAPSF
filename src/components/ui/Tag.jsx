@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, ClockAlert, AlarmClock, Loader2, CheckCheck, ArchiveRestore, ArrowDown, Minus, ArrowUp, ShieldAlert ,TriangleAlert, UserCheck, UserX, User, UserCog} from "lucide-react";
+import { Sparkles, ClockAlert, AlarmClock, Loader2, CheckCheck, ArchiveRestore, ArrowDown, Minus, ArrowUp, ShieldAlert, TriangleAlert, UserCheck, UserX, User, UserCog, MailSearch, CalendarClock, BedDouble, CalendarDays, Briefcase, SlidersHorizontal, BadgeCheck, Clock4, Handshake, GraduationCap } from "lucide-react";
 
 /**
  * Tag - A reusable component for displaying status and priority tags
@@ -41,6 +41,27 @@ export const COLOR_MAP = {
   
   // Special tags
   OVERDUE: "#ef4444",
+
+  // SLA Type colors
+  "INITIAL REVIEW": "#3b82f6",
+  "COMPLETION DUE": "#FF6E00",
+
+  // Time Type colors
+  "WORKING TIME": "#22c55e",
+  "CALENDAR TIME": "#8b5cf6",
+  "CUSTOM TIME": "#06b6d4",
+
+  // Schedule Type colors
+  "DAY OFF": "#6b7280",
+  "FULL DAY": "#3b82f6",
+  "WORKING HOURS": "#fdc700",
+  "CUSTOM": "#22c55e",
+
+  // Employee Class colors
+  "FULL-TIME": "#22c55e",
+  "PART-TIME": "#f59e0b",
+  "CONTRACTOR": "#8b5cf6",
+  "INTERN": "#06b6d4",
 };
 
 export const ICON_MAP = {
@@ -69,6 +90,27 @@ export const ICON_MAP = {
   SUPERVISOR: UserCog,
   
   OVERDUE: TriangleAlert,
+
+  // SLA Type icons
+  "INITIAL REVIEW": MailSearch,
+  "COMPLETION DUE": CalendarClock,
+
+  // Time Type icons
+  "WORKING TIME": Briefcase,
+  "CALENDAR TIME": CalendarDays,
+  "CUSTOM TIME": SlidersHorizontal,
+
+  // Schedule Type icons
+  "DAY OFF": BedDouble,
+  "FULL DAY": CalendarDays,
+  "WORKING HOURS": Briefcase,
+  "CUSTOM": SlidersHorizontal,
+
+  // Employee Class icons
+  "FULL-TIME": BadgeCheck,
+  "PART-TIME": Clock4,
+  "CONTRACTOR": Handshake,
+  "INTERN": GraduationCap,
 };
 
 export const getValueColor = (value) => {
@@ -103,30 +145,19 @@ const Tag = ({ type, value, t, isRTL = false, className = "", icon, showIcon = f
   let translationKey;
   
   if (type === 'status') {
-    // Handle both formats: "New" and "NEW"
-    // Check if we're in the ticket details page
-    const isTicketDetailsPage = window.location.pathname.includes('/tickets/');
-    
-    if (isTicketDetailsPage) {
-      // In ticket details page, use the ticketDetails.statuses namespace
-      // Use the value as-is (with spaces) for translation keys
-      translationKey = `ticketsPage.statuses.${value}`;
-    } else {
-      // In tickets list page, use the ticketsPage.statuses namespace
-      // Use the value as-is (with spaces) for translation keys
-      translationKey = `ticketsPage.statuses.${value}`;
-    }
+    translationKey = `ticketsPage.statuses.${value}`;
   } else if (type === 'userType') {
     translationKey = `administratorMenu.userTypes.${value}`;
+  } else if (type === 'slaType') {
+    translationKey = `administratorMenu.tabs.slaRules.slaTypes.${value}`;
+  } else if (type === 'timeType') {
+    translationKey = `administratorMenu.tabs.slaRules.timeTypes.${value}`;
+  } else if (type === 'scheduleType') {
+    translationKey = `administratorMenu.tabs.slaRules.scheduleTypes.${value}`;
+  } else if (type === 'employeeClass') {
+    translationKey = `administratorMenu.tabs.ticketingRules.employeeClasses.${value}`;
   } else {
-    // For priorities, check if we're in ticket details page
-    const isTicketDetailsPage = window.location.pathname.includes('/tickets/');
-    
-    if (isTicketDetailsPage) {
-      translationKey = `ticketsPage.priorities.${value}`;
-    } else {
-      translationKey = `ticketsPage.priorities.${value}`;
-    }
+    translationKey = `ticketsPage.priorities.${value}`;
   }
   
   return (

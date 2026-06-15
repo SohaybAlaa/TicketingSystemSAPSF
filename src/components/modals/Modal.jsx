@@ -9,7 +9,7 @@ import { X } from "lucide-react";
  * @param {string} title - Modal title
  * @param {ReactNode} children - Modal content
  */
-export default function Modal({ isOpen, onClose, title, children, icon, subtitle }) {
+export default function Modal({ isOpen, onClose, title, children, icon, subtitle, maxWidth }) {
   if (!isOpen) return null;
 
   // Check if this is a delete modal by examining the icon content
@@ -62,7 +62,7 @@ export default function Modal({ isOpen, onClose, title, children, icon, subtitle
           boxShadow:
             "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
           width: "90%",
-          maxWidth: "500px",
+          maxWidth: maxWidth || "500px",
           maxHeight: "90vh",
           overflow: "auto",
         }}

@@ -18,7 +18,7 @@ import { createPortal } from 'react-dom'
  * @param {function} t           - The i18n translation function from react-i18next
  * @param {boolean}  isRTL       - If true, flips layout for Arabic (right-to-left) languages
  */
-export default function DaisySelect({ value, options, onChange, hasError, placeholder, translationPrefix, t, isRTL, disabled }) {
+export default function DaisySelect({ value, options, onChange, hasError, placeholder, translationPrefix, t, isRTL, disabled, getOptionClass }) {
   const [isOpen, setIsOpen] = useState(false)
   const triggerRef = useRef(null)
   const menuRef = useRef(null)
@@ -61,8 +61,11 @@ export default function DaisySelect({ value, options, onChange, hasError, placeh
         setIsOpen(false)
       }
     }
-    // Close on scroll of any ancestor (modal body, etc.)
-    const handleScroll = () => setIsOpen(false)
+    // Close on scroll of any ancestor (modal body, etc.) but not from inside the menu
+    const handleScroll = (e) => {
+      if (menuRef.current && menuRef.current.contains(e.target)) return
+      setIsOpen(false)
+    }
 
     document.addEventListener('mousedown', handleClickOutside)
     window.addEventListener('scroll', handleScroll, true)
@@ -88,7 +91,7 @@ export default function DaisySelect({ value, options, onChange, hasError, placeh
         {/* Selected value text or placeholder — fills available space with flex-1 */}
         {/* In RTL (Arabic): text aligns right. In LTR (English): text aligns left */}
         {/* Gray-400 color for placeholder, gray-800 for actual selected value */}
-        <span className={`${label ? 'text-gray-800' : 'text-gray-400'} ${isRTL ? 'text-right' : 'text-left'} flex-1`}>
+        <span className={`${label ? 'text-gray-800' : 'text-gray-400'} ${isRTL ? 'text-right' : 'text-left'} flex-1 truncate whitespace-nowrap`}>
           {label ?? displayPlaceholder}
         </span>
 
@@ -129,9 +132,16 @@ export default function DaisySelect({ value, options, onChange, hasError, placeh
                   }}
                 >
                   {/* Highlight the currently selected option with a yellow background */}
-                  <a className={`block px-3 py-1.5 font-medium w-full rounded-lg cursor-pointer hover:bg-yellow-50 transition-colors ${isSelected ? 'bg-yellow-50 text-yellow-800' : ''}`}>
-                    {optionLabel}
-                  </a>
+                  {(() => {
+                    const customClass = getOptionClass ? getOptionClass(option) : ''
+                    const baseHover = customClass ? '' : 'hover:bg-yellow-50'
+                    const selectedClass = isSelected && !customClass ? 'bg-yellow-50 text-yellow-800' : ''
+                    return (
+                      <a className={`block px-3 py-1.5 font-medium w-full rounded-lg cursor-pointer transition-colors ${baseHover} ${selectedClass} ${customClass}`}>
+                        {optionLabel}
+                      </a>
+                    )
+                  })()}
                 </li>
               )
             })}
