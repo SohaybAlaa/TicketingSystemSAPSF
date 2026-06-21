@@ -67,24 +67,6 @@ export default function AlertNotification({ alerts, onClose }) {
 
   return createPortal(
     <>
-      <style>
-        {`
-          @keyframes slide-in-right {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-          }
-          @keyframes slide-in-left {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-          }
-          .animate-slide-in-rtl { 
-            animation: slide-in-left 0.3s ease-out; 
-          }
-          .animate-slide-in-ltr { 
-            animation: slide-in-right 0.3s ease-out; 
-          }
-        `}
-      </style>
       <div
         className={`fixed top-4 z-[9999] w-96 max-w-full ${
           isRTL ? "left-4" : "right-4"

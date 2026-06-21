@@ -19,24 +19,22 @@ export default function InfoMetricCard({ title, icon, items, isRTL = false }) {
   const rtlClass = (base, rtlExtra = "") => `${base} ${isRTL ? rtlExtra : ""}`.trim();
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6 h-full">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5 lg:p-5 xl:p-6 h-full">
       <SectionHeader icon={icon} title={title} />
-      <div className="space-y-4">
+      <div className="space-y-3 lg:space-y-4">
         {items.map((item, index) => (
-          <div key={index} className="flex items-start justify-between gap-3 pb-4 border-b border-gray-100 last:border-b-0 last:pb-0">
-            <div className="flex items-start gap-3 flex-1">
+          <div key={index} className="flex items-center justify-between gap-2 pb-3 lg:pb-4 border-b border-gray-100 last:border-b-0 last:pb-0">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               {item.icon && (
-                <div className={`p-2 rounded-lg ${item.color?.replace('text-', 'bg-').replace('600', '100') || "bg-gray-100"}`}>
-                  <item.icon className={`w-5 h-5 ${item.color || "text-gray-600"}`} />
+                <div className={`flex-shrink-0 p-1.5 lg:p-2 rounded-lg ${item.color?.replace('text-', 'bg-').replace('600', '100') || "bg-gray-100"}`}>
+                  <item.icon className={`w-4 h-4 lg:w-5 lg:h-5 ${item.color || "text-gray-600"}`} />
                 </div>
               )}
-              <div className="flex-1">
-                <p className={rtlClass("text-sm font-medium text-gray-600", "font-semibold text-base")}>
-                  {item.label}
-                </p>
-              </div>
+              <p className={rtlClass("text-xs lg:text-sm font-medium text-gray-600 leading-tight", "font-semibold text-sm")}>
+                {item.label}
+              </p>
             </div>
-            <span className={rtlClass("text-lg font-bold whitespace-nowrap", "text-xl font-bold") + ` ${item.color || "text-gray-900"}`}>
+            <span className={rtlClass("text-sm lg:text-base xl:text-lg font-bold whitespace-nowrap flex-shrink-0", "text-base xl:text-xl font-bold") + ` ${item.color || "text-gray-900"}`}>
               {item.value}
             </span>
           </div>

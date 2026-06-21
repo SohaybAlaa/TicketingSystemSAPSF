@@ -332,13 +332,13 @@ export default function OrgStructureTab() {
 
       {/* Table 1: Support Groups */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
           <SectionHeader 
             icon={Boxes} 
             title={t('administratorMenu.tabs.orgStructure.supportGroups.title')} 
             description={t('administratorMenu.tabs.orgStructure.supportGroups.description', 'Manage support groups and team hierarchies')}
           />
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             <GridSearchBar
               inputRef={groupSearchRef}
               value={groupSearch}
@@ -348,8 +348,6 @@ export default function OrgStructureTab() {
             <button
               onClick={() => setGroupModal('new')}
               className={`action-button !w-52 ${isRTL ? 'flex-row-reverse' : ''}`}
-              onMouseEnter={e => { const i = e.currentTarget.querySelector('.icon-spin');  if (i) { i.style.transition = 'transform 1s ease'; i.style.transform = 'rotate(360deg)' } }}
-              onMouseLeave={e => { const i = e.currentTarget.querySelector('.icon-spin');  if (i) { i.style.transition = 'none';              i.style.transform = 'rotate(0deg)'   } }}
             >
               <Plus className="w-5 h-5 icon-spin" />{t('administratorMenu.tabs.orgStructure.supportGroups.newGroup')}
             </button>
@@ -403,9 +401,9 @@ export default function OrgStructureTab() {
 
       {/* Table 2: Assigned Users */}
       <div id="assigned-users-section">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
           <SectionHeader icon={Users} title={t('administratorMenu.tabs.orgStructure.assignedUsers.title')} subtitle={selectedGroup ? `• ${selectedGroup.name}` : undefined} />
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             <GridSearchBar
               value={memberSearch}
               onChange={setMemberSearch}
@@ -416,8 +414,6 @@ export default function OrgStructureTab() {
               disabled={!selectedGroup || loadingMembers}
               onClick={() => setMemberTarget(true)}
               className={`action-button !w-52 disabled:!cursor-not-allowed ${isRTL ? 'flex-row-reverse' : ''}`}
-              onMouseEnter={e => { const i = e.currentTarget.querySelector('.icon-flip'); if (i) { i.style.transition = 'transform 1s ease'; i.style.transform = 'rotateY(360deg)' } }}
-              onMouseLeave={e => { const i = e.currentTarget.querySelector('.icon-flip'); if (i) { i.style.transition = 'none';              i.style.transform = 'rotateY(0deg)'   } }}
             >
               <UserPlus className="w-5 h-5 icon-flip" />{t('administratorMenu.tabs.orgStructure.assignedUsers.addMember')}
             </button>

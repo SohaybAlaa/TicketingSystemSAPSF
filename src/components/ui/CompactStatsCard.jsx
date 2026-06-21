@@ -26,7 +26,7 @@ const CompactStatsCard = ({
   return (
     <div
       onClick={onClick}
-      className="rounded-xl border border-gray-200 px-5 py-4 flex items-center gap-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-102 hover:border-opacity-60 cursor-pointer mt-3 mb-2"
+      className="rounded-xl border border-gray-200 px-3 sm:px-5 py-3 sm:py-4 flex items-center gap-2 sm:gap-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-102 hover:border-opacity-60 cursor-pointer mt-3 mb-2"
       style={{
         background: active
           ? `linear-gradient(135deg, ${iconBoxColor}40 0%, ${iconBoxColor}25 50%, #ffffff 100%)`
@@ -35,26 +35,20 @@ const CompactStatsCard = ({
         boxShadow: active ? `0 0 0 2px ${iconBoxColor}40` : undefined,
       }}
       onMouseEnter={(e) => {
-        const icon = e.currentTarget.querySelector('.icon-flip');
-        if (icon) {
-          icon.style.transition = 'transform 1s ease';
-          icon.style.transform = 'rotateY(360deg)';
-        }
         e.currentTarget.style.borderColor = iconBoxColor + '60';
         e.currentTarget.style.background = active
           ? `linear-gradient(135deg, ${iconBoxColor}50 0%, ${iconBoxColor}35 50%, #ffffff 100%)`
           : `linear-gradient(135deg, ${iconBoxColor}25 0%, ${iconBoxColor}15 50%, #ffffff 100%)`;
+        const icon = e.currentTarget.querySelector('.icon-flip');
+        if (icon) { icon.style.transition = 'transform 1s ease'; icon.style.transform = 'rotateY(360deg)'; }
       }}
       onMouseLeave={(e) => {
-        const icon = e.currentTarget.querySelector('.icon-flip');
-        if (icon) {
-          icon.style.transition = 'none';
-          icon.style.transform = 'rotateY(0deg)';
-        }
         e.currentTarget.style.borderColor = active ? iconBoxColor + '80' : iconBoxColor + '30';
         e.currentTarget.style.background = active
           ? `linear-gradient(135deg, ${iconBoxColor}40 0%, ${iconBoxColor}25 50%, #ffffff 100%)`
           : `linear-gradient(135deg, ${iconBoxColor}15 0%, ${iconBoxColor}08 50%, #ffffff 100%)`;
+        const icon = e.currentTarget.querySelector('.icon-flip');
+        if (icon) { icon.style.transition = 'none'; icon.style.transform = 'rotateY(0deg)'; }
       }}
     >
       {/* Icon */}
@@ -68,12 +62,12 @@ const CompactStatsCard = ({
         <Icon className={`${iconClassName} w-6 h-6`} style={{ color: iconBoxColor }} />
       </div>
 
-      {/* Title and Value on same line */}
-      <div className="flex items-center gap-4 min-w-0 flex-1">
-        <span className="text-xl font-semibold text-gray-600 uppercase tracking-wide whitespace-nowrap">
+      {/* Title and Value always on one line */}
+      <div className="flex items-center gap-2 min-w-0 flex-1">
+        <span className="text-sm sm:text-base lg:text-xl font-semibold text-gray-600 uppercase tracking-wide leading-tight truncate">
           {title}
         </span>
-        <span className="text-xl font-bold text-gray-800 uppercase tracking-wide whitespace-nowrap">
+        <span className="text-sm sm:text-base lg:text-xl font-bold text-gray-800 uppercase tracking-wide whitespace-nowrap">
           {value}
         </span>
       </div>

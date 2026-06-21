@@ -34,7 +34,7 @@ export default function Section2Conditions({ f, stepRef, setActiveStep }) {
           )
         }
       />
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Live summary of all conditions — only shown when at least one exists */}
         {f.condCount > 0 && (
           <div className="mb-5">

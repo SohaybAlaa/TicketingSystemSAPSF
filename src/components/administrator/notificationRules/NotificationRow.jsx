@@ -140,7 +140,7 @@ export default function NotificationRow({ n, isExpanded, onToggle, onSave, onDel
         }}
       />
 
-      <div className="flex items-center gap-3 px-6 py-4">
+      <div className="flex items-start sm:items-center gap-3 px-3 sm:px-6 py-3 sm:py-4">
         {/* Status bell — yellow gradient container, fills when expanded */}
         <div className={`relative w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 border transition-[background,border-color,box-shadow] duration-300 ${isExpanded
           ? 'bg-gradient-to-br from-yellow-300 to-amber-400 border-yellow-400 shadow-lg shadow-yellow-300/50'
@@ -153,7 +153,7 @@ export default function NotificationRow({ n, isExpanded, onToggle, onSave, onDel
         </div>
 
         {/* Left side: info */}
-        <div className="flex-1 min-w-0 flex flex-col gap-2">
+        <div className="flex-1 min-w-0 flex flex-col gap-1.5 sm:gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <span className="!text-slate-800 !text-[17px] !leading-tight flex-shrink-0">
               <span className="!font-extrabold">#</span><span className="!font-bold">{n.id}</span>
@@ -178,15 +178,20 @@ export default function NotificationRow({ n, isExpanded, onToggle, onSave, onDel
             </div>
           )}
 
+          {/* Status toggle — mobile only, shown inline below subject */}
+          <div className="sm:hidden" onClick={e => e.stopPropagation()}>
+            <StatusToggle active={n.status} onChange={onToggleStatus} />
+          </div>
+
           <div className="flex items-center gap-2 flex-wrap">
             {conditionPill}
             {personaPill}
           </div>
         </div>
 
-        {/* Right side: status toggle + delete + chevron */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <div onClick={e => e.stopPropagation()}>
+        {/* Right side: status toggle (desktop only) + delete + chevron */}
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          <div className="hidden sm:block" onClick={e => e.stopPropagation()}>
             <StatusToggle active={n.status} onChange={onToggleStatus} />
           </div>
           <div onClick={e => e.stopPropagation()}>

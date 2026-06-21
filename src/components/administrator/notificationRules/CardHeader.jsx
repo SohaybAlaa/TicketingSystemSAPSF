@@ -11,7 +11,7 @@ export default function CardHeader({ num, label, subtitle, badge, action }) {
   const isRTL = i18n.language === 'ar'
 
   return (
-    <div className={`relative flex items-center justify-between gap-4 px-6 py-5 border-b border-gray-100 ${isRTL ? 'bg-gradient-to-l from-yellow-50/60 via-amber-50/30 to-transparent' : 'bg-gradient-to-r from-yellow-50/60 via-amber-50/30 to-transparent'}`}>
+    <div className={`relative flex items-center justify-between gap-3 px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 ${isRTL ? 'bg-gradient-to-l from-yellow-50/60 via-amber-50/30 to-transparent' : 'bg-gradient-to-r from-yellow-50/60 via-amber-50/30 to-transparent'}`}>
       {/* Left accent bar (or right in RTL) */}
       <span
         aria-hidden="true"

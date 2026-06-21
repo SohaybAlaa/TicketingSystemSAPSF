@@ -16,15 +16,6 @@ export default function PlaceholderBar({ onInsert, disabled = false }) {
       className={`bg-gradient-to-br from-gray-50 via-white to-yellow-50/30 border border-gray-200 rounded-xl p-4 mb-4 transition-opacity duration-200 hover:border-yellow-400 transition-colors duration-200 ${disabled ? 'opacity-50' : ''}`}
       aria-disabled={disabled}
     >
-      <style>{`
-        @keyframes clickTap {
-          0%, 60%, 100% { transform: translate(0, 0) scale(1); }
-          15% { transform: translate(2px, 2px) scale(0.88); }
-          30% { transform: translate(0, 0) scale(1.08); }
-          45% { transform: translate(0, 0) scale(1); }
-        }
-        .anim-click-tap { animation: clickTap 1.6s ease-in-out infinite; transform-origin: 30% 30%; }
-      `}</style>
       <FieldLabel className="mb-4">
         <span className="inline-flex items-center gap-2">
           {disabled
@@ -39,8 +30,8 @@ export default function PlaceholderBar({ onInsert, disabled = false }) {
       </FieldLabel>
       <div className="flex flex-col gap-3">
         {PLACEHOLDERS.map(({ group, items }) => (
-          <div key={group} className="flex items-start gap-3">
-            <span className="!text-[14px] !font-extrabold !text-amber-600 !uppercase !tracking-[0.12em] mt-2 w-24 flex-shrink-0">
+          <div key={group} className="flex flex-col sm:flex-row sm:items-start gap-1.5 sm:gap-3">
+            <span className="!text-[12px] sm:!text-[14px] !font-extrabold !text-amber-600 !uppercase !tracking-[0.12em] sm:mt-2 sm:w-24 flex-shrink-0">
               {group}
             </span>
             <div className="flex flex-wrap gap-2">

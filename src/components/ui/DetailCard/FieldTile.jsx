@@ -21,14 +21,10 @@ export default function FieldTile({ label, value, icon: Icon, color, isEmail, cu
       onMouseEnter={e => {
         e.currentTarget.style.background = `linear-gradient(135deg, ${color}15 0%, ${color}08 100%)`
         e.currentTarget.style.borderColor = `${color}40`
-        const icon = e.currentTarget.querySelector('.icon-flip')
-        if (icon) { icon.style.transition = 'transform 0.6s ease'; icon.style.transform = 'rotateY(360deg)' }
       }}
       onMouseLeave={e => {
         e.currentTarget.style.background = `linear-gradient(135deg, ${color}08 0%, ${color}04 100%)`
         e.currentTarget.style.borderColor = `${color}20`
-        const icon = e.currentTarget.querySelector('.icon-flip')
-        if (icon) { icon.style.transition = 'none'; icon.style.transform = 'rotateY(0deg)' }
       }}
     >
       <div className="flex items-center gap-3 justify-between">

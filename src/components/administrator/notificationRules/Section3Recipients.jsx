@@ -45,13 +45,13 @@ export default function Section3Recipients({ f, stepRef, setActiveStep }) {
           )
         }
       />
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Persona card grid — red outline on the whole grid if validation fails */}
         <div className="mb-4">
           <FieldLabel size="sm" className="mb-3">
             {t('administratorMenu.tabs.notificationRules.recipients.title')} <span className="!text-red-500 !font-bold">*</span>
           </FieldLabel>
-          <div className={`grid grid-cols-4 gap-3 ${f.showErr('personas') ? 'p-3 -m-3 rounded-2xl border-2 border-red-300 bg-red-50/40' : ''}`}>
+          <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 ${f.showErr('personas') ? 'p-3 -m-3 rounded-2xl border-2 border-red-300 bg-red-50/40' : ''}`}>
             {PERSONAS.map(p => (
               <PersonaCard
                 key={p.id}
@@ -72,10 +72,7 @@ export default function Section3Recipients({ f, stepRef, setActiveStep }) {
         {f.extraPersonas.length > 0 && (
           <div className="mt-5 pt-5 border-t border-dashed border-gray-200">
             <FieldLabel size="sm" className="mb-3">{t('administratorMenu.tabs.notificationRules.recipients.title')}</FieldLabel>
-            <div
-              className="grid gap-3 p-4 rounded-2xl bg-gradient-to-br from-amber-50/60 via-yellow-50/40 to-transparent border border-amber-100"
-              style={{ gridTemplateColumns: `repeat(${f.extraPersonas.length}, 1fr)` }}
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-2xl bg-gradient-to-br from-amber-50/60 via-yellow-50/40 to-transparent border border-amber-100">
               {f.extraPersonas.map(p => {
                 const opts = EXTRA_OPTIONS[p.extra] ?? EMPLOYEE_OPTS // fallback to employee options
                 const selectedValues = f.extraSelections[p.extra] || []

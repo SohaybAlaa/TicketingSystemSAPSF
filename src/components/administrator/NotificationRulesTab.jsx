@@ -113,29 +113,16 @@ export default function NotificationRulesTab() {
 
   return (
     <>
-      {/* Shake animation used by bell icons on hover */}
-      <style>{`
-        @keyframes shake {
-          0%, 100% { transform: rotate(0deg); }
-          25% { transform: rotate(-15deg); }
-          75% { transform: rotate(15deg); }
-        }
-        .action-button:hover .icon-shake,
-        .notification-stats-card:hover .icon-shake,
-        .group\\/row:hover .icon-shake {
-          animation: shake 0.3s ease-in-out 3;
-        }
-      `}</style>
       <AlertNotification alerts={alerts} onClose={removeAlert} />
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
         <SectionHeader
           icon={BellDot}
           title={t('administratorMenu.tabs.notificationRules.title')}
           description={t('administratorMenu.tabs.notificationRules.description')}
         />
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           {notifications.length > 0 && (
             <GridSearchBar
               inputRef={searchRef}
@@ -156,7 +143,7 @@ export default function NotificationRulesTab() {
 
       {/* Stats cards */}
       {notifications.length > 0 && (
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-3 mb-4">
           <div className="notification-stats-card">
             <CompactStatsCard
               title={t('administratorMenu.tabs.notificationRules.stats.total')}

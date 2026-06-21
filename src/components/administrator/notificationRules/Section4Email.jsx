@@ -27,7 +27,7 @@ export default function Section4Email({ f, stepRef, setActiveStep }) {
         subtitle={t('administratorMenu.tabs.notificationRules.template.subtitle')}
         action={null}
       />
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Sender row — fixed from address, not editable by the user */}
         <div className="flex items-center gap-3 mb-5 p-3 rounded-xl border border-gray-200 bg-gradient-to-r from-gray-50 via-white to-white hover:border-yellow-400 transition-colors duration-200">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-300 via-yellow-400 to-amber-500 flex items-center justify-center shadow-md shadow-yellow-300/60 flex-shrink-0 ring-2 ring-white">
@@ -46,26 +46,14 @@ export default function Section4Email({ f, stepRef, setActiveStep }) {
         <PlaceholderBar onInsert={f.insertPlaceholder} disabled={!f.isEditingEmail} />
 
         {/* Toggle between Preview and Edit modes */}
-        <style>{`
-          @keyframes eyeLook {
-            0%, 100% { transform: translateX(0) scaleY(1); }
-            18% { transform: translateX(-1.5px) scaleY(1); }
-            36% { transform: translateX(0) scaleY(1); }
-            54% { transform: translateX(1.5px) scaleY(1); }
-            72% { transform: translateX(0) scaleY(1); }
-            90% { transform: translateX(0) scaleY(0.1); }
-            94% { transform: translateX(0) scaleY(1); }
-          }
-          .anim-eye { animation: eyeLook 3s ease-in-out infinite; transform-origin: center; display: inline-block; }
-        `}</style>
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
           <FieldLabel className="!text-[15px] !tracking-[0.14em]">
             <span className="inline-flex items-center gap-2">
               {f.isEditingEmail ? t('administratorMenu.tabs.notificationRules.form.clickToEdit') : t('administratorMenu.tabs.notificationRules.template.title')}
               <Eye size={20} strokeWidth={2.25} className="text-slate-700 flex-shrink-0 anim-eye" />
             </span>
           </FieldLabel>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             {/* Apply template button — resets subject + body to the default template */}
             {f.isEditingEmail && (
               <button

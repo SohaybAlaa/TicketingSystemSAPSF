@@ -13,7 +13,7 @@ export default function GridSearchBar({ value, onChange, placeholder, disabled =
         ref={inputRef}
         disabled={disabled}
         className={`border border-gray-200 rounded-xl ${isRTL ? 'pr-8 pl-8' : 'pl-8 pr-8'} py-3 text-sm font-semibold text-gray-800
-                   focus:outline-none focus:ring-3 focus:ring-yellow-400 w-120 bg-white
+                   focus:outline-none focus:ring-3 focus:ring-yellow-400 w-full sm:w-64 md:w-80 lg:w-96 bg-white
                    disabled:!cursor-not-allowed ${isRTL ? 'text-right' : ''}`}
         placeholder={placeholder}
         value={value}

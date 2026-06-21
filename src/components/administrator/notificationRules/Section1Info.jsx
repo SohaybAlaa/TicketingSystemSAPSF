@@ -30,8 +30,8 @@ export default function Section1Info({ f, stepRef, setActiveStep }) {
           </Pill>
         }
       />
-      <div className="p-6">
-        <div className="grid grid-cols-3 gap-4">
+      <div className="p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Name field — required, red border on error */}
           <div className="col-span-1 flex flex-col gap-1.5">
             <FieldLabel htmlFor={`f-name-${f.id}`}>
@@ -59,15 +59,6 @@ export default function Section1Info({ f, stepRef, setActiveStep }) {
           </div>
           {/* Auto-generated ID — read-only, shown with a lock icon animation */}
           <div className="flex flex-col gap-1.5">
-            <style>{`
-              @keyframes ntfLockWiggle {
-                0%, 70%, 100% { transform: rotate(0deg); }
-                78% { transform: rotate(-12deg); }
-                86% { transform: rotate(10deg); }
-                94% { transform: rotate(-4deg); }
-              }
-              .anim-ntf-lock { animation: ntfLockWiggle 2.6s ease-in-out infinite; transform-origin: 50% 60%; display: inline-block; }
-            `}</style>
             <FieldLabel>
               <span className="inline-flex items-center gap-2">
                 {t('administratorMenu.tabs.notificationRules.form.name')}

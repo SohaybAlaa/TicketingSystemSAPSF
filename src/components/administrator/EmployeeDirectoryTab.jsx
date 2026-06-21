@@ -203,13 +203,13 @@ export default function EmployeeDirectoryTab() {
       />
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
         <SectionHeader
           icon={BookUser}
           title={t('administratorMenu.tabs.employeeDirectory.title', 'Employee directory')}
           description={t('administratorMenu.tabs.employeeDirectory.description', 'View and manage employee records and information')}
         />
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           <GridSearchBar
             inputRef={searchRef}
             value={search}
@@ -222,14 +222,6 @@ export default function EmployeeDirectoryTab() {
           <button
             onClick={() => setEmployeeModal('new')}
             className={`action-button !w-52 ${isRTL ? 'flex-row-reverse' : ''}`}
-            onMouseEnter={e => {
-              const i = e.currentTarget.querySelector('.icon-spin')
-              if (i) { i.style.transition = 'transform 1s ease'; i.style.transform = 'rotate(360deg)' }
-            }}
-            onMouseLeave={e => {
-              const i = e.currentTarget.querySelector('.icon-spin')
-              if (i) { i.style.transition = 'none'; i.style.transform = 'rotate(0deg)' }
-            }}
           >
             <UserPlus className="w-5 h-5 icon-spin" />
             {t('administratorMenu.tabs.employeeDirectory.addEmployee', 'Add employee')}
@@ -238,7 +230,7 @@ export default function EmployeeDirectoryTab() {
       </div>
 
       {/* Stat cards row */}
-      <div className="grid grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         {STATS_CONFIG.map(({ titleKey, fallback, icon, iconBoxColor, getValue }) => (
           <CompactStatsCard
             key={titleKey}

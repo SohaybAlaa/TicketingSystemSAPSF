@@ -182,13 +182,13 @@ export default function TicketingRulesTab() {
       />
 
       {/* Header: Title, Search Bar, Add Rule Button */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
         <SectionHeader
           icon={SlidersHorizontal}
           title={t('administratorMenu.tabs.ticketingRules.title', 'Ticketing Rules')}
           description={t('administratorMenu.tabs.ticketingRules.description', 'Configure ticket routing and assignment rules')}
         />
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           <GridSearchBar
             inputRef={searchRef}
             value={search}
@@ -199,14 +199,6 @@ export default function TicketingRulesTab() {
           <button
             onClick={() => setRuleModal('new')}
             className={`action-button !w-52 ${isRTL ? 'flex-row-reverse' : ''}`}
-            onMouseEnter={e => {
-              const i = e.currentTarget.querySelector('.icon-spin')
-              if (i) { i.style.transition = 'transform 1s ease'; i.style.transform = 'rotate(360deg)' }
-            }}
-            onMouseLeave={e => {
-              const i = e.currentTarget.querySelector('.icon-spin')
-              if (i) { i.style.transition = 'none'; i.style.transform = 'rotate(0deg)' }
-            }}
           >
             <SlidersHorizontal className="w-5 h-5 icon-spin" />
             {t('administratorMenu.tabs.ticketingRules.addRule', 'Add Rule')}
@@ -215,7 +207,7 @@ export default function TicketingRulesTab() {
       </div>
 
       {/* Stats Row: Quick overview cards (Total, Categories, Groups, Agents) */}
-      <div className="grid grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         <CompactStatsCard
           title={t('administratorMenu.tabs.ticketingRules.totalRules', 'Total Rules')}
           value={rules.length}

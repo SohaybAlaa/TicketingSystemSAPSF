@@ -618,49 +618,45 @@ export default function Tickets({ ticketid }) {
                 </h2>
 
                 {/* Ticket Metadata */}
-                <div className="flex flex-nowrap items-center gap-x-1 text-sm text-gray-600 overflow-x-auto">
-                  <span className="flex items-center gap-1 !font-medium whitespace-nowrap">
-                    <User className="w-3 h-3" />
-                    {t("ticketDetails.employee")}:{" "}
-                    {t(
-                      `employees.${ticket.employee.name}`,
-                      ticket.employee.name
+                <div className="flex flex-col gap-y-1.5 text-sm text-gray-600">
+                  {/* Row 1: Employee + Assigned To */}
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="flex items-center gap-1 !font-medium whitespace-nowrap">
+                      <User className="w-3 h-3 flex-shrink-0" />
+                      {t("ticketDetails.employee")}:{" "}
+                      {t(`employees.${ticket.employee.name}`, ticket.employee.name)}
+                    </span>
+                    <span className="text-gray-300">•</span>
+                    <span className="flex items-center gap-1 !font-medium whitespace-nowrap">
+                      <UserCog className="w-3 h-3 flex-shrink-0" />
+                      {t("ticketDetails.assignedTo")}:{" "}
+                      {t(
+                        `teamMembers.${ticket.assigned_user_name}`,
+                        t(`employees.${ticket.assigned_user_name}`, ticket.assigned_user_name)
+                      )}
+                    </span>
+                  </div>
+                  {/* Row 2: Category + Created + Updated */}
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="flex items-center gap-1 !font-medium whitespace-nowrap cursor-default" title={`${t("ticketDetails.category", "Category")}: ${t(`categories.${ticket.category_name}`, ticket.category_name)}`}>
+                      <div className="w-1.5 h-1.5 bg-orange-500 rounded-full flex-shrink-0"></div>
+                      {t(`categories.${ticket.category_name}`, ticket.category_name)}
+                    </span>
+                    <span className="text-gray-300">•</span>
+                    <span className="flex items-center gap-1 !font-medium whitespace-nowrap cursor-default" title={`${t("ticketDetails.createdAt")}: ${formatDateTime(ticket.created_at)}`}>
+                      <Clock className="w-3 h-3 flex-shrink-0" />
+                      {formatDateTime(ticket.created_at)}
+                    </span>
+                    {ticket.updated_at && ticket.updated_at !== ticket.created_at && (
+                      <>
+                        <span className="text-gray-300">•</span>
+                        <span className="flex items-center gap-1 !font-medium whitespace-nowrap cursor-default" title={`${t("ticketDetails.lastUpdate")}: ${formatDateTime(ticket.updated_at)}`}>
+                          <FilePenLine className="w-3 h-3 flex-shrink-0" />
+                          {formatDateTime(ticket.updated_at)}
+                        </span>
+                      </>
                     )}
-                  </span>
-                  <span className="text-gray-300">•</span>
-                  <span className="flex items-center gap-1 !font-medium whitespace-nowrap">
-                    <UserCog className="w-3 h-3" />
-                    {t("ticketDetails.assignedTo")}:{" "}
-                    {t(
-                      `teamMembers.${ticket.assigned_user_name}`,
-                      t(
-                        `employees.${ticket.assigned_user_name}`,
-                        ticket.assigned_user_name
-                      )
-                    )}
-                  </span>
-                  <span className="text-gray-300">•</span>
-                  <span className="flex items-center gap-1 !font-medium whitespace-nowrap cursor-default" title={`${t("ticketDetails.category", "Category")}: ${t(`categories.${ticket.category_name}`, ticket.category_name)}`}>
-                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
-                    {t(
-                      `categories.${ticket.category_name}`,
-                      ticket.category_name
-                    )}
-                  </span>
-                  <span className="text-gray-300">•</span>
-                  <span className="flex items-center gap-1 !font-medium whitespace-nowrap cursor-default" title={`${t("ticketDetails.createdAt")}: ${formatDateTime(ticket.created_at)}`}>
-                    <Clock className="w-3 h-3" />
-                    {formatDateTime(ticket.created_at)}
-                  </span>
-                  {ticket.updated_at && ticket.updated_at !== ticket.created_at && (
-                    <>
-                      <span className="text-gray-300">•</span>
-                      <span className="flex items-center gap-1 !font-medium whitespace-nowrap cursor-default" title={`${t("ticketDetails.lastUpdate")}: ${formatDateTime(ticket.updated_at)}`}>
-                        <FilePenLine className="w-3 h-3" />
-                        {formatDateTime(ticket.updated_at)}
-                      </span>
-                    </>
-                  )}
+                  </div>
                 </div>
               </div>
 

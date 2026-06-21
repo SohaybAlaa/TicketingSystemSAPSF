@@ -101,20 +101,9 @@ export default function AssignToOtherModal({
         {/* Step 2: Member Selection or Team Only */}
         {selectedTeam && currentTeam && (
           <div
-            style={{
-              animation: "fadeIn 0.2s ease-out",
-              willChange: "opacity, transform",
-            }}
+            style={{ willChange: "opacity, transform" }}
+            className="animate-fadeInDown"
           >
-            <style>
-              {`
-                @keyframes fadeIn {
-                 from { opacity: 0; transform: translateY(-6px); }
-                 to   { opacity: 1; transform: translateY(0); }
-                }
-              `}
-            </style>
-
             <label
               className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "text-right" : "text-left"}`}
             >

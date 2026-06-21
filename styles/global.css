@@ -154,6 +154,165 @@ p {
   background: #fffbeb !important;
 }
 
+/* ─── Shared keyframe animations ─────────────────────────────────────────── */
+
+/* tickets/page.jsx — scale fade-in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.animate-fadeIn { animation: fadeIn 0.3s ease-in-out; }
+
+/* AssignToOtherModal — slide-down fade-in */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeInDown { animation: fadeInDown 0.2s ease-out; }
+
+/* AlertNotification — slide in from right (LTR) or left (RTL) */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+.animate-slide-in-ltr { animation: slide-in-right 0.3s ease-out; }
+.animate-slide-in-rtl { animation: slide-in-left  0.3s ease-out; }
+
+/* NotificationRulesTab — bell icon shake on hover */
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg);  }
+  25%       { transform: rotate(-15deg); }
+  75%       { transform: rotate(15deg);  }
+}
+.action-button:hover .icon-shake,
+.notification-stats-card:hover .icon-shake,
+.group\/row:hover .icon-shake {
+  animation: shake 0.3s ease-in-out 3;
+}
+
+/* StepBar — pulse ring around active step dot */
+@keyframes stepbar-pulse-ring {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  70%  { transform: scale(1.6); opacity: 0;    }
+  100% { transform: scale(1.6); opacity: 0;    }
+}
+/* StepBar — flowing shimmer on active progress line */
+@keyframes stepbar-line-flow {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%);  }
+}
+/* StepBar — pencil wiggle on active step icon */
+@keyframes stepbar-pencil-wiggle {
+  0%, 100% { transform: rotate(-10deg); }
+  50%       { transform: rotate(10deg);  }
+}
+
+/* Section4Email — eye look animation on preview icon */
+@keyframes eyeLook {
+  0%, 100% { transform: translateX(0)     scaleY(1);   }
+  18%       { transform: translateX(-1.5px) scaleY(1);  }
+  36%       { transform: translateX(0)     scaleY(1);   }
+  54%       { transform: translateX(1.5px) scaleY(1);   }
+  72%       { transform: translateX(0)     scaleY(1);   }
+  90%       { transform: translateX(0)     scaleY(0.1); }
+  94%       { transform: translateX(0)     scaleY(1);   }
+}
+.anim-eye { animation: eyeLook 3s ease-in-out infinite; transform-origin: center; display: inline-block; }
+
+/* Section1Info — lock icon wiggle */
+@keyframes ntfLockWiggle {
+  0%, 70%, 100% { transform: rotate(0deg);   }
+  78%            { transform: rotate(-12deg); }
+  86%            { transform: rotate(10deg);  }
+  94%            { transform: rotate(-4deg);  }
+}
+.anim-ntf-lock { animation: ntfLockWiggle 2.6s ease-in-out infinite; transform-origin: 50% 60%; display: inline-block; }
+
+/* PlaceholderBar — click/tap cursor animation */
+@keyframes clickTap {
+  0%, 60%, 100% { transform: translate(0, 0)   scale(1);    }
+  15%            { transform: translate(2px, 2px) scale(0.88); }
+  30%            { transform: translate(0, 0)   scale(1.08); }
+  45%            { transform: translate(0, 0)   scale(1);    }
+}
+.anim-click-tap { animation: clickTap 1.6s ease-in-out infinite; transform-origin: 30% 30%; }
+
+/* ConditionBlock — AND/OR pill glow pulse */
+@keyframes andOrGlow {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(250, 204, 21, 0.55), 0 2px 6px  -1px rgba(245, 158, 11, 0.45); }
+  50%       { box-shadow: 0 0 0 5px rgba(250, 204, 21, 0),    0 4px 10px -1px rgba(245, 158, 11, 0.55); }
+}
+.anim-andor-glow { animation: andOrGlow 1.8s ease-in-out infinite; }
+
+/* Icon flip — 3D Y-axis rotation on parent hover */
+.icon-flip {
+  transition: none;
+  transform: rotateY(0deg);
+}
+button:hover .icon-flip,
+a:hover .icon-flip,
+[role="button"]:hover .icon-flip {
+  transition: transform 1s ease;
+  transform: rotateY(360deg);
+}
+
+/* Icon spin — Z-axis rotation on parent hover */
+.icon-spin {
+  transition: none;
+  transform: rotate(0deg);
+}
+button:hover .icon-spin,
+a:hover .icon-spin,
+[role="button"]:hover .icon-spin {
+  transition: transform 1s ease;
+  transform: rotate(360deg);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+/* AG Grid Pagination Panel — mobile fix */
+@media (max-width: 639px) {
+  .ag-paging-panel {
+    flex-wrap: wrap !important;
+    height: auto !important;
+    padding: 8px !important;
+    gap: 6px !important;
+    justify-content: center !important;
+  }
+
+  .ag-paging-page-summary-panel {
+    order: 1;
+    font-size: 11px !important;
+  }
+
+  .ag-paging-row-summary-panel {
+    order: 2;
+    font-size: 11px !important;
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  .ag-paging-page-size {
+    order: 0;
+    font-size: 11px !important;
+  }
+
+  .ag-paging-button {
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 4px !important;
+  }
+
+  .ag-picker-field-wrapper {
+    min-width: 60px !important;
+  }
+}
+
 /* Custom black scrollbar styling */
 * {
   scrollbar-width: thin;

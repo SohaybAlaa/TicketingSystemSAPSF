@@ -97,22 +97,22 @@ export default function Administrator() {
       subtitle={t('administratorMenu.subtitle')}
     >
       {/* Tab Container */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-clip">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-x-hidden">
 
         {/* Mobile Tab Navigation - 2x3 Grid */}
-        <div className="grid grid-cols-2 gap-2 p-4 bg-gray-50 md:hidden">
+        <div className="grid grid-cols-2 gap-2 p-3 bg-gray-50 md:hidden">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-5 py-4 text-lg font-semibold rounded-xl cursor-pointer flex items-center justify-center gap-3 transition-all duration-300 ${
+              className={`px-3 py-3 text-xs sm:text-sm font-semibold rounded-xl cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 text-center leading-tight ${
                 activeTab === tab.id
                   ? 'bg-white text-gray-800 shadow-[inset_0_-4px_12px_rgba(234,179,8,0.3)] border border-yellow-300 ring-1 ring-yellow-200'
                   : 'bg-transparent text-gray-500 hover:bg-white hover:text-gray-700 hover:shadow-sm border border-transparent'
               }`}
             >
-              <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'text-yellow-500' : ''}`} />
-              {tab.label}
+              <tab.icon className={`w-4 h-4 flex-shrink-0 ${activeTab === tab.id ? 'text-yellow-500' : ''}`} />
+              <span className="truncate">{tab.label}</span>
             </button>
           ))}
         </div>
@@ -125,7 +125,7 @@ export default function Administrator() {
                 key={tab.id}
                 ref={(el) => (tabsRef.current[tab.id] = el)}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 px-2 py-4 text-base font-semibold transition-all duration-300 whitespace-nowrap cursor-pointer flex items-center justify-center gap-3 ${
+                className={`flex-1 px-1 lg:px-2 py-4 text-xs lg:text-sm xl:text-base font-semibold transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 lg:gap-2 min-w-0 ${
                   activeTab === tab.id
                     ? 'text-gray-800 shadow-[inset_0_-6px_16px_rgba(234,179,8,0.25)]'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -144,7 +144,7 @@ export default function Administrator() {
         </div>
 
         {/* Tab Content */}
-        <div className="p-6">
+        <div className="p-3 sm:p-4 md:p-6">
           {/* Organization Structure — real content */}
           {activeTab === 'org-structure' && <OrgStructureTab />}
 

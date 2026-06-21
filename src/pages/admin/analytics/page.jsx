@@ -653,7 +653,7 @@ export default function Analytics() {
 
       {/*  BOTTOM INFO CARDS (3 cards in a row) */}
       {/* Each InfoMetricCard shows a list of label + value + icon rows */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8"> 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mt-8"> 
         {/* Card 1: Resolution Metrics */}
         <InfoMetricCard
           icon={Target}

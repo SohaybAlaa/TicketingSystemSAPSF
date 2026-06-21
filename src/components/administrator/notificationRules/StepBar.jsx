@@ -18,22 +18,7 @@ export default function StepBar({ activeStep, scrollProgress, completedSteps, on
 
   return (
     <div className="bg-white border-2 border-gray-200 rounded-2xl shadow-md overflow-hidden">
-      <style>{`
-        @keyframes stepbar-pulse-ring {
-          0%   { transform: scale(1);    opacity: 0.55; }
-          70%  { transform: scale(1.6);  opacity: 0;    }
-          100% { transform: scale(1.6);  opacity: 0;    }
-        }
-        @keyframes stepbar-line-flow {
-          0%   { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        @keyframes stepbar-pencil-wiggle {
-          0%, 100% { transform: rotate(-10deg); }
-          50%      { transform: rotate(10deg); }
-        }
-      `}</style>
-      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+      <div className="px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-1 h-3.5 rounded-full bg-gradient-to-b from-yellow-400 to-amber-500" />
           <span className="!text-[15px] !font-extrabold !text-slate-700 !uppercase tracking-[0.15em]">{t('administratorMenu.tabs.notificationRules.form.progress')}</span>
@@ -44,8 +29,8 @@ export default function StepBar({ activeStep, scrollProgress, completedSteps, on
         </div>
       </div>
 
-      <div className="px-6 py-6">
-        <div className="flex items-center gap-4">
+      <div className="px-3 sm:px-6 py-4 sm:py-6">
+        <div className="flex items-center gap-2 sm:gap-4">
           {FORM_STEPS.map((step, i) => {
             const isDone = completedSteps.includes(step.num)
             const isActive = activeStep === step.num
@@ -57,7 +42,7 @@ export default function StepBar({ activeStep, scrollProgress, completedSteps, on
               <React.Fragment key={step.num}>
                 <button
                   onClick={() => onStepClick(step.num)}
-                  className={`flex items-center gap-3 group cursor-pointer focus:outline-none flex-shrink-0 transition-all duration-200 ${isIdle ? 'opacity-40 hover:opacity-70' : ''}`}
+                  className={`flex items-center gap-1.5 sm:gap-3 group cursor-pointer focus:outline-none flex-shrink-0 transition-all duration-200 ${isIdle ? 'opacity-40 hover:opacity-70' : ''}`}
                 >
                   <div className="relative flex-shrink-0">
                     {isActive && (
@@ -68,7 +53,7 @@ export default function StepBar({ activeStep, scrollProgress, completedSteps, on
                       />
                     )}
                     <div
-                      className={`relative w-11 h-11 rounded-full flex items-center justify-center shadow-sm ${
+                      className={`relative w-8 h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-sm ${
                         isIdle ? 'bg-white border-2 border-gray-200' : ''
                       }`}
                       style={isIdle ? undefined : {
@@ -109,7 +94,7 @@ export default function StepBar({ activeStep, scrollProgress, completedSteps, on
                     </div>
                   </div>
 
-                  <div className="flex flex-col text-left min-w-0">
+                  <div className="hidden sm:flex flex-col text-left min-w-0">
                     <span className={`leading-tight tracking-tight transition-colors duration-200 ${
                       isActive
                         ? '!text-[15px] !font-extrabold !text-slate-900'

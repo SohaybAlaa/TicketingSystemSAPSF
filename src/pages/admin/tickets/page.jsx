@@ -1,7 +1,7 @@
 import { AllCommunityModule } from "ag-grid-community";
 import { myTheme } from "@utils/agGridThemes";
 import { AgGridReact } from "ag-grid-react";
-import React, { useState, useRef, useMemo, useEffect } from "react";
+import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { Download, Inbox, X, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
@@ -210,7 +210,7 @@ export default function Tickets() {
     ? t(`usernames.${user.username}`, user.username)
     : t("adminName");
 
-  const showAlert = (type, message, title = "") => {
+  const showAlert = useCallback((type, message, title = "") => {
     const id = Date.now() + Math.random(); //unique id for each alert
     const newAlert = { id, type, message, title }; //create new alert object
 
@@ -223,14 +223,14 @@ export default function Tickets() {
     setTimeout(() => {
       removeAlert(id);
     }, duration);
-  };
+  }, []);
 
-  const removeAlert = (id) => { //remove alert from the alerts array
+  const removeAlert = useCallback((id) => { //remove alert from the alerts array
     setAlerts((prev) => prev.filter((alert) => alert.id !== id)); //filter out the alert with the given id
-  };
+  }, []);
 
   // Generic API request helper — DRY (DONT REPEAT YOURSELF) up all fetch calls
-  const apiRequest = async (url, body) => {
+  const apiRequest = useCallback(async (url, body) => {
     const response = await fetch(url, { // Fetch the API endpoint
       method: 'POST', // HTTP method
       headers: { 'Content-Type': 'application/json' }, // Content type
@@ -244,19 +244,21 @@ export default function Tickets() {
       throw new Error(data.error || t("ticketsPage.alerts.unknownError", "Unknown error"));
     }
     return data;
-  };
+  }, [t]);
 
   // Helper: clear grid selection via API + state
-  const clearSelection = () => {
+  const clearSelection = useCallback(() => {
     setSelectedRows([]);
     if (gridRef.current?.api) {
       gridRef.current.api.deselectAll();
     }
-  };
+  }, []);
 
   // Helper: run operations with Promise.allSettled — works for both single and bulk
-  const executeAction = async (rows, requestFn, { onSuccess, successMessage, successTitle, errorPrefix, isBulk = false }) => {
-    if (isProcessing || rows.length === 0) return; // Check if the request is already processing or if there are no rows to process
+  const isProcessingRef = useRef(false);
+  const executeAction = useCallback(async (rows, requestFn, { onSuccess, successMessage, successTitle, errorPrefix, isBulk = false }) => {
+    if (isProcessingRef.current || rows.length === 0) return; // Check if the request is already processing or if there are no rows to process
+    isProcessingRef.current = true;
     setIsProcessing(true); // Set the processing state to true
 
     try {
@@ -300,12 +302,13 @@ export default function Tickets() {
       console.error(`Action error:`, error);
       showAlert("error", `${errorPrefix}: ${error.message}`, t("ticketsPage.alerts.error", "Error"));
     } finally {
+      isProcessingRef.current = false;
       setIsProcessing(false);
     }
-  };
+  }, [showAlert, clearSelection, t]);
 
   // Unified handlers (single + bulk via optional ticketId)
-  const handleStatusChange = (newStatus, ticketId) => {
+  const handleStatusChange = useCallback((newStatus, ticketId) => {
     const isBulk = !ticketId; // Determine if the action is bulk or single
     const rows = ticketId ? [{ ticketId }] : selectedRows; // Get the rows to process
 
@@ -327,9 +330,9 @@ export default function Tickets() {
         isBulk,
       }
     );
-  };
+  }, [executeAction, apiRequest, selectedRows, t]);
 
-  const handlePriorityChange = (newPriority, ticketId) => {
+  const handlePriorityChange = useCallback((newPriority, ticketId) => {
     const isBulk = !ticketId; //
     const rows = ticketId ? [{ ticketId }] : selectedRows;
 
@@ -351,9 +354,9 @@ export default function Tickets() {
         isBulk,
       }
     );
-  };
+  }, [executeAction, apiRequest, selectedRows, t]);
 
-  const handleAssignToMe = (ticketId) => {
+  const handleAssignToMe = useCallback((ticketId) => {
     const isBulk = !ticketId;
     const rows = ticketId ? [{ ticketId }] : selectedRows;
 
@@ -380,9 +383,9 @@ export default function Tickets() {
         isBulk,
       }
     );
-  };
+  }, [executeAction, apiRequest, selectedRows, user, adminName, t]);
 
-  const handleAssignToOther = (memberName, ticketId) => {
+  const handleAssignToOther = useCallback((memberName, ticketId) => {
     const isBulk = !ticketId;
     const rows = ticketId ? [{ ticketId }] : selectedRows;
     const memberEmail = `${memberName.toLowerCase().replace(' ', '.')}@company.com`;
@@ -410,9 +413,9 @@ export default function Tickets() {
         isBulk,
       }
     );
-  };
+  }, [executeAction, apiRequest, selectedRows, t]);
 
-  const handleDeleteTicket = (ticketId) => {
+  const handleDeleteTicket = useCallback((ticketId) => {
     const isBulk = !ticketId;
     const rows = ticketId ? [{ ticketId }] : selectedRows;
 
@@ -432,7 +435,7 @@ export default function Tickets() {
         isBulk,
       }
     );
-  };
+  }, [executeAction, apiRequest, selectedRows, t]);
 
   const handleAddTicket = async (formData) => {
     if (isProcessing) return;
@@ -528,32 +531,41 @@ export default function Tickets() {
     window.open(`/admin/tickets/${ticketId}`, "_blank");
   };
 
+  const isTouchDevice = () => window.matchMedia("(pointer: coarse)").matches;
+
+  // Stable refs so colDefs never changes when handlers update (prevents AG Grid remounting cells)
+  const handleStatusChangeRef = useRef(handleStatusChange);
+  const handlePriorityChangeRef = useRef(handlePriorityChange);
+  const handleDeleteTicketRef = useRef(handleDeleteTicket);
+  const handleAssignToMeRef = useRef(handleAssignToMe);
+  const handleAssignToOtherRef = useRef(handleAssignToOther);
+  useEffect(() => { handleStatusChangeRef.current = handleStatusChange; }, [handleStatusChange]);
+  useEffect(() => { handlePriorityChangeRef.current = handlePriorityChange; }, [handlePriorityChange]);
+  useEffect(() => { handleDeleteTicketRef.current = handleDeleteTicket; }, [handleDeleteTicket]);
+  useEffect(() => { handleAssignToMeRef.current = handleAssignToMe; }, [handleAssignToMe]);
+  useEffect(() => { handleAssignToOtherRef.current = handleAssignToOther; }, [handleAssignToOther]);
+
+  // Stable proxy callbacks — identity never changes, always call the latest handler via ref
+  const stableStatusChange = useCallback((...args) => handleStatusChangeRef.current(...args), []);
+  const stablePriorityChange = useCallback((...args) => handlePriorityChangeRef.current(...args), []);
+  const stableDeleteTicket = useCallback((...args) => handleDeleteTicketRef.current(...args), []);
+  const stableAssignToMe = useCallback((...args) => handleAssignToMeRef.current(...args), []);
+  const stableAssignToOther = useCallback((...args) => handleAssignToOtherRef.current(...args), []);
+
   // Get column definitions with handlers and translation function
-  const colDefs = getColumnDefs(
-    handleStatusChange,
-    handlePriorityChange,
-    handleDeleteTicket,
-    handleAssignToMe,
-    handleAssignToOther,
-    t, // Pass translation function
-    isRTL // Pass RTL layout parameter
-  );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const colDefs = useMemo(() => getColumnDefs(
+    stableStatusChange,
+    stablePriorityChange,
+    stableDeleteTicket,
+    stableAssignToMe,
+    stableAssignToOther,
+    t,
+    isRTL
+  ), [gridKey]);
 
   return (
     <>
-      <style>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
-
       <AdminLayout
         title={t("ticketsPage.title")}
         subtitle={t("ticketsPage.subtitle")}
@@ -562,36 +574,38 @@ export default function Tickets() {
         <AlertNotification alerts={alerts} onClose={removeAlert} />
 
         {/* Search, Bulk Actions & Export */}
-        <div className="bg-white p-4 rounded-lg shadow-sm mb-4">
-          <div className="flex items-center gap-4">
-            {/* Search input with optional active-filter chip inside */}
-            <div
-              className="flex items-center gap-2 border-2 border-yellow-400 rounded-lg px-2 w-full focus-within:ring-2 focus-within:ring-yellow-400 bg-white"
+        <div className="bg-white p-4 rounded-lg shadow-sm mb-4 flex flex-col lg:flex-row gap-3">
+          {/* Row 1 (mobile/tablet) / left side (desktop): Search bar */}
+          <div
+            className="flex items-center gap-2 border-2 border-yellow-400 rounded-lg px-2 w-full focus-within:ring-2 focus-within:ring-yellow-400 bg-white"
+            dir={isRTL ? "rtl" : "ltr"}
+          >
+            {activeFilter && (
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-yellow-50 border border-yellow-300 rounded-full text-sm font-medium text-yellow-700 shadow-sm whitespace-nowrap transition-all duration-200 hover:bg-yellow-100">
+                {activeFilter === "assignedToMe" && (isRTL ? "مُعيَّن لي" : "Assigned to Me")}
+                {activeFilter === "myTeamTickets" && (isRTL ? "تذاكر فريقي" : "My Team Tickets")}
+                {activeFilter === "newTickets" && (isRTL ? "تذاكر جديدة" : "New Tickets")}
+                {activeFilter === "underProcess" && (isRTL ? "قيد المعالجة" : "Under Process")}
+                {activeFilter === "slaBreached" && (isRTL ? "تجاوز SLA" : "SLA Breached")}
+                {activeFilter === "closed30Days" && (isRTL ? "مغلقة (30 يوم)" : "Closed (30 days)")}
+                <button onClick={() => setActiveFilter("")} className="ml-1 text-yellow-600 hover:text-yellow-900">
+                  <X className="w-4 h-4 cursor-pointer" />
+                </button>
+              </span>
+            )}
+            <input
+              type="text"
+              autoFocus
+              placeholder={activeFilter ? "" : t("ticketsPage.search")}
+              value={quickFilterText}
+              onChange={(e) => { setQuickFilterText(e.target.value); setActiveFilter(""); }}
+              className="flex-1 py-3 outline-none bg-transparent text-md"
               dir={isRTL ? "rtl" : "ltr"}
-            >
-              {activeFilter && (
-                <span className="flex items-center gap-1.5 px-3 py-1 bg-yellow-50 border border-yellow-300 rounded-full text-sm font-medium text-yellow-700 shadow-sm whitespace-nowrap transition-all duration-200 hover:bg-yellow-100">                  {activeFilter === "assignedToMe" && (isRTL ? "مُعيَّن لي" : "Assigned to Me")}
-                  {activeFilter === "myTeamTickets" && (isRTL ? "تذاكر فريقي" : "My Team Tickets")}
-                  {activeFilter === "newTickets" && (isRTL ? "تذاكر جديدة" : "New Tickets")}
-                  {activeFilter === "underProcess" && (isRTL ? "قيد المعالجة" : "Under Process")}
-                  {activeFilter === "slaBreached" && (isRTL ? "تجاوز SLA" : "SLA Breached")}
-                  {activeFilter === "closed30Days" && (isRTL ? "مغلقة (30 يوم)" : "Closed (30 days)")}
-                  <button onClick={() => setActiveFilter("")} className="ml-1 text-yellow-600 hover:text-yellow-900">
-                    <X className="w-4 h-4  cursor-pointer" />
-                  </button>
-                </span>
-              )}
-              <input
-                type="text"
-                autoFocus
-                placeholder={activeFilter ? "" : t("ticketsPage.search")}
-                value={quickFilterText}
-                onChange={(e) => { setQuickFilterText(e.target.value); setActiveFilter(""); }}
-                className="flex-1 py-3 outline-none bg-transparent text-md"
-                dir={isRTL ? "rtl" : "ltr"}
-              />
-            </div>
-            {/* Bulk Actions Button - Animated show/hide */}
+            />
+          </div>
+
+          {/* Row 2 (mobile/tablet) / right side (desktop): Buttons */}
+          <div className="flex items-center gap-3 lg:flex-shrink-0">
             {selectedRows.length > 1 && (
               <BulkActionsButton
                 selectedRows={selectedRows}
@@ -617,18 +631,16 @@ export default function Tickets() {
                 t={t}
               />
             )}
-
             <button
               onClick={() => setIsAddTicketModalOpen(true)}
-              className="action-button"
+              className="action-button flex-1 lg:w-36 lg:flex-none"
             >
               {t("ticketsPage.addTicket", "Add Ticket")}
               <Plus size={16} />
             </button>
-
             <button
               onClick={handleExport}
-              className="action-button"
+              className="action-button flex-1 lg:w-36 lg:flex-none"
             >
               {t("ticketsPage.export")}
               <Download size={16} />
@@ -690,8 +702,11 @@ export default function Tickets() {
             }}
             onGridReady={onGridReady}
             onSelectionChanged={onSelectionChanged}
+            onRowClicked={(event) => {
+              if (!event.data?._skeleton && isTouchDevice()) handleRowClick(event);
+            }}
             onRowDoubleClicked={(event) => {
-              if (!event.data?._skeleton) handleRowClick(event);
+              if (!event.data?._skeleton && !isTouchDevice()) handleRowClick(event);
             }}
             onFilterChanged={onFilterChanged}
             domLayout="autoHeight"

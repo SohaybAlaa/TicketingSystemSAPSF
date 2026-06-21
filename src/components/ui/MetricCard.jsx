@@ -75,7 +75,7 @@ export default function MetricCard({
 
   return (
     <div 
-      className="group relative bg-white rounded-xl border-2 border-gray-200 shadow-sm transition-all duration-300 p-6 overflow-hidden cursor-pointer hover-effect"
+      className="group relative bg-white rounded-xl border-2 border-gray-200 shadow-sm transition-all duration-300 p-4 lg:p-5 xl:p-6 overflow-hidden cursor-pointer hover-effect"
       style={{
         '--glow-shadow': glowShadowMap[iconColor] || glowShadowMap.blue,
       }}
@@ -93,17 +93,17 @@ export default function MetricCard({
       <div className="absolute inset-0 bg-gradient-to-br from-transparent to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       
       <div className="relative z-10">
-        <div className="flex items-center gap-5 mb-4">
+        <div className="flex items-center gap-3 lg:gap-4 xl:gap-5 mb-3 lg:mb-4">
           <div className="flex-1">
-            <p className={rtlClass(`!text-md !font-bold ${titleColorMap[iconColor] || titleColorMap.blue} !uppercase !tracking-wider !mb-2`, "!font-bold")}>
+            <p className={rtlClass(`!text-xs lg:!text-sm xl:!text-md !font-bold ${titleColorMap[iconColor] || titleColorMap.blue} !uppercase !tracking-wider !mb-1 lg:!mb-2`, "!font-bold")}>
               {title}
             </p>
-            <p className={rtlClass("!text-3xl !font-bold !text-gray-900 !leading-none !tracking-wider", "!text-4xl")}>
+            <p className={rtlClass("!text-2xl lg:!text-2xl xl:!text-3xl !font-bold !text-gray-900 !leading-none !tracking-wider", "!text-3xl")}>
               {value}
             </p>
           </div>
-          <div className={`flex-shrink-0 p-4 rounded-full ${iconColorMap[iconColor] || iconColorMap.blue} shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-110`}>
-            <Icon className={`w-7 h-7 text-${iconColor}-600`} />
+          <div className={`flex-shrink-0 p-2.5 lg:p-3 xl:p-4 rounded-full ${iconColorMap[iconColor] || iconColorMap.blue} shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-110`}>
+            <Icon className={`w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 text-${iconColor}-600`} />
           </div>
         </div>
         

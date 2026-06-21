@@ -54,13 +54,6 @@ export default function ConditionBlock({ cond, index, total, onChange, onRemove 
             <div className="w-full border-t border-gray-300" />
           </div>
           {/* Centered AND/OR pill */}
-          <style>{`
-            @keyframes andOrGlow {
-              0%, 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.55), 0 2px 6px -1px rgba(245, 158, 11, 0.45); }
-              50%      { box-shadow: 0 0 0 5px rgba(250, 204, 21, 0), 0 4px 10px -1px rgba(245, 158, 11, 0.55); }
-            }
-            .anim-andor-glow { animation: andOrGlow 1.8s ease-in-out infinite; }
-          `}</style>
           <div className="relative flex justify-center">
             <div className="bg-white px-2">
               <div className="flex items-center gap-0.5 bg-gray-50 border border-gray-200 rounded-full p-0.5">
@@ -85,46 +78,82 @@ export default function ConditionBlock({ cond, index, total, onChange, onRemove 
         </div>
       )}
 
-      <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-3 hover:border-yellow-300 hover:shadow-sm transition-all duration-200">
-        <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ring-1 ring-inset ring-white/40 transition-transform duration-200 hover:scale-105"
-          style={{
-            background: `linear-gradient(135deg, ${def.color}22, ${def.color}44)`,
-            boxShadow: `0 2px 10px -2px ${def.color}55, inset 0 1px 0 rgba(255,255,255,0.45)`,
-          }}
-        >
-          <Icon size={18} style={{ color: def.color }} strokeWidth={2.25} />
-        </div>
+      <div className="relative bg-white border border-gray-200 rounded-xl px-3 sm:px-4 py-3 hover:border-yellow-300 hover:shadow-sm transition-all duration-200">
+        {/* Remove button — top-right corner on mobile/tablet */}
+        {total > 1 && (
+          <button
+            onClick={onRemove}
+            className="lg:hidden absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full text-red-400 hover:text-red-600 hover:bg-red-50 hover:scale-110 active:scale-95 border border-transparent hover:border-red-400 transition-all duration-200 cursor-pointer z-10"
+          >
+            <X size={13} strokeWidth={2.5} />
+          </button>
+        )}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
 
-        <div className="flex flex-col gap-0.5 min-w-0" style={{ flex: '0 1 180px' }}>
-          <FieldLabel size="sm">{i18nT('administratorMenu.tabs.notificationRules.conditions.conditionType')}</FieldLabel>
-          <DaisySelect
-            value={cond.type}
-            options={COND_TYPES.map(ct => ct.value)}
-            onChange={value => {
-              const found = COND_TYPES.find(ct => ct.value === value)
-              onChange({ ...cond, type: value, whenType: found?.whenType || WHEN_TYPE.IMMEDIATE, subtype: found?.subtypes[0] || '' })
-            }}
-            translationPrefix="administratorMenu.tabs.notificationRules.conditions.types"
-            t={i18nT}
-            isRTL={isRTL}
-          />
-        </div>
+          {/* Row 1 (mobile): icon + Type dropdown */}
+          {/* Row 1 (tablet): icon + Type + Subtype */}
+          {/* Row 1 (desktop): icon + Type + Subtype + When + remove — all in one flex */}
+          <div className="flex items-center gap-2 min-w-0">
+            {/* Icon */}
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ring-1 ring-inset ring-white/40"
+              style={{
+                background: `linear-gradient(135deg, ${def.color}22, ${def.color}44)`,
+                boxShadow: `0 2px 10px -2px ${def.color}55, inset 0 1px 0 rgba(255,255,255,0.45)`,
+              }}
+            >
+              <Icon size={16} style={{ color: def.color }} strokeWidth={2.25} />
+            </div>
 
-        <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-          <FieldLabel size="sm">{i18nT('administratorMenu.tabs.notificationRules.form.step2')}</FieldLabel>
-          <DaisySelect
-            value={cond.subtype}
-            options={def.subtypes}
-            onChange={value => onChange({ ...cond, subtype: value })}
-            translationPrefix="administratorMenu.tabs.notificationRules.conditions.subtypes"
-            t={i18nT}
-            isRTL={isRTL}
-            getOptionClass={subtypeOptionClass}
-          />
-        </div>
+            {/* Type dropdown — always visible in row 1 */}
+            <div className="flex flex-col gap-0.5 min-w-0 flex-1 lg:w-44 lg:flex-none">
+              <FieldLabel size="sm">{i18nT('administratorMenu.tabs.notificationRules.conditions.conditionType')}</FieldLabel>
+              <DaisySelect
+                value={cond.type}
+                options={COND_TYPES.map(ct => ct.value)}
+                onChange={value => {
+                  const found = COND_TYPES.find(ct => ct.value === value)
+                  onChange({ ...cond, type: value, whenType: found?.whenType || WHEN_TYPE.IMMEDIATE, subtype: found?.subtypes[0] || '' })
+                }}
+                translationPrefix="administratorMenu.tabs.notificationRules.conditions.types"
+                t={i18nT}
+                isRTL={isRTL}
+              />
+            </div>
 
-        <div className="flex flex-col gap-0.5 flex-shrink-0" style={{ width: 460 }}>
+            {/* Subtype — visible in row 1 on tablet+, hidden on mobile */}
+            <div className="hidden md:flex flex-col gap-0.5 min-w-0 flex-1 lg:w-44 lg:flex-none">
+              <FieldLabel size="sm">{i18nT('administratorMenu.tabs.notificationRules.form.step2')}</FieldLabel>
+              <DaisySelect
+                value={cond.subtype}
+                options={def.subtypes}
+                onChange={value => onChange({ ...cond, subtype: value })}
+                translationPrefix="administratorMenu.tabs.notificationRules.conditions.subtypes"
+                t={i18nT}
+                isRTL={isRTL}
+                getOptionClass={subtypeOptionClass}
+              />
+            </div>
+
+          </div>
+
+          {/* Row 2 (mobile only): Subtype dropdown */}
+          <div className="md:hidden flex flex-col gap-0.5 min-w-0 w-full">
+            <FieldLabel size="sm">{i18nT('administratorMenu.tabs.notificationRules.form.step2')}</FieldLabel>
+            <DaisySelect
+              value={cond.subtype}
+              options={def.subtypes}
+              onChange={value => onChange({ ...cond, subtype: value })}
+              translationPrefix="administratorMenu.tabs.notificationRules.conditions.subtypes"
+              t={i18nT}
+              isRTL={isRTL}
+              getOptionClass={subtypeOptionClass}
+            />
+          </div>
+
+          {/* Row 3 (mobile) / Row 2 (tablet) / inline (desktop): When to send + remove */}
+          <div className="flex items-end gap-2 lg:flex-1 min-w-0">
+            <div className="flex flex-col gap-0.5 flex-1 min-w-0">
           <FieldLabel size="sm">{i18nT('administratorMenu.tabs.notificationRules.conditions.whenToSend')}</FieldLabel>
           {(() => {
             const instantMode = cond.type === CONDITION_TYPE.SLA ? WHEN_TYPE.BREACH : WHEN_TYPE.IMMEDIATE
@@ -149,86 +178,109 @@ export default function ConditionBlock({ cond, index, total, onChange, onRemove 
               : i18nT('administratorMenu.tabs.notificationRules.conditions.instant')
 
             return (
-              <div className={`flex items-center gap-1.5 w-full h-10 px-2 rounded-xl border shadow-sm transition-colors duration-200 ${tone} [&_.btn]:min-h-0 [&_.btn]:!h-7 [&_.btn]:!py-0`}>
-                {/* Segmented pill toggle — same style as AND/OR */}
-                <div className="flex items-center gap-0.5 bg-white/70 border border-gray-200 rounded-full p-0.5 flex-shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => onChange({ ...cond, whenType: instantMode })}
-                    title={isBreach
-                      ? i18nT('administratorMenu.tabs.notificationRules.conditions.tooltips.atMomentOfBreach')
-                      : i18nT('administratorMenu.tabs.notificationRules.conditions.tooltips.immediatelyOnChange')}
-                    className={`w-7 h-6 flex items-center justify-center rounded-full transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 ${isInstant
-                      ? (isBreach
-                        ? 'bg-gradient-to-r from-red-400 via-rose-400 to-red-500 !text-white shadow-sm shadow-red-300/60'
-                        : 'bg-gradient-to-r from-green-400 via-emerald-400 to-green-500 !text-white shadow-sm shadow-green-300/60')
-                      : '!text-gray-500 hover:!text-gray-700'
-                      }`}
-                  >
-                    <InstantIcon size={13} strokeWidth={2.75} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onChange({ ...cond, whenType: WHEN_TYPE.TIME })}
-                    title={i18nT('administratorMenu.tabs.notificationRules.conditions.tooltips.scheduled')}
-                    className={`w-7 h-6 flex items-center justify-center rounded-full transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 ${!isInstant
-                      ? 'bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 !text-yellow-900 shadow-sm shadow-amber-300/60'
-                      : '!text-gray-500 hover:!text-gray-700'
-                      }`}
-                  >
-                    <Timer size={13} strokeWidth={2.75} />
-                  </button>
+              <div className={`w-full px-2 py-2 rounded-xl border shadow-sm transition-colors duration-200 ${tone} [&_.btn]:min-h-0 [&_.btn]:!h-7 [&_.btn]:!py-0`}>
+                {/* Row 1: toggle + number + time unit (always visible) */}
+                <div className="flex items-center gap-1.5">
+                  {/* Segmented pill toggle */}
+                  <div className="flex items-center gap-0.5 bg-white/70 border border-gray-200 rounded-full p-0.5 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => onChange({ ...cond, whenType: instantMode })}
+                      title={isBreach
+                        ? i18nT('administratorMenu.tabs.notificationRules.conditions.tooltips.atMomentOfBreach')
+                        : i18nT('administratorMenu.tabs.notificationRules.conditions.tooltips.immediatelyOnChange')}
+                      className={`w-7 h-6 flex items-center justify-center rounded-full transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 ${isInstant
+                        ? (isBreach
+                          ? 'bg-gradient-to-r from-red-400 via-rose-400 to-red-500 !text-white shadow-sm shadow-red-300/60'
+                          : 'bg-gradient-to-r from-green-400 via-emerald-400 to-green-500 !text-white shadow-sm shadow-green-300/60')
+                        : '!text-gray-500 hover:!text-gray-700'
+                        }`}
+                    >
+                      <InstantIcon size={13} strokeWidth={2.75} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onChange({ ...cond, whenType: WHEN_TYPE.TIME })}
+                      title={i18nT('administratorMenu.tabs.notificationRules.conditions.tooltips.scheduled')}
+                      className={`w-7 h-6 flex items-center justify-center rounded-full transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 ${!isInstant
+                        ? 'bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 !text-yellow-900 shadow-sm shadow-amber-300/60'
+                        : '!text-gray-500 hover:!text-gray-700'
+                        }`}
+                    >
+                      <Timer size={13} strokeWidth={2.75} />
+                    </button>
+                  </div>
+
+                  {/* Instant: show label. Scheduled: show number + time unit + age (inline on desktop) */}
+                  {isInstant ? (
+                    <span className={`!text-[12px] !font-bold truncate ${isBreach ? '!text-red-700' : '!text-green-700'}`}>
+                      {isBreach ? i18nT('administratorMenu.tabs.notificationRules.conditions.slaBreached') : i18nT('administratorMenu.tabs.notificationRules.conditions.immediate')}
+                    </span>
+                  ) : (
+                    <div className="flex items-center gap-1 flex-1 min-w-0">
+                      <input
+                        type="number"
+                        min="1"
+                        value={cond.amount || 1}
+                        onChange={e => onChange({ ...cond, amount: e.target.value })}
+                        className="w-12 h-7 bg-white border border-amber-200 rounded-md px-1 py-0 text-[12px] font-bold text-center text-slate-800 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-300/40 transition-all flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <DaisySelect
+                          value={cond.unit || TIME_UNITS[1]}
+                          options={TIME_UNITS}
+                          onChange={value => onChange({ ...cond, unit: value })}
+                          translationPrefix="administratorMenu.tabs.notificationRules.conditions"
+                          t={i18nT}
+                          isRTL={isRTL}
+                        />
+                      </div>
+                      {/* Age breached inline on desktop */}
+                      <div className="hidden lg:block flex-1 min-w-0">
+                        <DaisySelect
+                          value={cond.ageBreached ? AGE_OPTION.BREACHED : AGE_OPTION.NORMAL}
+                          options={AGE_OPTIONS}
+                          onChange={value => onChange({ ...cond, ageBreached: value === AGE_OPTION.BREACHED })}
+                          translationPrefix="administratorMenu.tabs.notificationRules.conditions.ageOptions"
+                          t={i18nT}
+                          isRTL={isRTL}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Active content */}
-                {isInstant ? (
-                  <span className={`!text-[12px] !font-bold truncate ${isBreach ? '!text-red-700' : '!text-green-700'}`}>
-                    {isBreach ? i18nT('administratorMenu.tabs.notificationRules.conditions.slaBreached') : i18nT('administratorMenu.tabs.notificationRules.conditions.immediate')}
-                  </span>
-                ) : (
-                  <div className="flex items-center gap-1 flex-1 min-w-0">
-                    <input
-                      type="number"
-                      min="1"
-                      value={cond.amount || 1}
-                      onChange={e => onChange({ ...cond, amount: e.target.value })}
-                      className="w-10 h-7 bg-white border border-amber-200 rounded-md px-1 py-0 text-[12px] font-bold text-center text-slate-800 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-300/40 transition-all flex-shrink-0"
+                {/* Row 2: age breached — mobile/tablet only, scheduled mode only */}
+                {!isInstant && (
+                  <div className="lg:hidden mt-2 min-w-0">
+                    <DaisySelect
+                      value={cond.ageBreached ? AGE_OPTION.BREACHED : AGE_OPTION.NORMAL}
+                      options={AGE_OPTIONS}
+                      onChange={value => onChange({ ...cond, ageBreached: value === AGE_OPTION.BREACHED })}
+                      translationPrefix="administratorMenu.tabs.notificationRules.conditions.ageOptions"
+                      t={i18nT}
+                      isRTL={isRTL}
                     />
-                    <div className="flex-1 min-w-0">
-                      <DaisySelect
-                        value={cond.unit || TIME_UNITS[1]}
-                        options={TIME_UNITS}
-                        onChange={value => onChange({ ...cond, unit: value })}
-                        translationPrefix="administratorMenu.tabs.notificationRules.conditions"
-                        t={i18nT}
-                        isRTL={isRTL}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <DaisySelect
-                        value={cond.ageBreached ? AGE_OPTION.BREACHED : AGE_OPTION.NORMAL}
-                        options={AGE_OPTIONS}
-                        onChange={value => onChange({ ...cond, ageBreached: value === AGE_OPTION.BREACHED })}
-                        translationPrefix="administratorMenu.tabs.notificationRules.conditions.ageOptions"
-                        t={i18nT}
-                        isRTL={isRTL}
-                      />
-                    </div>
                   </div>
                 )}
               </div>
             )
           })()}
-        </div>
+            </div>
 
-        {total > 1 && (
-          <button
-            onClick={onRemove}
-            className="w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 hover:rounded-full hover:scale-110 active:scale-95 border border-transparent hover:border-red-400 transition-all duration-200 cursor-pointer"
-          >
-            <X size={14} strokeWidth={2.5} />
-          </button>
-        )}
+          </div>
+
+          {/* Remove button — end of row on desktop only */}
+          {total > 1 && (
+            <button
+              onClick={onRemove}
+              className="hidden lg:flex w-7 h-7 flex-shrink-0 items-center justify-center rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 hover:rounded-full hover:scale-110 active:scale-95 border border-transparent hover:border-red-400 transition-all duration-200 cursor-pointer self-center"
+            >
+              <X size={14} strokeWidth={2.5} />
+            </button>
+          )}
+
+        </div>
       </div>
     </div>
   )
