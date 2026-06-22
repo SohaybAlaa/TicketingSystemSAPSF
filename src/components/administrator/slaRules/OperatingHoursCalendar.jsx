@@ -43,42 +43,42 @@ export default function OperatingHoursCalendar({
   const [hoveredPreset, setHoveredPreset] = React.useState(null)
 
   return (
-    <div className="bg-white px-5 pt-5 pb-5">
+    <div className="bg-white px-3 sm:px-5 pt-5 pb-5">
 
-      {/* Working Day Calendar + Time Zone header row */}
-      <div className="flex items-center justify-between mb-6">
+      {/* Working Day Calendar + Time Zone header row — stacks on mobile, side-by-side on md+ */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center flex-shrink-0">
             <CalendarDays className="w-5 h-5 text-blue-600" />
           </div>
           <div>
             <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider">
               {t('administratorMenu.tabs.slaRules.operatingHours.workingDayCalendar', 'Working Day Calendar')}
             </h4>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
               {t('administratorMenu.tabs.slaRules.operatingHours.workingDayCalendarDesc', 'UAE regular working week with 5 working days (Sun - Thu)')}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3 !mr-2">
-          <div className="w-9 h-9 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center">
+        <div className="flex items-center gap-3 sm:mr-2">
+          <div className="w-9 h-9 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center flex-shrink-0">
             <Globe className="w-5 h-5 text-purple-600" />
           </div>
           <div className="flex items-center gap-2">
-            <h4 className="!text-xl !font-bold !text-slate-700 !uppercase !tracking-wider">
+            <h4 className="text-base font-bold text-slate-700 uppercase tracking-wider">
               {t('administratorMenu.tabs.slaRules.operatingHours.timeZone', 'Time Zone')}
             </h4>
-            <span className="!text-lg !font-bold !text-purple-600">
+            <span className="text-base font-bold text-purple-600">
               {t('administratorMenu.tabs.slaRules.operatingHours.timeZoneValue', 'UTC +3')}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Working Days header + Save button */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-green-100 border border-green-200 flex items-center justify-center">
+      {/* Working Days header + Save button — stacks on mobile */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="w-9 h-9 rounded-full bg-green-100 border border-green-200 flex items-center justify-center flex-shrink-0">
             <Clock className="w-5 h-5 text-green-600" />
           </div>
           <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider">
@@ -93,7 +93,7 @@ export default function OperatingHoursCalendar({
         <button
           onClick={onSave}
           disabled={!hasUnsavedChanges}
-          className={`${hasUnsavedChanges ? 'action-button !mr-1' : 'action-button !mr-1 !cursor-not-allowed'} ${isRTL ? 'flex-row-reverse' : ''}`}
+          className={`${hasUnsavedChanges ? 'action-button' : 'action-button !cursor-not-allowed'} ${isRTL ? 'flex-row-reverse' : ''} sm:!mr-1 self-start sm:self-auto`}
           title={t('administratorMenu.tabs.slaRules.operatingHours.saveChanges', 'Save Changes')}
           onMouseEnter={e => {
             if (!hasUnsavedChanges) return
@@ -121,31 +121,36 @@ export default function OperatingHoursCalendar({
           return (
             <div
               key={day}
-              className={`rounded-lg border-2 px-4 py-3 flex items-center gap-4 transition-all duration-200 ${
+              className={`rounded-lg border-2 px-3 sm:px-4 py-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 transition-all duration-200 ${
                 enabled
                   ? 'border-green-200 bg-white shadow-sm hover:shadow-md hover:border-green-400'
                   : 'border-gray-200 bg-gray-50 opacity-70 hover:opacity-90 hover:bg-gray-100 hover:border-gray-400'
               }`}
             >
-              {/* Enable/disable toggle checkbox */}
-              <button
-                onClick={() => onToggleDay(day)}
-                className={`w-5 h-5 rounded flex-shrink-0 border-2 flex items-center justify-center transition-all duration-200 cursor-pointer ${
-                  enabled ? 'bg-green-500 border-green-500 text-white' : 'bg-white border-gray-500 hover:border-gray-600'
-                }`}
-              >
-                {enabled && <Check className="w-3 h-3" strokeWidth={3} />}
-              </button>
+              {/* Row 1 (mobile): checkbox + day name + Tag */}
+              <div className="flex items-center gap-3 sm:contents">
 
-              {/* Day name */}
-              <span className={`text-sm font-semibold w-24 ${enabled ? 'text-slate-700' : 'text-gray-600'}`}>
-                {t(`administratorMenu.tabs.slaRules.operatingHours.days.${day}`, day)}
-              </span>
+                {/* Enable/disable toggle checkbox */}
+                <button
+                  onClick={() => onToggleDay(day)}
+                  className={`w-5 h-5 rounded flex-shrink-0 border-2 flex items-center justify-center transition-all duration-200 cursor-pointer ${
+                    enabled ? 'bg-green-500 border-green-500 text-white' : 'bg-white border-gray-500 hover:border-gray-600'
+                  }`}
+                >
+                  {enabled && <Check className="w-3 h-3" strokeWidth={3} />}
+                </button>
+
+                {/* Day name */}
+                <span className={`text-sm font-semibold w-24 flex-shrink-0 ${enabled ? 'text-slate-700' : 'text-gray-600'}`}>
+                  {t(`administratorMenu.tabs.slaRules.operatingHours.days.${day}`, day)}
+                </span>
+
+              </div>
 
               {enabled ? (
                 <>
                   {/* Active preset pill buttons */}
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     {DAY_PRESETS.map(p => {
                       const active = currentPreset === p.key
                       const hovered = hoveredPreset === `${day}-${p.key}`
@@ -182,48 +187,52 @@ export default function OperatingHoursCalendar({
                   </div>
 
                   {/* Time inputs — editable only when Custom preset is selected */}
-                  <div className="flex items-center gap-2 flex-1">
-                    <label className="text-xs text-gray-500 font-medium">
-                      {t('administratorMenu.tabs.slaRules.operatingHours.start', 'Start')}
-                    </label>
-                    <input
-                      type="time"
-                      value={dayData?.start ?? '08:00'}
-                      disabled={!isCustom}
-                      onChange={(e) => onTimeChange(day, 'start', e.target.value)}
-                      className={`border rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
-                        isCustom
-                          ? 'border-gray-200 text-slate-700 focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400'
-                          : 'border-gray-100 text-gray-400 bg-gray-50 cursor-not-allowed'
-                      }`}
-                    />
-                    <span className="text-gray-400 mx-1">—</span>
-                    <label className="text-xs text-gray-500 font-medium">
-                      {t('administratorMenu.tabs.slaRules.operatingHours.end', 'End')}
-                    </label>
-                    <input
-                      type="time"
-                      value={dayData?.end ?? '17:00'}
-                      disabled={!isCustom}
-                      onChange={(e) => onTimeChange(day, 'end', e.target.value)}
-                      className={`border rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
-                        isCustom
-                          ? 'border-gray-200 text-slate-700 focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400'
-                          : 'border-gray-100 text-gray-400 bg-gray-50 cursor-not-allowed'
-                      }`}
-                    />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 flex-1">
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-gray-500 font-medium w-8">
+                        {t('administratorMenu.tabs.slaRules.operatingHours.start', 'Start')}
+                      </label>
+                      <input
+                        type="time"
+                        value={dayData?.start ?? '08:00'}
+                        disabled={!isCustom}
+                        onChange={(e) => onTimeChange(day, 'start', e.target.value)}
+                        className={`border rounded-lg px-2 sm:px-3 py-1.5 text-sm font-medium transition-all ${
+                          isCustom
+                            ? 'border-gray-200 text-slate-700 focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400'
+                            : 'border-gray-100 text-gray-400 bg-gray-50 cursor-not-allowed'
+                        }`}
+                      />
+                    </div>
+                    <span className="text-gray-400 hidden sm:block">—</span>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-gray-500 font-medium w-8">
+                        {t('administratorMenu.tabs.slaRules.operatingHours.end', 'End')}
+                      </label>
+                      <input
+                        type="time"
+                        value={dayData?.end ?? '17:00'}
+                        disabled={!isCustom}
+                        onChange={(e) => onTimeChange(day, 'end', e.target.value)}
+                        className={`border rounded-lg px-2 sm:px-3 py-1.5 text-sm font-medium transition-all ${
+                          isCustom
+                            ? 'border-gray-200 text-slate-700 focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400'
+                            : 'border-gray-100 text-gray-400 bg-gray-50 cursor-not-allowed'
+                        }`}
+                      />
+                    </div>
                   </div>
 
                   <Tag
                     type="scheduleType"
                     value={currentPreset === 'fullDay' ? 'Full Day' : currentPreset === 'workingHours' ? 'Working Hours' : 'Custom'}
-                    t={t} isRTL={isRTL} showIcon className="flex-shrink-0"
+                    t={t} isRTL={isRTL} showIcon className="flex-shrink-0 hidden sm:flex"
                   />
                 </>
               ) : (
                 <>
                   {/* Disabled preset pills when day is off */}
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     {DAY_PRESETS.map(p => (
                       <button
                         key={p.key}
@@ -236,29 +245,33 @@ export default function OperatingHoursCalendar({
                   </div>
 
                   {/* Disabled time inputs */}
-                  <div className="flex items-center gap-2 flex-1">
-                    <label className="text-xs text-gray-400 font-medium">
-                      {t('administratorMenu.tabs.slaRules.operatingHours.start', 'Start')}
-                    </label>
-                    <input
-                      type="time"
-                      value={dayData?.start ?? '08:00'}
-                      disabled
-                      className="border rounded-lg px-3 py-1.5 text-sm font-medium border-gray-100 text-gray-300 bg-gray-50 cursor-not-allowed"
-                    />
-                    <span className="text-gray-300 mx-1">—</span>
-                    <label className="text-xs text-gray-400 font-medium">
-                      {t('administratorMenu.tabs.slaRules.operatingHours.end', 'End')}
-                    </label>
-                    <input
-                      type="time"
-                      value={dayData?.end ?? '17:00'}
-                      disabled
-                      className="border rounded-lg px-3 py-1.5 text-sm font-medium border-gray-100 text-gray-300 bg-gray-50 cursor-not-allowed"
-                    />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 flex-1">
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-gray-400 font-medium w-8">
+                        {t('administratorMenu.tabs.slaRules.operatingHours.start', 'Start')}
+                      </label>
+                      <input
+                        type="time"
+                        value={dayData?.start ?? '08:00'}
+                        disabled
+                        className="border rounded-lg px-2 sm:px-3 py-1.5 text-sm font-medium border-gray-100 text-gray-300 bg-gray-50 cursor-not-allowed"
+                      />
+                    </div>
+                    <span className="text-gray-300 hidden sm:block">—</span>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-gray-400 font-medium w-8">
+                        {t('administratorMenu.tabs.slaRules.operatingHours.end', 'End')}
+                      </label>
+                      <input
+                        type="time"
+                        value={dayData?.end ?? '17:00'}
+                        disabled
+                        className="border rounded-lg px-2 sm:px-3 py-1.5 text-sm font-medium border-gray-100 text-gray-300 bg-gray-50 cursor-not-allowed"
+                      />
+                    </div>
                   </div>
 
-                  <Tag type="scheduleType" value="Day Off" t={t} isRTL={isRTL} showIcon className="flex-shrink-0" />
+                  <Tag type="scheduleType" value="Day Off" t={t} isRTL={isRTL} showIcon className="flex-shrink-0 hidden sm:flex" />
                 </>
               )}
             </div>

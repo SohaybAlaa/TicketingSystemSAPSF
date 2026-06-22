@@ -42,7 +42,7 @@ export default function EmployeeDetailCard({ employee, onEdit, onDelete, onCopy,
         noSelectionText={t('administratorMenu.tabs.employeeDirectory.selectEmployee', 'Select an Employee')}
         noSelectionSub={t('administratorMenu.tabs.employeeDirectory.selectEmployeeTip', 'Click on any row in the table above to view employee details')}
         tileCount={8}
-        cols={4}
+        colsClass="grid-cols-1 xl:grid-cols-4"
       />
     )
   }
@@ -98,7 +98,7 @@ export default function EmployeeDetailCard({ employee, onEdit, onDelete, onCopy,
       title={employee.name}
       subtitle={`${employee.department} · ${employee.location} · ${employee.entityName}`}
       fields={fields}
-      cols={4}
+      colsClass="grid-cols-1 xl:grid-cols-4"
       onEdit={() => onEdit(employee)}
       onDelete={() => onDelete(employee)}
       t={t}

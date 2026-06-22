@@ -139,14 +139,12 @@ export default function useNotificationForm({ initial, onSave, onValuesChange, s
     }
   }, [subject, body])
 
-  // Fills subject + body from the first condition's built-in template (asks for confirmation if fields have content)
+  // Fills subject + body from the first condition's built-in template
   const applyTemplate = useCallback(() => {
     if (!conds.length) return
-    const hasContent = subject.trim() || body.trim()
-    if (hasContent && !window.confirm(t('administratorMenu.tabs.notificationRules.template.applyTemplateConfirm'))) return
     const def = COND_TYPES.find(ct => ct.value === conds[0].type)
     if (def?.template) { setSubject(def.template.subject); setBody(def.template.body) }
-  }, [conds, subject, body, t])
+  }, [conds])
 
   // ── Validation ─────
   // errors is recomputed whenever values change — empty string = valid, non-empty = error message

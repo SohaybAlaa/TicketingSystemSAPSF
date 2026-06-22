@@ -75,7 +75,7 @@ export default function SLARuleDetailCard({ selectedRule, children, onEdit, onDe
         noSelectionText={t('administratorMenu.tabs.slaRules.operatingHours.noSelection', 'No SLA rule selected')}
         noSelectionSub={t('administratorMenu.tabs.slaRules.operatingHours.noSelectionSub', 'Select a row from the SLA Rules table above to configure its operating hours')}
         tileCount={6}
-        cols={3}
+        colsClass="grid-cols-1 xl:grid-cols-3"
         extraSkeleton={<CalendarSkeleton />}
       />
     )
@@ -102,7 +102,7 @@ export default function SLARuleDetailCard({ selectedRule, children, onEdit, onDe
       title={selectedRule.slaName}
       subtitle={`${selectedRule.slaId} · ID ${selectedRule.id}`}
       fields={fields}
-      cols={3}
+      colsClass="grid-cols-1 xl:grid-cols-3"
       onEdit={() => onEdit(selectedRule)}
       onDelete={() => onDelete(selectedRule)}
       t={t}

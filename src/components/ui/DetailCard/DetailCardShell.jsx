@@ -2,6 +2,9 @@ import React from 'react'
 import { Pencil, Trash2, ArrowUp } from 'lucide-react'
 import FieldTile from './FieldTile'
 
+// Maps cols number to a safe static Tailwind class (JIT-safe fallback)
+const COLS_CLASS_MAP = { 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4' }
+
 // Generic skeleton shown when no item is selected.
 // Props:
 //   placeholderIcon  - Lucide icon component shown in the gray header box
@@ -9,8 +12,9 @@ import FieldTile from './FieldTile'
 //   noSelectionSub   - secondary text (e.g. "Select a row above...")
 //   tileCount        - how many pulsing skeleton tiles to show
 //   cols             - grid columns for tiles (default 3)
+//   colsClass        - explicit Tailwind grid class(es) override (e.g. "grid-cols-2 lg:grid-cols-4")
 //   extraSkeleton    - optional JSX rendered below the tiles (e.g. calendar skeleton)
-export function DetailCardPlaceholder({ placeholderIcon: Icon, noSelectionText, noSelectionSub, tileCount = 6, cols = 3, extraSkeleton }) {
+export function DetailCardPlaceholder({ placeholderIcon: Icon, noSelectionText, noSelectionSub, tileCount = 6, cols = 3, colsClass, extraSkeleton }) {
   return (
     <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-gradient-to-b from-gray-50 to-white animate-in fade-in slide-in-from-bottom-3 duration-300">
       <div className="flex items-center justify-between px-6 py-5 bg-gradient-to-r from-white to-gray-50 gap-4">
@@ -35,7 +39,7 @@ export function DetailCardPlaceholder({ placeholderIcon: Icon, noSelectionText, 
           </button>
         </div>
       </div>
-      <div className={`grid grid-cols-${cols} bg-white p-5 gap-3`}>
+      <div className={`grid ${colsClass ?? COLS_CLASS_MAP[cols] ?? 'grid-cols-3'} bg-white p-5 gap-3`}>
         {[...Array(tileCount)].map((_, i) => (
           <div key={i} className="rounded-xl px-4 py-3.5 bg-gray-50 border border-gray-100 animate-pulse">
             <div className="flex items-center gap-3">
@@ -66,11 +70,12 @@ export function DetailCardPlaceholder({ placeholderIcon: Icon, noSelectionText, 
 //   subtitle        - secondary subtitle text
 //   fields          - array of field objects: { label, value, icon, color, customRender?, copyButton? }
 //   cols            - grid columns for tiles (default 3)
+//   colsClass       - explicit Tailwind grid class(es) override (e.g. "grid-cols-2 lg:grid-cols-4")
 //   onEdit          - edit button callback
 //   onDelete        - delete button callback
 //   t               - i18n translation function
 //   children        - optional content rendered below the tiles (e.g. OperatingHoursCalendar)
-export default function DetailCardShell({ headerIcon: Icon, headerIconGradient, title, subtitle, fields, cols = 3, onEdit, onDelete, t, children }) {
+export default function DetailCardShell({ headerIcon: Icon, headerIconGradient, title, subtitle, fields, cols = 3, colsClass, onEdit, onDelete, t, children }) {
   return (
     <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-gradient-to-b from-gray-50 to-white animate-in fade-in slide-in-from-bottom-3 duration-300">
 
@@ -104,7 +109,7 @@ export default function DetailCardShell({ headerIcon: Icon, headerIconGradient, 
       </div>
 
       {/* Tile grid */}
-      <div className={`grid grid-cols-${cols} bg-white px-5 pt-2 pb-5 gap-3`}>
+      <div className={`grid ${colsClass ?? COLS_CLASS_MAP[cols] ?? 'grid-cols-3'} bg-white px-5 pt-2 pb-5 gap-3`}>
         {fields.map(({ label, value, icon, color, customRender, copyButton }) => (
           <FieldTile
             key={label}
