@@ -177,6 +177,14 @@ export const getColumnDefs = (
     field: "created",
     headerName: t("ticketsPage.columns.created"),
     filter: "agDateColumnFilter",
+    // The "created" field itself is a pre-formatted display string (e.g. "Jul 13, 2026"), so
+    // sorting on it directly compares text, not time (e.g. "Aug 5, 2026" < "Jul 13, 2026"
+    // alphabetically, even though July comes first). Sort by the raw timestamp instead.
+    comparator: (valueA, valueB, nodeA, nodeB) => {
+      const a = nodeA?.data?.createdAt ? new Date(nodeA.data.createdAt).getTime() : 0;
+      const b = nodeB?.data?.createdAt ? new Date(nodeB.data.createdAt).getTime() : 0;
+      return a - b;
+    },
     filterParams: {
       comparator: (filterDate, cellValue) => {
         if (!cellValue) return -1;
@@ -197,6 +205,13 @@ export const getColumnDefs = (
     headerName: t("ticketsPage.columns.slaDue"),
     width: 150,
     filter: "agDateColumnFilter",
+    // Same issue as "created": slaDue is a pre-formatted display string, so the default
+    // sort would compare text, not time. Sort by the raw timestamp instead.
+    comparator: (valueA, valueB, nodeA, nodeB) => {
+      const a = nodeA?.data?.slaDeadlineAt ? new Date(nodeA.data.slaDeadlineAt).getTime() : 0;
+      const b = nodeB?.data?.slaDeadlineAt ? new Date(nodeB.data.slaDeadlineAt).getTime() : 0;
+      return a - b;
+    },
     filterParams: {
       comparator: (filterDate, cellValue) => {
         if (!cellValue) return -1;

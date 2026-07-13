@@ -11,7 +11,7 @@ import DeleteConfirmModal from '@components/modals/DeleteConfirmModal'
 import EmployeeFormModal from '@components/modals/EmployeeFormModal'
 import ModernSeparator from '@components/ui/ModernSeparator'
 import EmployeeDetailCard from '@components/administrator/employeeDirectory/EmployeeDetailCard'
-import { MOCK_EMPLOYEES } from '@data/mockData'
+import { SKELETON_ROWS, SkeletonBar } from '@components/ui/GridSkeleton'
 import { UserPlus, Building2, Contact, BookUser, Building, BriefcaseBusiness, Users } from 'lucide-react'
 import { buildGridOverlay, defaultColDef, getRowStyle } from '@utils/agGridUtils.jsx'
 import { ActionsCellRenderer, TextCellRenderer } from '@components/grid/CellRenderers'
@@ -63,7 +63,9 @@ export default function EmployeeDirectoryTab() {
         ? {
             headerClass: 'ag-header-cell-center',
             cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
-            cellRenderer: (params) => <Tag type="employeeClass" value={params.value} showIcon t={t} isRTL={isRTL} />,
+            cellRenderer: (params) => params.data?._skeleton
+              ? <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} centered />
+              : <Tag type="employeeClass" value={params.value} showIcon t={t} isRTL={isRTL} />,
           }
         : {
             cellRenderer: TextCellRenderer,
@@ -93,8 +95,12 @@ export default function EmployeeDirectoryTab() {
   }), [t])
 
   // Employee list and the currently selected row (null = show placeholder)
-  const [employees,        setEmployees]        = useState(MOCK_EMPLOYEES)
+  const [employees,        setEmployees]        = useState([])
   const [selectedEmployee, setSelectedEmployee] = useState(null)
+
+  // Data-loading (initial fetch) and mutation (create/update/delete) states
+  const [isLoading,    setIsLoading]    = useState(true)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   // Modal state: null = closed, 'new' = adding, or an employee object = editing that employee
   const [employeeModal,        setEmployeeModal]        = useState(null)
@@ -125,6 +131,47 @@ export default function EmployeeDirectoryTab() {
   // Auto-focus the search input when the tab first mounts
   useEffect(() => { searchRef.current?.focus() }, [])
 
+  // Generic POST helper for create/update/delete — throws on failure
+  const apiRequest = useCallback(async (url, body) => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || `HTTP ${res.status}`)
+    }
+    return data
+  }, [])
+
+  // Fetch the employee list from the API on first mount
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        setIsLoading(true)
+        const res = await fetch('/api/public/administrator/employees')
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const data = await res.json()
+        if (!data.success) throw new Error(data.error || 'Failed to load employees')
+        if (!cancelled) setEmployees(data.employees || [])
+      } catch (err) {
+        console.error('[EmployeeDirectory] Failed to fetch employees:', err)
+        if (!cancelled) {
+          pushAlert(
+            'error',
+            t('administratorMenu.tabs.employeeDirectory.alerts.loadFailed', 'Failed to load employees'),
+            err.message,
+          )
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [pushAlert, t])
+
   // After an edit or delete, update selectedEmployee to reflect the new data
   // (or clear it if the selected employee was deleted)
   const syncSelected = useCallback((updated) => {
@@ -141,40 +188,72 @@ export default function EmployeeDirectoryTab() {
     setTimeout(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
   }, [])
 
-  // Called when the EmployeeFormModal submits. Handles both creating and updating.
-  const handleSave = useCallback((form) => {
+  // Called when the EmployeeFormModal submits. Handles both creating and updating
+  // via the live API, then updates local state from the server response.
+  const handleSave = useCallback(async (form) => {
+    if (isProcessing) return
     const isNew = employeeModal === 'new'
-    const updated = isNew
-      ? [...employees, { ...form, id: Date.now() }]
-      : employees.map(e => e.id === employeeModal.id ? { ...e, ...form } : e)
+    setIsProcessing(true)
+    try {
+      let updated
+      if (isNew) {
+        const data = await apiRequest('/api/public/administrator/employees/create', form)
+        updated = [...employees, data.employee]
+      } else {
+        const data = await apiRequest('/api/public/administrator/employees/update', { id: employeeModal.id, ...form })
+        updated = employees.map(e => (e.id === employeeModal.id ? data.employee : e))
+      }
+      setEmployees(updated)
+      syncSelected(updated)
+      setEmployeeModal(null)
+      pushAlert(
+        'success',
+        isNew
+          ? t('administratorMenu.tabs.employeeDirectory.alerts.created', 'Employee added')
+          : t('administratorMenu.tabs.employeeDirectory.alerts.updated', 'Employee updated'),
+        isNew
+          ? t('administratorMenu.tabs.employeeDirectory.alerts.createdMsg', { name: form.name }, `${form.name} has been added.`)
+          : t('administratorMenu.tabs.employeeDirectory.alerts.updatedMsg', { name: form.name }, `${form.name} has been updated.`),
+      )
+    } catch (err) {
+      console.error('[EmployeeDirectory] Save failed:', err)
+      pushAlert(
+        'error',
+        t('administratorMenu.tabs.employeeDirectory.alerts.saveFailed', 'Save failed'),
+        err.message,
+      )
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [employeeModal, employees, syncSelected, pushAlert, t, apiRequest, isProcessing])
 
-    setEmployees(updated)
-    syncSelected(updated)
-    setEmployeeModal(null)
-    pushAlert(
-      'success',
-      isNew
-        ? t('administratorMenu.tabs.employeeDirectory.alerts.created', 'Employee added')
-        : t('administratorMenu.tabs.employeeDirectory.alerts.updated', 'Employee updated'),
-      isNew
-        ? t('administratorMenu.tabs.employeeDirectory.alerts.createdMsg', { name: form.name }, `${form.name} has been added.`)
-        : t('administratorMenu.tabs.employeeDirectory.alerts.updatedMsg', { name: form.name }, `${form.name} has been updated.`),
-    )
-  }, [employeeModal, employees, syncSelected, pushAlert, t])
-
-  // Called when the DeleteConfirmModal confirms deletion.
-  const handleDelete = useCallback(() => {
+  // Called when the DeleteConfirmModal confirms deletion — deletes via the API.
+  const handleDelete = useCallback(async () => {
+    if (isProcessing) return
     const { name, id } = deleteEmployeeTarget
-    const updated = employees.filter(e => e.id !== id)
-    if (selectedEmployee?.id === id) setSelectedEmployee(null)
-    setEmployees(updated)
-    setDeleteEmployeeTarget(null)
-    pushAlert(
-      'success',
-      t('administratorMenu.tabs.employeeDirectory.alerts.deleted', 'Employee removed'),
-      t('administratorMenu.tabs.employeeDirectory.alerts.deletedMsg', { name }, `${name} has been removed.`),
-    )
-  }, [employees, deleteEmployeeTarget, selectedEmployee, pushAlert, t])
+    setIsProcessing(true)
+    try {
+      await apiRequest('/api/public/administrator/employees/delete', { id })
+      const updated = employees.filter(e => e.id !== id)
+      if (selectedEmployee?.id === id) setSelectedEmployee(null)
+      setEmployees(updated)
+      setDeleteEmployeeTarget(null)
+      pushAlert(
+        'success',
+        t('administratorMenu.tabs.employeeDirectory.alerts.deleted', 'Employee removed'),
+        t('administratorMenu.tabs.employeeDirectory.alerts.deletedMsg', { name }, `${name} has been removed.`),
+      )
+    } catch (err) {
+      console.error('[EmployeeDirectory] Delete failed:', err)
+      pushAlert(
+        'error',
+        t('administratorMenu.tabs.employeeDirectory.alerts.deleteFailed', 'Delete failed'),
+        err.message,
+      )
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [employees, deleteEmployeeTarget, selectedEmployee, pushAlert, t, apiRequest, isProcessing])
 
   // Context object passed to every AG Grid cell. ActionsCellRenderer reads
   // onEdit/onDelete from here to wire up the edit and delete buttons per row.
@@ -248,8 +327,8 @@ export default function EmployeeDirectoryTab() {
           key={`employee-grid-${i18n.language}`}
           ref={gridRef}
           domLayout="autoHeight"
-          rowData={employees}
-          quickFilterText={search}
+          rowData={isLoading ? SKELETON_ROWS : employees}
+          quickFilterText={isLoading ? '' : search}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           getRowStyle={(params) => ({
@@ -263,7 +342,7 @@ export default function EmployeeDirectoryTab() {
           rowHeight={48}
           headerHeight={52}
           suppressCellFocus
-          pagination
+          pagination={!isLoading}
           paginationPageSize={25}
           paginationPageSizeSelector={[ 25, 50, 75, 100, 200]}
           enableRtl={isRTL}

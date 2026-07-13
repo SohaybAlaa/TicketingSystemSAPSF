@@ -4,8 +4,6 @@ import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
   Ticket,
-  Copy,
-  TicketCheck,
   Clock,
   User,
   AlertTriangle,
@@ -15,6 +13,7 @@ import {
 } from "lucide-react";
 import { formatDateTime } from "@utils/formatDateTime";
 import Tag from "@components/ui/Tag";
+import CopyButton from "@components/ui/CopyButton";
 import { TEAMS } from "@data/mockData";
 import AlertNotification from "@ui/AlertNotification";
 import TicketNotFound from "@components/ticketDetails/TicketNotFound";
@@ -30,7 +29,6 @@ export default function Tickets({ ticketid }) {
 
   // UI States
   const [alerts, setAlerts] = useState([]);
-  const [isCopied, setIsCopied] = useState(false);
   // File Upload States
   const [isUploading, setIsUploading] = useState(false);
   const [actualAttachments, setActualAttachments] = useState([]);
@@ -164,18 +162,6 @@ export default function Tickets({ ticketid }) {
   };
 
   // TICKET ACTION HANDLERS
-  const handleCopyTicketId = async () => {
-    try {
-      await navigator.clipboard.writeText(ticket.ticket_id);
-      setIsCopied(true);
-      showAlert("success", t("ticketDetails.alerts.ticketIdCopied"));
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (error) {
-      console.error("Failed to copy:", error);
-      showAlert("error", t("ticketDetails.alerts.copyFailed"));
-    }
-  };
-
   const handleStatusChange = (newStatus) => {
     setLocalStatus(newStatus);
     closeDropdown();
@@ -569,17 +555,12 @@ export default function Tickets({ ticketid }) {
                     <h1>
                       {t("ticketDetails.ticketId")} #{ticket.ticket_id}
                     </h1>
-                    <button
-                      onClick={handleCopyTicketId}
-                      className="group p-2 cursor-pointer hover:bg-gray-100 rounded-lg transition-all duration-200 relative"
+                    <CopyButton
+                      value={ticket.ticket_id}
                       title={t("ticketDetails.copyTicketId")}
-                    >
-                      {isCopied ? (
-                        <TicketCheck className="w-4 h-4 text-green-600" />
-                      ) : (
-                        <Copy className="w-4 h-4 text-gray-500 group-hover:text-gray-700" />
-                      )}
-                    </button>
+                      onCopy={() => showAlert("success", t("ticketDetails.alerts.ticketIdCopied"))}
+                      onError={() => showAlert("error", t("ticketDetails.alerts.copyFailed"))}
+                    />
                   </div>
 
                   {/* Status Badge */}
@@ -618,7 +599,7 @@ export default function Tickets({ ticketid }) {
                 </h2>
 
                 {/* Ticket Metadata */}
-                <div className="flex flex-col gap-y-1.5 text-sm text-gray-600">
+                <div className="flex flex-col md:flex-row md:items-center gap-y-1.5 md:gap-x-2 text-sm text-gray-600">
                   {/* Row 1: Employee + Assigned To */}
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span className="flex items-center gap-1 !font-medium whitespace-nowrap">
@@ -636,6 +617,10 @@ export default function Tickets({ ticketid }) {
                       )}
                     </span>
                   </div>
+
+                  {/* Separator between the two groups — desktop (single-line) only */}
+                  <span className="hidden md:inline text-gray-300">•</span>
+
                   {/* Row 2: Category + Created + Updated */}
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span className="flex items-center gap-1 !font-medium whitespace-nowrap cursor-default" title={`${t("ticketDetails.category", "Category")}: ${t(`categories.${ticket.category_name}`, ticket.category_name)}`}>

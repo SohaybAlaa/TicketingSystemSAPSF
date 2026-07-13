@@ -8,7 +8,7 @@ import { PRIORITY_OPTIONS } from '@data/mockData'
 
 // Static option lists for tag-button selectors
 const SLA_TYPE_OPTIONS = ['Initial Review', 'Completion Due']
-const TIME_TYPE_OPTIONS = ['Working Time', 'Calendar Time']
+const TIME_TYPE_OPTIONS = ['Working Time', 'Calendar Time', 'Custom Time']
 const RESPONSE_TIME_UNITS = ['Hours', 'Days']
 
 // Modal for creating or editing a single SLA rule

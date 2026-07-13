@@ -9,11 +9,11 @@ import CompactStatsCard from '@components/ui/CompactStatsCard'
 import AlertNotification from '@components/ui/AlertNotification'
 import DeleteConfirmModal from '@components/modals/DeleteConfirmModal'
 import TicketingRuleFormModal from '@components/modals/TicketingRuleFormModal'
-import { MOCK_TICKETING_RULES } from '@data/mockData'
 import { buildGridOverlay, defaultColDef, getRowStyle } from '@utils/agGridUtils.jsx'
 import { ActionsCellRenderer, TextCellRenderer } from '@components/grid/CellRenderers'
+import { SKELETON_ROWS, SkeletonBar } from '@components/ui/GridSkeleton'
 import Tag from '@components/ui/Tag'
-import { SlidersHorizontal, AlertTriangle, Logs, CirclePile, UserCog } from 'lucide-react'
+import { SlidersHorizontal, AlertTriangle, Logs, CirclePile, Building2 } from 'lucide-react'
 
 ModuleRegistry.registerModules([AllCommunityModule])
 
@@ -44,7 +44,9 @@ export default function TicketingRulesTab() {
       flex: 1.2, minWidth: 145,
       headerClass: 'ag-header-cell-center',
       cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
-      cellRenderer: (params) => <Tag type="employeeClass" value={params.value} showIcon t={t} isRTL={isRTL} />,
+      cellRenderer: (params) => params.data?._skeleton
+        ? <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} centered />
+        : <Tag type="employeeClass" value={params.value} showIcon t={t} isRTL={isRTL} />,
     },
     {
       field: 'supportCategory',
@@ -74,7 +76,9 @@ export default function TicketingRulesTab() {
       headerClass: 'ag-header-cell-center',
       cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
       // Render priority as a colored tag badge
-      cellRenderer: (params) => <Tag type="priority" value={params.value} t={t} isRTL={isRTL} />,
+      cellRenderer: (params) => params.data?._skeleton
+        ? <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} centered />
+        : <Tag type="priority" value={params.value} t={t} isRTL={isRTL} />,
     },
     {
       headerName: t('administratorMenu.tabs.ticketingRules.columns.action', 'Action'),
@@ -93,7 +97,21 @@ export default function TicketingRulesTab() {
   }), [t])
 
   // State: Rules data
-  const [rules, setRules] = useState(MOCK_TICKETING_RULES)
+  const [rules, setRules] = useState([])
+
+  // Live dropdown sources for the form modal (entities/categories+subcategories/groups)
+  const [entityOptions, setEntityOptions] = useState([])
+  const [categories,    setCategories]    = useState([])
+  const [groupOptions,  setGroupOptions]  = useState([])
+
+  // SLA assignments, fetched read-only so we can warn when a rule has no matching SLA
+  // assignment — that combo would route+prioritize tickets but never get a real SLA timer
+  // (SLA_FLOW_DOCUMENTATION Steps 2 and 3 are independent lookups; nothing else catches this).
+  const [slaAssignments, setSlaAssignments] = useState([])
+
+  // Data-loading (initial fetch) and mutation (create/update/delete) states
+  const [isLoading,    setIsLoading]    = useState(true)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   // State: Modal management (null | 'new' | ruleObject for edit)
   const [ruleModal,        setRuleModal]        = useState(null)
@@ -121,38 +139,139 @@ export default function TicketingRulesTab() {
   // Auto-focus search input on mount
   useEffect(() => { searchRef.current?.focus() }, [])
 
-  // Handler: Save new or updated rule
-  const handleSave = useCallback((form) => {
+  // Generic POST helper for create/update/delete — throws on failure
+  const apiRequest = useCallback(async (url, body) => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || `HTTP ${res.status}`)
+    }
+    return data
+  }, [])
+
+  // Fetch the ticketing rules list from the API on first mount
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        setIsLoading(true)
+        const res = await fetch('/api/public/administrator/ticketing-rules')
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const data = await res.json()
+        if (!data.success) throw new Error(data.error || 'Failed to load rules')
+        if (!cancelled) setRules(data.rules || [])
+      } catch (err) {
+        console.error('[TicketingRules] Failed to fetch rules:', err)
+        if (!cancelled) {
+          pushAlert('error', t('administratorMenu.tabs.ticketingRules.alerts.loadFailed', 'Failed to load rules'), err.message)
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [pushAlert, t])
+
+  // Fetch live entity/category/group options for the create/edit form (must match the DB
+  // exactly, since the backend resolves these by name — see resolveRuleIds in ticketing-rules/create.js)
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const [eRes, cRes, gRes, aRes] = await Promise.all([
+          fetch('/api/public/administrator/entities'),
+          fetch('/api/public/administrator/categories'),
+          fetch('/api/public/administrator/groups'),
+          fetch('/api/public/administrator/sla-assignments'),
+        ])
+        const [eData, cData, gData, aData] = await Promise.all([eRes.json(), cRes.json(), gRes.json(), aRes.json()])
+        if (cancelled) return
+        if (eData.success) setEntityOptions((eData.entities || []).map(e => e.name))
+        if (cData.success) setCategories(cData.categories || [])
+        if (gData.success) setGroupOptions((gData.groups || []).map(g => g.name))
+        if (aData.success) setSlaAssignments(aData.assignments || [])
+      } catch (err) {
+        console.error('[TicketingRules] Failed to fetch form options:', err)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [])
+
+  // Handler: Save new or updated rule via the API
+  const handleSave = useCallback(async (form) => {
+    if (isProcessing) return
     const isNew = ruleModal === 'new'
-    const updated = isNew
-      ? [...rules, { ...form, id: Date.now() }]
-      : rules.map(r => r.id === ruleModal.id ? { ...r, ...form } : r)
+    setIsProcessing(true)
+    try {
+      let updated
+      if (isNew) {
+        const data = await apiRequest('/api/public/administrator/ticketing-rules/create', form)
+        updated = [...rules, data.rule]
+      } else {
+        const data = await apiRequest('/api/public/administrator/ticketing-rules/update', { id: ruleModal.id, ...form })
+        updated = rules.map(r => (r.id === ruleModal.id ? data.rule : r))
+      }
+      setRules(updated)
+      setRuleModal(null)
+      pushAlert(
+        'success',
+        isNew
+          ? t('administratorMenu.tabs.ticketingRules.alerts.created', 'Rule added')
+          : t('administratorMenu.tabs.ticketingRules.alerts.updated', 'Rule updated'),
+        isNew
+          ? t('administratorMenu.tabs.ticketingRules.alerts.createdMsg', 'New ticketing rule has been added.')
+          : t('administratorMenu.tabs.ticketingRules.alerts.updatedMsg', 'Ticketing rule has been updated.'),
+      )
 
-    setRules(updated)
-    setRuleModal(null)
-    pushAlert(
-      'success',
-      isNew
-        ? t('administratorMenu.tabs.ticketingRules.alerts.created', 'Rule added')
-        : t('administratorMenu.tabs.ticketingRules.alerts.updated', 'Rule updated'),
-      isNew
-        ? t('administratorMenu.tabs.ticketingRules.alerts.createdMsg', 'New ticketing rule has been added.')
-        : t('administratorMenu.tabs.ticketingRules.alerts.updatedMsg', 'Ticketing rule has been updated.'),
-    )
-  }, [ruleModal, rules, pushAlert, t])
+      // Warn if this combo has no matching SLA Assignment — tickets routed by this rule
+      // would get a Group + Priority but never a real SLA timer (fall back to a flat deadline).
+      const hasMatchingAssignment = slaAssignments.some(a =>
+        a.entity === form.entity &&
+        a.employeeClass === form.employeeClass &&
+        a.supportCategory === form.supportCategory &&
+        a.subcategory === form.subcategory
+      )
+      if (!hasMatchingAssignment) {
+        pushAlert(
+          'warning',
+          t('administratorMenu.tabs.ticketingRules.alerts.noSlaAssignment', 'No matching SLA Assignment'),
+          t('administratorMenu.tabs.ticketingRules.alerts.noSlaAssignmentMsg', 'Tickets for this Entity + Employee Class + Category + Subcategory will be routed but won\'t get a real SLA timer until an SLA Assignment is added for the same combo.'),
+        )
+      }
+    } catch (err) {
+      console.error('[TicketingRules] Save failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.ticketingRules.alerts.saveFailed', 'Save failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [ruleModal, rules, slaAssignments, pushAlert, t, apiRequest, isProcessing])
 
-  // Handler: Delete rule after confirmation
-  const handleDelete = useCallback(() => {
+  // Handler: Delete rule after confirmation via the API
+  const handleDelete = useCallback(async () => {
+    if (isProcessing) return
     const { id, supportCategory, subcategory } = deleteRuleTarget
-    const updated = rules.filter(r => r.id !== id)
-    setRules(updated)
-    setDeleteRuleTarget(null)
-    pushAlert(
-      'success',
-      t('administratorMenu.tabs.ticketingRules.alerts.deleted', 'Rule removed'),
-      t('administratorMenu.tabs.ticketingRules.alerts.deletedMsg', { supportCategory, subcategory }, `${supportCategory} / ${subcategory} rule has been removed.`),
-    )
-  }, [rules, deleteRuleTarget, pushAlert, t])
+    setIsProcessing(true)
+    try {
+      await apiRequest('/api/public/administrator/ticketing-rules/delete', { id })
+      const updated = rules.filter(r => r.id !== id)
+      setRules(updated)
+      setDeleteRuleTarget(null)
+      pushAlert(
+        'success',
+        t('administratorMenu.tabs.ticketingRules.alerts.deleted', 'Rule removed'),
+        t('administratorMenu.tabs.ticketingRules.alerts.deletedMsg', { supportCategory, subcategory }, `${supportCategory} / ${subcategory} rule has been removed.`),
+      )
+    } catch (err) {
+      console.error('[TicketingRules] Delete failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.ticketingRules.alerts.deleteFailed', 'Delete failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [rules, deleteRuleTarget, pushAlert, t, apiRequest, isProcessing])
 
   // Context passed to grid for row action handlers
   const gridContext = useMemo(() => ({
@@ -171,6 +290,9 @@ export default function TicketingRulesTab() {
         onSave={handleSave}
         initial={ruleModal === 'new' ? null : ruleModal}
         existingRules={rules}
+        entityOptions={entityOptions}
+        categories={categories}
+        groupOptions={groupOptions}
       />
       {/* Modal: Delete Confirmation */}
       <DeleteConfirmModal
@@ -206,7 +328,7 @@ export default function TicketingRulesTab() {
         </div>
       </div>
 
-      {/* Stats Row: Quick overview cards (Total, Categories, Groups, Agents) */}
+      {/* Stats Row: Quick overview cards (Total, Categories, Groups) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         <CompactStatsCard
           title={t('administratorMenu.tabs.ticketingRules.totalRules', 'Total Rules')}
@@ -227,9 +349,9 @@ export default function TicketingRulesTab() {
           iconBoxColor="#3b82f6"
         />
         <CompactStatsCard
-          title={t('administratorMenu.tabs.ticketingRules.agents', 'Agents')}
-          value={new Set(rules.map(r => r.agent).filter(Boolean)).size}
-          icon={UserCog}
+          title={t('administratorMenu.tabs.ticketingRules.entities', 'Entities')}
+          value={new Set(rules.map(r => r.entity)).size}
+          icon={Building2}
           iconBoxColor="#FF6E00"
         />
       </div>
@@ -240,8 +362,8 @@ export default function TicketingRulesTab() {
           key={`ticketing-rules-grid-${i18n.language}`}
           ref={gridRef}
           domLayout="autoHeight"
-          rowData={rules}
-          quickFilterText={search}
+          rowData={isLoading ? SKELETON_ROWS : rules}
+          quickFilterText={isLoading ? '' : search}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           getRowStyle={getRowStyle}
@@ -249,7 +371,7 @@ export default function TicketingRulesTab() {
           rowHeight={48}
           headerHeight={52}
           suppressCellFocus
-          pagination
+          pagination={!isLoading}
           paginationPageSize={20}
           paginationPageSizeSelector={[20, 50, 100]}
           enableRtl={isRTL}

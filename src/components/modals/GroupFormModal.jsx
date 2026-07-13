@@ -12,15 +12,18 @@ import { MOCK_GROUPS } from "@data/mockData";
  * @param {function} onSave   - Callback with form data when saved
  * @param {object|null} initial - Existing group data for edit mode (null = create)
  */
-export default function GroupFormModal({ isOpen, onClose, onSave, initial = null }) {
+export default function GroupFormModal({ isOpen, onClose, onSave, initial = null, groups = null }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
   const isEdit = !!initial;
 
   const emptyForm = { name: "", validFrom: "", validTo: "", parentName: "", externalCode: "" };
-  
-  // Get unique parent names from MOCK_GROUPS
-  const parentNameOptions = Array.from(new Set(MOCK_GROUPS.map(g => g.parentName))).sort();
+
+  // Use the live groups list when provided, otherwise fall back to mock data
+  const sourceGroups = groups ?? MOCK_GROUPS;
+
+  // Get unique parent names from the source groups
+  const parentNameOptions = Array.from(new Set(sourceGroups.map(g => g.parentName).filter(Boolean))).sort();
 
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
@@ -75,7 +78,7 @@ export default function GroupFormModal({ isOpen, onClose, onSave, initial = null
       next.externalCode = t("modals.groupForm.errors.externalCodeTooLong", "External code must not exceed 50 characters");
     } else {
       // Check for duplicate external code (excluding current item if editing)
-      const isDuplicate = MOCK_GROUPS.some(g => 
+      const isDuplicate = sourceGroups.some(g => 
         g.externalCode === trimmedExternalCode && 
         (!isEdit || g.id !== initial.id)
       );

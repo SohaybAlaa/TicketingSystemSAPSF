@@ -9,9 +9,9 @@ import CompactStatsCard from '@components/ui/CompactStatsCard'
 import AlertNotification from '@components/ui/AlertNotification'
 import DeleteConfirmModal from '@components/modals/DeleteConfirmModal'
 import SLAAssignmentFormModal from '@components/modals/SLAAssignmentFormModal'
-import { MOCK_SLA_CONFIGURATIONS, MOCK_SLA_RULES } from '@data/mockData'
 import { buildGridOverlay, defaultColDef, getRowStyle } from '@utils/agGridUtils.jsx'
 import { ActionsCellRenderer, TextCellRenderer } from '@components/grid/CellRenderers'
+import { SKELETON_ROWS, SkeletonBar } from '@components/ui/GridSkeleton'
 import Tag from '@components/ui/Tag'
 import { Settings, AlertTriangle, Building2, Logs, Users } from 'lucide-react'
 ModuleRegistry.registerModules([AllCommunityModule])
@@ -22,11 +22,8 @@ export default function SLAAssignmentTab() {
   // isRTL flips grid direction and layout for Arabic
   const isRTL = i18n.language === 'ar'
 
-  // Get SLA ID options from the actual SLA Rules data
-  const slaIdOptions = useMemo(() => {
-    const uniqueIds = [...new Set(MOCK_SLA_RULES.map(r => r.slaId))].sort()
-    return uniqueIds
-  }, [])
+  // SLA ID options are loaded from the sla-policies endpoint (see effect below)
+  const [slaIdOptions, setSlaIdOptions] = useState([])
 
   // Column definitions
   const columnDefs = useMemo(() => [
@@ -50,7 +47,9 @@ export default function SLAAssignmentTab() {
       flex: 1.2, minWidth: 155,
       headerClass: 'ag-header-cell-center',
       cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
-      cellRenderer: (params) => <Tag type="employeeClass" value={params.value} showIcon t={t} isRTL={isRTL} />,
+      cellRenderer: (params) => params.data?._skeleton
+        ? <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} centered />
+        : <Tag type="employeeClass" value={params.value} showIcon t={t} isRTL={isRTL} />,
     },
     {
       field: 'supportCategory',
@@ -82,7 +81,20 @@ export default function SLAAssignmentTab() {
   }), [t])
 
   // Main data list for the grid
-  const [configs, setConfigs] = useState(MOCK_SLA_CONFIGURATIONS)
+  const [configs, setConfigs] = useState([])
+
+  // Live dropdown sources for the form modal (entities/categories+subcategories)
+  const [entityOptions, setEntityOptions] = useState([])
+  const [categories,    setCategories]    = useState([])
+
+  // Ticketing rules, fetched read-only so we can warn when an assignment has no matching
+  // ticketing rule — that combo would get a real SLA timer but never a Group/Priority
+  // (SLA_FLOW_DOCUMENTATION Steps 2 and 3 are independent lookups; nothing else catches this).
+  const [ticketingRules, setTicketingRules] = useState([])
+
+  // Data-loading (initial fetch) and mutation (create/update/delete) states
+  const [isLoading,    setIsLoading]    = useState(true)
+  const [isProcessing, setIsProcessing] = useState(false)
   // null = closed, 'new' = create form, object = edit form with existing row data
   const [configModal, setConfigModal] = useState(null)
   // Holds the row pending deletion so the confirm modal knows what to remove
@@ -107,48 +119,142 @@ export default function SLAAssignmentTab() {
   // Auto-focus the search bar when the tab mounts
   useEffect(() => { searchRef.current?.focus() }, [])
 
-  // Adds a new config with an auto-generated SLA-### id, or updates an existing one
-  const handleSave = useCallback((form) => {
-    const isNew = configModal === 'new'
-    if (isNew) {
-      const maxId = configs.reduce((m, r) => Math.max(m, r.id), 0)
-      // Find the highest existing SLA number so the next id is always unique
-      const nextNum = configs.reduce((m, r) => {
-        const n = parseInt(r.slaId?.replace('SLA-', ''), 10)
-        return isNaN(n) ? m : Math.max(m, n)
-      }, 0) + 1
-      const newConfig = {
-        id: maxId + 1,
-        slaId: `SLA-${String(nextNum).padStart(3, '0')}`,
-        ...form,
-      }
-      setConfigs(prev => [...prev, newConfig])
-    } else {
-      setConfigs(prev => prev.map(r => r.id === configModal.id ? { ...r, ...form } : r))
+  // Generic POST helper for create/update/delete — throws on failure
+  const apiRequest = useCallback(async (url, body) => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || `HTTP ${res.status}`)
     }
-    setConfigModal(null)
-    pushAlert(
-      'success',
-      isNew
-        ? t('administratorMenu.tabs.slaAssignment.alerts.created', 'Assignment added')
-        : t('administratorMenu.tabs.slaAssignment.alerts.updated', 'Assignment updated'),
-      isNew
-        ? t('administratorMenu.tabs.slaAssignment.alerts.createdMsg', 'New SLA assignment has been added.')
-        : t('administratorMenu.tabs.slaAssignment.alerts.updatedMsg', 'SLA assignment has been updated.'),
-    )
-  }, [configModal, configs, pushAlert, t])
+    return data
+  }, [])
 
-  // Removes the row stored in deleteTarget and shows a success alert
-  const handleDelete = useCallback(() => {
+  // Fetch assignments + SLA policy options from the API on first mount
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        setIsLoading(true)
+        const [aRes, pRes] = await Promise.all([
+          fetch('/api/public/administrator/sla-assignments'),
+          fetch('/api/public/administrator/sla-policies'),
+        ])
+        if (!aRes.ok) throw new Error(`HTTP ${aRes.status}`)
+        const aData = await aRes.json()
+        if (!aData.success) throw new Error(aData.error || 'Failed to load assignments')
+        if (!cancelled) setConfigs(aData.assignments || [])
+        // Policy options are non-critical; ignore their failure quietly
+        if (pRes.ok) {
+          const pData = await pRes.json()
+          if (!cancelled && pData.success) setSlaIdOptions((pData.policies || []).map(p => p.slaId))
+        }
+      } catch (err) {
+        console.error('[SLAAssignment] Failed to fetch data:', err)
+        if (!cancelled) {
+          pushAlert('error', t('administratorMenu.tabs.slaAssignment.alerts.loadFailed', 'Failed to load assignments'), err.message)
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [pushAlert, t])
+
+  // Fetch live entity/category options for the create/edit form (must match the DB exactly,
+  // since the backend resolves these by name — see resolveAssignmentIds in sla-assignments/create.js)
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const [eRes, cRes, rRes] = await Promise.all([
+          fetch('/api/public/administrator/entities'),
+          fetch('/api/public/administrator/categories'),
+          fetch('/api/public/administrator/ticketing-rules'),
+        ])
+        const [eData, cData, rData] = await Promise.all([eRes.json(), cRes.json(), rRes.json()])
+        if (cancelled) return
+        if (eData.success) setEntityOptions((eData.entities || []).map(e => e.name))
+        if (cData.success) setCategories(cData.categories || [])
+        if (rData.success) setTicketingRules(rData.rules || [])
+      } catch (err) {
+        console.error('[SLAAssignment] Failed to fetch form options:', err)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [])
+
+  // Adds a new assignment or updates an existing one via the API
+  const handleSave = useCallback(async (form) => {
+    if (isProcessing) return
+    const isNew = configModal === 'new'
+    setIsProcessing(true)
+    try {
+      if (isNew) {
+        const data = await apiRequest('/api/public/administrator/sla-assignments/create', form)
+        setConfigs(prev => [...prev, data.assignment])
+      } else {
+        const data = await apiRequest('/api/public/administrator/sla-assignments/update', { id: configModal.id, ...form })
+        setConfigs(prev => prev.map(r => (r.id === configModal.id ? data.assignment : r)))
+      }
+      setConfigModal(null)
+      pushAlert(
+        'success',
+        isNew
+          ? t('administratorMenu.tabs.slaAssignment.alerts.created', 'Assignment added')
+          : t('administratorMenu.tabs.slaAssignment.alerts.updated', 'Assignment updated'),
+        isNew
+          ? t('administratorMenu.tabs.slaAssignment.alerts.createdMsg', 'New SLA assignment has been added.')
+          : t('administratorMenu.tabs.slaAssignment.alerts.updatedMsg', 'SLA assignment has been updated.'),
+      )
+
+      // Warn if this combo has no matching Ticketing Rule — tickets would get a real SLA
+      // timer but never be routed to a group or get an authoritative priority.
+      const hasMatchingRule = ticketingRules.some(r =>
+        r.entity === form.entity &&
+        r.employeeClass === form.employeeClass &&
+        r.supportCategory === form.supportCategory &&
+        r.subcategory === form.subcategory
+      )
+      if (!hasMatchingRule) {
+        pushAlert(
+          'warning',
+          t('administratorMenu.tabs.slaAssignment.alerts.noTicketingRule', 'No matching Ticketing Rule'),
+          t('administratorMenu.tabs.slaAssignment.alerts.noTicketingRuleMsg', 'Tickets for this Entity + Employee Class + Category + Subcategory will get a real SLA timer, but won\'t be routed to a group or get an authoritative priority until a Ticketing Rule is added for the same combo.'),
+        )
+      }
+    } catch (err) {
+      console.error('[SLAAssignment] Save failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.slaAssignment.alerts.saveFailed', 'Save failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [configModal, ticketingRules, pushAlert, t, apiRequest, isProcessing])
+
+  // Removes the row stored in deleteTarget via the API and shows a success alert
+  const handleDelete = useCallback(async () => {
+    if (isProcessing) return
     const { id } = deleteTarget
-    setConfigs(prev => prev.filter(r => r.id !== id))
-    setDeleteTarget(null)
-    pushAlert(
-      'success',
-      t('administratorMenu.tabs.slaAssignment.alerts.deleted', 'Assignment removed'),
-      t('administratorMenu.tabs.slaAssignment.alerts.deletedMsg', 'SLA assignment has been removed.'),
-    )
-  }, [deleteTarget, pushAlert, t])
+    setIsProcessing(true)
+    try {
+      await apiRequest('/api/public/administrator/sla-assignments/delete', { id })
+      setConfigs(prev => prev.filter(r => r.id !== id))
+      setDeleteTarget(null)
+      pushAlert(
+        'success',
+        t('administratorMenu.tabs.slaAssignment.alerts.deleted', 'Assignment removed'),
+        t('administratorMenu.tabs.slaAssignment.alerts.deletedMsg', 'SLA assignment has been removed.'),
+      )
+    } catch (err) {
+      console.error('[SLAAssignment] Delete failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.slaAssignment.alerts.deleteFailed', 'Delete failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [deleteTarget, pushAlert, t, apiRequest, isProcessing])
 
   // Passed to AG Grid so cell renderers can trigger edit/delete actions
   const gridContext = useMemo(() => ({
@@ -168,6 +274,8 @@ export default function SLAAssignmentTab() {
         initial={configModal === 'new' ? null : configModal}
         existingConfigs={configs}
         slaIdOptions={slaIdOptions}
+        entityOptions={entityOptions}
+        categories={categories}
       />
 
       {/* Delete Confirmation */}
@@ -237,8 +345,8 @@ export default function SLAAssignmentTab() {
           key={`sla-config-grid-${i18n.language}`}
           ref={gridRef}
           domLayout="autoHeight"
-          rowData={configs}
-          quickFilterText={search}
+          rowData={isLoading ? SKELETON_ROWS : configs}
+          quickFilterText={isLoading ? '' : search}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           getRowStyle={getRowStyle}
@@ -246,7 +354,7 @@ export default function SLAAssignmentTab() {
           rowHeight={48}
           headerHeight={52}
           suppressCellFocus
-          pagination
+          pagination={!isLoading}
           paginationPageSize={10}
           paginationPageSizeSelector={[10, 25, 50]}
           enableRtl={isRTL}

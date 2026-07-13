@@ -285,6 +285,9 @@
       "subcategory": "التصنيف الفرعي",
       "selectCategoryFirst": "اختر التصنيف أولاً",
       "priority": "الأولوية",
+      "priorityNotReady": "املأ بيانات الموظف والعنوان والتصنيف والتصنيف الفرعي أولاً",
+      "priorityAutoLocked": "تم اختيارها تلقائيًا بناءً على قواعد التذاكر",
+      "priorityAuto": "تُملأ تلقائيًا عند تطابق إحدى قواعد التذاكر — وإلا يمكنك اختيارها يدويًا",
       "reason": "السبب",
       "reasonPlaceholder": "تفاصيل إضافية أو سبب هذا الطلب...",
       "cancel": "إلغاء",
@@ -404,6 +407,7 @@
       "entity": "الجهة",
       "supportCategory": "فئة الدعم",
       "subcategory": "الفئة الفرعية",
+      "selectCategoryFirst": "اختر فئة الدعم أولاً",
       "employeeClass": "فئة الموظف",
       "cancel": "إلغاء",
       "create": "إنشاء تعيين",
@@ -784,6 +788,7 @@
         "categories": "الفئات",
         "groups": "المجموعات",
         "agents": "الموظفون",
+        "missingSlaAssignment": "بدون تعيين SLA",
         "columns": {
           "entity": "الجهة",
           "supportCategory": "الفئة",
@@ -1354,7 +1359,9 @@
       "email": "البريد الإلكتروني",
       "department": "القسم",
       "position": "المنصب",
-      "location": "الموقع"
+      "location": "الموقع",
+      "mobileNumber": "رقم الجوال",
+      "copy": "نسخ"
     },
     "details": {
       "description": "الوصف",

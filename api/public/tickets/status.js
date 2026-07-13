@@ -1,4 +1,4 @@
-import { updateTicketStatusDB, getTicketByIdDB, addTicketActivityLogDB } from '../../_utils/db.js';
+import { updateTicketStatusDB, getTicketByIdDB, addTicketActivityLogDB, advanceTicketSlaOnStatusChangeDB } from '../../_utils/db.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') { // Allow only Post Method
@@ -18,12 +18,15 @@ export default async function handler(req, res) {
       });
     }
 
-    // Get old status before updating
+    // Get old status before updating (also carries sla_policy_id/priority for the timer step below)
     const ticket = await getTicketByIdDB(ticketId); // Get ticket by id
     const oldStatus = ticket ? ticket.internal_status : null; // Get old status
 
     // Status already comes with spaces from frontend, use as-is
     await updateTicketStatusDB(ticketId, status); // Update ticket status
+
+    // Advance SLA timers (pause/resume/stop, activate Completion Due) per SLA_FLOW_DOCUMENTATION
+    if (ticket) await advanceTicketSlaOnStatusChangeDB(ticket, status);
 
     // Log the status change
     const changedBy = req.session?.user

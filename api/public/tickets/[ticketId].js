@@ -1,4 +1,4 @@
-import { getTicketByIdDB, getTicketCommunicationsDB, getTicketInternalNotesDB, getTicketActivityLogDB } from '../../_utils/db.js';
+import { getTicketByIdDB, getTicketCommunicationsDB, getTicketInternalNotesDB, getTicketActivityLogDB, getTicketSlaTimersDB } from '../../_utils/db.js';
 
 export default async function handler(req, res) { 
   if (req.method !== 'GET') { 
@@ -27,22 +27,27 @@ export default async function handler(req, res) {
       });
     }
 
-    // Determine SLA hours based on ticket type prefix
-    let slaHours = 24; // Default
-    const ticketPrefix = ticket.ticket_id?.substring(0, ticket.ticket_id.indexOf('-')); // Get ticket type prefix VT / EPT / ST 
-    
-    if (ticketPrefix === 'EPT') {
-      slaHours = 12; // Exit Permission Ticket
-    } else if (ticketPrefix === 'VT') {
-      slaHours = 24; // Vacation Ticket
-    } else if (ticketPrefix === 'ST') {
-      slaHours = 48; // Support Ticket
-    }
+    // Pull the real SLA timers (SLA_FLOW_DOCUMENTATION Step 5). Initial Review = "Response Due",
+    // Completion Due = "Resolution Due". A 'running' timer past its due_at is breached even
+    // before the DB row is opportunistically flipped by the next status change.
+    const timers = await getTicketSlaTimersDB(ticketId);
+    const initialReviewTimer = timers.find(t => t.timer_type === 'Initial Review');
+    const completionDueTimer = timers.find(t => t.timer_type === 'Completion Due');
+    const isBreached = (timer) => !!timer && (
+      timer.state === 'breached' || (timer.state === 'running' && new Date() > new Date(timer.due_at))
+    );
 
-    // Calculate SLA deadlines based on ticket type
-    const createdDate = new Date(ticket.created_at);
-    const resolutionDueDate = new Date(createdDate.getTime() + (slaHours * 60 * 60 * 1000)); // Calculate resolution due date
-    const responseDueDate = new Date(createdDate.getTime() + (slaHours * 0.25 * 60 * 60 * 1000)); // Calculate response due date (25% of resolution time)
+    // Tickets with no matching sla_assignments row never get a real timer (see create.js) — they
+    // fall back to a flat deadline on tickets.sla_deadline instead. Schema.md documents that
+    // column as "SLA due date — ticket is breached if unresolved after this" with no carve-out
+    // for the no-policy case, so honor it here too: without this, dashboards (which key off
+    // sla_deadline) could show a ticket as breached while this page showed no SLA data for it.
+    const PAUSE_OR_STOP_STATUSES = ['Completed', 'Closed', 'Pending Employee', 'Pending Third Party'];
+    const hasRealSlaPolicy = !!ticket.sla_policy_id;
+    const fallbackDueAt = (!hasRealSlaPolicy && !completionDueTimer) ? ticket.sla_deadline : null;
+    const fallbackBreached = !!fallbackDueAt
+      && !PAUSE_OR_STOP_STATUSES.includes(ticket.internal_status)
+      && new Date() > new Date(fallbackDueAt);
 
     // Format ticket data
     const formattedTicket = {
@@ -57,7 +62,11 @@ export default async function handler(req, res) {
         email: ticket.employee_email,
         department: ticket.employee_department || 'N/A',
         position: ticket.employee_position || 'Employee',
-        location: ticket.employee_location || 'N/A'
+        location: ticket.employee_location || 'N/A',
+        // Not stored on tickets itself (tickets.employee_id has no DB-enforced FK — employees
+        // can be synced from SAP after the ticket already exists) — resolved via a join to
+        // employees in getTicketByIdDB, so it's null if that employee record doesn't exist yet.
+        mobileNumber: ticket.employee_mobile_number || null,
       },
       priority: ticket.priority || 'Medium',
       status: ticket.internal_status || 'New',
@@ -68,11 +77,13 @@ export default async function handler(req, res) {
       created_at: ticket.created_at,
       updated_at: ticket.updated_at,
       resolved_at: ticket.resolved_at,
-      // Use calculated SLA deadlines based on ticket type
-      sla_response_due_at: responseDueDate.toISOString(),
-      sla_resolution_due_at: resolutionDueDate.toISOString(),
-      sla_response_breached: new Date() > responseDueDate,
-      sla_resolution_breached: new Date() > resolutionDueDate,
+      // Real SLA timers (ticket_sla_timers) — null until that phase's timer has been activated.
+      // Falls back to the flat tickets.sla_deadline for tickets with no matching sla_assignments
+      // row (no real timer was ever created for them — see fallbackDueAt above).
+      sla_response_due_at: initialReviewTimer?.due_at || null,
+      sla_resolution_due_at: completionDueTimer?.due_at || fallbackDueAt,
+      sla_response_breached: isBreached(initialReviewTimer),
+      sla_resolution_breached: isBreached(completionDueTimer) || fallbackBreached,
       assigned_group_name: ticket.assigned_to_team || 'HR Operations',
       channel: 'Chatbot',
       start_date: ticket.start_date,

@@ -11,8 +11,10 @@ import {
   Mail,
   MapPin,
   Calendar,
+  Phone,
 } from "lucide-react";
 import Tag from "@components/ui/Tag";
+import CopyButton from "@components/ui/CopyButton";
 import { TEAMS } from "@data/mockData";
 
 export default function TicketRightColumnCards({
@@ -403,6 +405,7 @@ export default function TicketRightColumnCards({
                 })}
               </p>
             </div>
+            <CopyButton value={ticket.employee.name} title={t("ticketDetails.rightColumn.copy")} />
           </div>
 
           <div className="flex items-start gap-3 p-3 mb-2 bg-gray-50 rounded-lg hover-effect">
@@ -417,7 +420,25 @@ export default function TicketRightColumnCards({
                 {ticket.employee.email}
               </p>
             </div>
+            <CopyButton value={ticket.employee.email} title={t("ticketDetails.rightColumn.copy")} />
           </div>
+
+          {ticket.employee.mobileNumber && (
+            <div className="flex items-start gap-3 p-3 mb-2 bg-gray-50 rounded-lg hover-effect">
+              <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Phone className="w-4 h-4 text-teal-600" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="!text-xs !font-semibold !text-gray-500 !uppercase !tracking-wide">
+                  {t("ticketDetails.rightColumn.mobileNumber")}
+                </p>
+                <p className="!truncate !text-sm !font-semibold !text-gray-900">
+                  {ticket.employee.mobileNumber}
+                </p>
+              </div>
+              <CopyButton value={ticket.employee.mobileNumber} title={t("ticketDetails.rightColumn.copy")} />
+            </div>
+          )}
 
           <div className="flex items-start gap-3 p-3 mb-2 bg-gray-50 rounded-lg hover-effect">
             <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">

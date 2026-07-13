@@ -10,13 +10,13 @@ import CompactStatsCard from '@components/ui/CompactStatsCard'
 import AlertNotification from '@components/ui/AlertNotification'
 import DeleteConfirmModal from '@components/modals/DeleteConfirmModal'
 import SLARuleFormModal from '@components/modals/SLARuleFormModal'
-import { MOCK_SLA_RULES } from '@data/mockData'
 import { buildGridOverlay, defaultColDef, getRowStyle } from '@utils/agGridUtils.jsx'
 import { ActionsCellRenderer, TextCellRenderer } from '@components/grid/CellRenderers'
+import { SKELETON_ROWS, SkeletonBar } from '@components/ui/GridSkeleton'
 import Tag from '@components/ui/Tag'
 import { Timer, AlertTriangle, MailSearch, CalendarClock, Layers2, Globe, ChevronDown, ChevronUp } from 'lucide-react'
 import { SlaTypeCellRenderer, TimeTypeCellRenderer, SlaIdHeaderComponent } from './slaRules/SlaRuleCellRenderers'
-import { PRIORITY_ORDER, DAY_PRESETS, parseResponseTime, translateResponseTime, determineTimeType, DEFAULT_OPERATING_HOURS } from './slaRules/slaRuleUtils'
+import { PRIORITY_ORDER, DAY_PRESETS, parseResponseTime, translateResponseTime, determineTimeType } from './slaRules/slaRuleUtils'
 import SLARuleDetailCard from './slaRules/SLARuleDetailCard'
 import OperatingHoursCalendar from './slaRules/OperatingHoursCalendar'
 
@@ -41,11 +41,20 @@ export default function SLARuleTab() {
   const [sortActive, setSortActive] = useState(false)
 
   // State
-  const [rules, setRules] = useState(MOCK_SLA_RULES)
-  
+  const [rules, setRules] = useState([])
+
+  // Data-loading (initial fetch) and mutation (create/update/delete/save-hours) states
+  const [isLoading,    setIsLoading]    = useState(true)
+  const [isProcessing, setIsProcessing] = useState(false)
+
   // Draft operating hours state - tracks unsaved changes
   const [draftHours, setDraftHours] = useState(null)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+
+  // Keep grouped rules ordered by SLA group then id (matches the backend ordering)
+  const sortRules = useCallback((arr) => (
+    [...arr].sort((a, b) => (a.slaId === b.slaId ? a.id - b.id : a.slaId.localeCompare(b.slaId)))
+  ), [])
 
   // Collapse all / Expand all SLA ID groups
   const allSlaIds = useMemo(() => new Set(rules.map(r => r.slaId)), [rules])
@@ -78,6 +87,8 @@ export default function SLARuleTab() {
       },
       rowSpan: (params) => {
         if (!params.data) return 1
+        // Skeleton rows must never span (they share an undefined slaId)
+        if (params.data._skeleton) return 1
         // Disable rowSpan when sorting is active to prevent corruption
         if (sortActive) return 1
         // If group is collapsed, no spanning needed
@@ -99,6 +110,8 @@ export default function SLARuleTab() {
       },
       cellStyle: (params) => {
         if (!params.data) return {}
+        // Skeleton rows: plain cell, no spanning effects
+        if (params.data._skeleton) return { display: 'flex', alignItems: 'center' }
         // When sorting is active, show simple cell style without spanning effects
         if (sortActive) {
           return {
@@ -174,7 +187,9 @@ export default function SLARuleTab() {
       flex: 0.9, minWidth: 120,
       headerClass: 'ag-header-cell-center',
       cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
-      cellRenderer: (params) => <Tag type="priority" value={params.value} t={t} isRTL={isRTL} />,
+      cellRenderer: (params) => params.data?._skeleton
+        ? <SkeletonBar rowIndex={params.node?.rowIndex ?? 0} centered />
+        : <Tag type="priority" value={params.value} t={t} isRTL={isRTL} />,
       comparator: (valueA, valueB) => PRIORITY_ORDER[valueA] - PRIORITY_ORDER[valueB],
     },
     {
@@ -239,6 +254,43 @@ export default function SLARuleTab() {
 
   useEffect(() => { searchRef.current?.focus() }, [])
 
+  // Generic POST helper for create/update/delete/save-hours — throws on failure
+  const apiRequest = useCallback(async (url, body) => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || `HTTP ${res.status}`)
+    }
+    return data
+  }, [])
+
+  // Fetch the SLA rules list from the API on first mount
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        setIsLoading(true)
+        const res = await fetch('/api/public/administrator/sla-rules')
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const data = await res.json()
+        if (!data.success) throw new Error(data.error || 'Failed to load SLA rules')
+        if (!cancelled) setRules(data.rules || [])
+      } catch (err) {
+        console.error('[SLARules] Failed to fetch rules:', err)
+        if (!cancelled) {
+          pushAlert('error', t('administratorMenu.tabs.slaRules.alerts.loadFailed', 'Failed to load SLA rules'), err.message)
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [pushAlert, t])
+
   // Filtered rules based on unified search across all columns
   const filteredRules = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -282,31 +334,36 @@ export default function SLARuleTab() {
     }
   }, [selectedRule])
 
-  // Save operating hours changes
-  const handleSaveOperatingHours = useCallback(() => {
-    if (!selectedRule || !draftHours) return
-    
+  // Save operating hours changes via the API
+  const handleSaveOperatingHours = useCallback(async () => {
+    if (!selectedRule || !draftHours || isProcessing) return
+
     // Determine the new time type based on operating hours
     const newTimeType = determineTimeType(draftHours)
-    
-    const updated = rules.map(r => {
-      if (r.id !== selectedRule.id) return r
-      return { 
-        ...r, 
+    setIsProcessing(true)
+    try {
+      const data = await apiRequest('/api/public/administrator/sla-rules/operating-hours', {
+        id: selectedRule.id,
+        timeType: newTimeType,
         operatingHours: draftHours,
-        timeType: newTimeType 
-      }
-    })
-    setRules(updated)
-    syncSelected(updated)
-    setDraftHours(null)
-    setHasUnsavedChanges(false)
-    pushAlert(
-      'success',
-      t('administratorMenu.tabs.slaRules.alerts.operatingHoursSaved', 'Operating Hours Saved'),
-      t('administratorMenu.tabs.slaRules.alerts.operatingHoursSavedMsg', 'Operating hours have been updated successfully.'),
-    )
-  }, [selectedRule, draftHours, rules, syncSelected, pushAlert, t, determineTimeType])
+      })
+      const updated = rules.map(r => (r.id === selectedRule.id ? data.rule : r))
+      setRules(updated)
+      syncSelected(updated)
+      setDraftHours(null)
+      setHasUnsavedChanges(false)
+      pushAlert(
+        'success',
+        t('administratorMenu.tabs.slaRules.alerts.operatingHoursSaved', 'Operating Hours Saved'),
+        t('administratorMenu.tabs.slaRules.alerts.operatingHoursSavedMsg', 'Operating hours have been updated successfully.'),
+      )
+    } catch (err) {
+      console.error('[SLARules] Save operating hours failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.slaRules.alerts.saveFailed', 'Save failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [selectedRule, draftHours, rules, syncSelected, pushAlert, t, apiRequest, isProcessing])
 
   // Reset draft when selecting a different rule
   useEffect(() => {
@@ -355,18 +412,28 @@ export default function SLARuleTab() {
   }, [selectedRule, draftHours])
 
   // Handlers
-  const handleDelete = useCallback(() => {
-    const { id, slaName } = deleteRuleTarget
-    const updated = rules.filter(r => r.id !== id)
-    if (selectedRule?.id === id) setSelectedRule(null)
-    setRules(updated)
-    setDeleteRuleTarget(null)
-    pushAlert(
-      'success',
-      t('administratorMenu.tabs.slaRules.alerts.deleted', 'SLA Rule removed'),
-      t('administratorMenu.tabs.slaRules.alerts.deletedMsg', 'SLA rule has been removed.'),
-    )
-  }, [rules, deleteRuleTarget, selectedRule, pushAlert, t])
+  const handleDelete = useCallback(async () => {
+    if (isProcessing) return
+    const { id } = deleteRuleTarget
+    setIsProcessing(true)
+    try {
+      await apiRequest('/api/public/administrator/sla-rules/delete', { id })
+      const updated = rules.filter(r => r.id !== id)
+      if (selectedRule?.id === id) setSelectedRule(null)
+      setRules(updated)
+      setDeleteRuleTarget(null)
+      pushAlert(
+        'success',
+        t('administratorMenu.tabs.slaRules.alerts.deleted', 'SLA Rule removed'),
+        t('administratorMenu.tabs.slaRules.alerts.deletedMsg', 'SLA rule has been removed.'),
+      )
+    } catch (err) {
+      console.error('[SLARules] Delete failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.slaRules.alerts.deleteFailed', 'Delete failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [rules, deleteRuleTarget, selectedRule, pushAlert, t, apiRequest, isProcessing])
 
   // Open modal for Add / Edit
   const openAddModal = useCallback(() => {
@@ -379,53 +446,39 @@ export default function SLARuleTab() {
     setRuleModalOpen(true)
   }, [])
 
-  // Save handler for modal (add or edit)
-  const handleRuleSave = useCallback((formData) => {
-    if (ruleModalTarget) {
-      // Edit existing rule
-      const updated = rules.map(r => {
-        if (r.id !== ruleModalTarget.id) return r
-        return { ...r, ...formData }
-      })
-      setRules(updated)
-      syncSelected(updated)
-      pushAlert('success',
-        t('administratorMenu.tabs.slaRules.alerts.updated', 'SLA Rule updated'),
-        t('administratorMenu.tabs.slaRules.alerts.updatedMsg', 'SLA rule has been updated successfully.'),
-      )
-    } else {
-      // Add new rule — generate next id, use provided slaId group or create new
-      const maxId = rules.reduce((m, r) => Math.max(m, r.id), 0)
-      // If no slaId provided, generate a new group id
-      let slaId = formData.slaId
-      if (!slaId) {
-        const nextNum = rules.reduce((m, r) => {
-          const n = parseInt(r.slaId?.replace('SLA-', ''), 10)
-          return isNaN(n) ? m : Math.max(m, n)
-        }, 0) + 1
-        slaId = `SLA-${String(nextNum).padStart(3, '0')}`
-      }
-      const newRule = {
-        id: maxId + 1,
-        ...formData,
-        slaId,
-        operatingHours: DEFAULT_OPERATING_HOURS,
-      }
-      // Insert after the last rule of the same slaId group
-      const lastIdx = rules.reduce((idx, r, i) => r.slaId === slaId ? i : idx, -1)
-      if (lastIdx >= 0) {
-        const updated = [...rules]
-        updated.splice(lastIdx + 1, 0, newRule)
+  // Save handler for modal (add or edit) via the API
+  const handleRuleSave = useCallback(async (formData) => {
+    if (isProcessing) return
+    setIsProcessing(true)
+    try {
+      if (ruleModalTarget) {
+        // Edit existing rule
+        const data = await apiRequest('/api/public/administrator/sla-rules/update', { id: ruleModalTarget.id, ...formData })
+        const updated = sortRules(rules.map(r => (r.id === ruleModalTarget.id ? data.rule : r)))
         setRules(updated)
+        syncSelected(updated)
+        pushAlert('success',
+          t('administratorMenu.tabs.slaRules.alerts.updated', 'SLA Rule updated'),
+          t('administratorMenu.tabs.slaRules.alerts.updatedMsg', 'SLA rule has been updated successfully.'),
+        )
       } else {
-        setRules(prev => [...prev, newRule])
+        // Add new rule — backend resolves/creates the SLA group and default hours
+        const data = await apiRequest('/api/public/administrator/sla-rules/create', formData)
+        setRules(sortRules([...rules, data.rule]))
+        pushAlert('success',
+          t('administratorMenu.tabs.slaRules.alerts.created', 'SLA Rule created'),
+          t('administratorMenu.tabs.slaRules.alerts.createdMsg', 'New SLA rule has been created successfully.'),
+        )
       }
-      pushAlert('success',
-        t('administratorMenu.tabs.slaRules.alerts.created', 'SLA Rule created'),
-        t('administratorMenu.tabs.slaRules.alerts.createdMsg', 'New SLA rule has been created successfully.'),
-      )
+      setRuleModalOpen(false)
+      setRuleModalTarget(null)
+    } catch (err) {
+      console.error('[SLARules] Save rule failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.slaRules.alerts.saveFailed', 'Save failed'), err.message)
+    } finally {
+      setIsProcessing(false)
     }
-  }, [ruleModalTarget, rules, syncSelected, pushAlert, t])
+  }, [ruleModalTarget, rules, syncSelected, pushAlert, t, apiRequest, sortRules, isProcessing])
 
   // Grid context
   const gridContext = useMemo(() => ({
@@ -520,7 +573,7 @@ export default function SLARuleTab() {
           key={`sla-rules-grid-${i18n.language}`}
           ref={gridRef}
           domLayout="autoHeight"
-          rowData={displayedRules}
+          rowData={isLoading ? SKELETON_ROWS : displayedRules}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           getRowStyle={(params) => {
@@ -566,7 +619,7 @@ export default function SLARuleTab() {
           headerHeight={52}
           suppressCellFocus
           suppressRowTransform
-          pagination
+          pagination={!isLoading}
           paginationPageSize={16}
           paginationPageSizeSelector={[16, 32, 64, 128, 256]}
           enableRtl={isRTL}

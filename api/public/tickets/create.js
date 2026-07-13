@@ -1,11 +1,19 @@
-import { createTicketDB, generateTicketIdDB, addTicketActivityLogDB } from '../../_utils/db.js';
+import {
+  createTicketDB, generateTicketIdDB, addTicketActivityLogDB,
+  getEntityIdByNameDB, getCategoryIdByNameDB, getSubcategoryIdByNameDB,
+  getTicketingRuleByComboDB, activateInitialReviewTimerDB, getGroupByIdDB,
+} from '../../_utils/db.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') { // Allow only POST method
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  const { employeeId, employeeName, employeeEmail, category, subcategory, priority, title, reason, raisedById, raisedByName, raisedByEmail } = req.body;
+  const {
+    employeeId, employeeName, employeeEmail, employeeDepartment, employeeLocation,
+    employeeEntity, employeeClass, category, subcategory, priority, title, reason,
+    raisedById, raisedByName, raisedByEmail,
+  } = req.body;
 
   // Validate required fields
   if (!employeeId || !employeeName || !category || !priority || !title) {
@@ -16,17 +24,38 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Resolve the SLA flow combo (Entity + Employee Class + Category + Subcategory) to the
+    // authoritative priority from ticketing_rules, per SLA_FLOW_DOCUMENTATION Step 2.
+    // Falls back to the client-supplied priority when no entity/class was provided or no
+    // rule matches (e.g. a combo outside TICKET_ROUTING_MATRIX.md).
+    let entityId = null, categoryId = null, subcategoryId = null, resolvedPriority = priority, assignedTeam = null;
+    if (employeeEntity && employeeClass && subcategory) {
+      entityId = await getEntityIdByNameDB(employeeEntity);
+      categoryId = await getCategoryIdByNameDB(category);
+      subcategoryId = categoryId ? await getSubcategoryIdByNameDB(categoryId, subcategory) : null;
+      if (entityId && subcategoryId) {
+        const rule = await getTicketingRuleByComboDB(entityId, employeeClass, categoryId, subcategoryId);
+        if (rule) {
+          resolvedPriority = rule.priority;
+          // Step 2 of SLA_FLOW_DOCUMENTATION also produces a Group assignment — resolve
+          // the matched support_groups row so the ticket is routed, not just prioritized.
+          const group = await getGroupByIdDB(rule.groupId);
+          if (group) assignedTeam = group.name;
+        }
+      }
+    }
+
     // Generate next ticket_id based on category
     const ticketId = await generateTicketIdDB(category);
 
-    // Determine SLA hours based on ticket prefix
+    // Fallback flat SLA deadline (used only if no sla_assignments match is found below).
     const prefix = ticketId.substring(0, ticketId.indexOf('-'));
     let slaHours = 48; // Default for ST
     if (prefix === 'VT') slaHours = 24;
     else if (prefix === 'EPT') slaHours = 12;
 
     // Create the ticket
-    const newTicket = await createTicketDB({
+    let newTicket = await createTicketDB({
       ticket_id: ticketId,
       title,
       category,
@@ -35,13 +64,28 @@ export default async function handler(req, res) {
       employee_id: employeeId,
       employee_name: employeeName,
       employee_email: employeeEmail || null,
-      priority,
+      employee_department: employeeDepartment || null,
+      employee_location: employeeLocation || null,
+      priority: resolvedPriority,
+      assigned_to_team: assignedTeam,
       raised_by: 'hr_staff',
       raised_by_id: raisedById || null,
       raised_by_name: raisedByName || null,
       raised_by_email: raisedByEmail || null,
       sla_hours: slaHours,
     });
+
+    // Resolve SLA Assignment + SLA Rule and activate the Initial Review timer
+    // (SLA_FLOW_DOCUMENTATION Steps 3-5). Overwrites sla_deadline/sla_policy_id
+    // with the real SLA-flow deadline when a match exists.
+    if (entityId && categoryId && subcategoryId) {
+      const timer = await activateInitialReviewTimerDB({
+        ticketId, entityId, employeeClass, categoryId, subcategoryId, priority: resolvedPriority,
+      });
+      if (timer) {
+        newTicket.sla_deadline = timer.due_at;
+      }
+    }
 
     // Log initial activity entries (status, priority)
     const changedByInfo = {
@@ -53,7 +97,7 @@ export default async function handler(req, res) {
     };
 
     await addTicketActivityLogDB(ticketId, 'status', null, 'New', changedByInfo);
-    await addTicketActivityLogDB(ticketId, 'priority', null, priority, changedByInfo);
+    await addTicketActivityLogDB(ticketId, 'priority', null, resolvedPriority, changedByInfo);
 
     // Format response to match the list API shape
     const formatted = {
@@ -85,6 +129,7 @@ export default async function handler(req, res) {
         minute: '2-digit',
         hour12: true
       }) : 'N/A',
+      slaDeadlineAt: newTicket.sla_deadline,
       startDate: newTicket.start_date,
       endDate: newTicket.end_date,
       startTime: newTicket.start_time,

@@ -18,7 +18,6 @@ import AddTicketModal from "@components/modals/AddTicketModal";
 // Utilities
 import { getColumnDefs, defaultColDef } from "@utils/columnDefs";
 import { SKELETON_ROWS } from "@components/ui/GridSkeleton";
-import { MOCK_SLA_CONFIGURATIONS } from "@data/mockData";
 
 export default function Tickets() {
   const { t, i18n } = useTranslation();
@@ -54,21 +53,36 @@ export default function Tickets() {
   // Add Ticket modal
   const [isAddTicketModalOpen, setIsAddTicketModalOpen] = useState(false);
 
-  // Derive categories + subcategory map from SLA Assignment data
-  const { slaCategories, slaSubcategoryMap } = useMemo(() => {
-    const map = {};
-    for (const cfg of MOCK_SLA_CONFIGURATIONS) {
-      const cat = cfg.supportCategory;
-      const sub = cfg.subcategory;
-      if (!map[cat]) map[cat] = new Set();
-      map[cat].add(sub);
-    }
-    return {
-      slaCategories: Object.keys(map),
-      slaSubcategoryMap: Object.fromEntries(
-        Object.entries(map).map(([k, v]) => [k, [...v]])
-      ),
+  // Categories + subcategory map, derived from real SLA Assignment data
+  const [slaCategories, setSlaCategories] = useState([]);
+  const [slaSubcategoryMap, setSlaSubcategoryMap] = useState({});
+
+  // Fetch SLA assignments and derive the category/subcategory dropdown options
+  useEffect(() => {
+    const fetchSlaCategories = async () => {
+      try {
+        const res = await fetch('/api/public/administrator/sla-assignments');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.assignments) {
+            const map = {};
+            for (const a of data.assignments) {
+              const cat = a.supportCategory;
+              const sub = a.subcategory;
+              if (!map[cat]) map[cat] = new Set();
+              map[cat].add(sub);
+            }
+            setSlaCategories(Object.keys(map));
+            setSlaSubcategoryMap(
+              Object.fromEntries(Object.entries(map).map(([k, v]) => [k, [...v]]))
+            );
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch SLA categories:', err);
+      }
     };
+    fetchSlaCategories();
   }, []);
 
   // Bulk action modals

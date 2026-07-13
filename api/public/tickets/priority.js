@@ -1,4 +1,4 @@
-import { updateTicketPriorityDB, getTicketByIdDB, addTicketActivityLogDB } from '../../_utils/db.js';
+import { updateTicketPriorityDB, getTicketByIdDB, addTicketActivityLogDB, resyncTicketSlaTimersForPriorityDB } from '../../_utils/db.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') { // allow only POST method
@@ -24,6 +24,13 @@ export default async function handler(req, res) {
 
     // Priority already comes with title case from frontend, use as-is
     await updateTicketPriorityDB(ticketId, priority); // update ticket priority
+
+    // Rebase any still-open SLA timers onto the new priority's rule (SLA_FLOW_DOCUMENTATION
+    // Step 4 depends on priority — escalating/downgrading after creation must not leave the
+    // ticket's timer running on its old, now-stale, response-time budget).
+    if (oldPriority && oldPriority !== priority) {
+      await resyncTicketSlaTimersForPriorityDB(ticketId, priority);
+    }
 
     // Log the priority change
     const changedBy = req.session?.user

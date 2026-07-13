@@ -32,14 +32,15 @@ export default async function handler(req, res) {
         day: 'numeric', 
         year: 'numeric' 
       }) : 'N/A',
-      slaDue: row.sla_deadline ? new Date(row.sla_deadline).toLocaleString('en-US', { 
-        month: 'short', 
-        day: 'numeric', 
+      slaDue: row.sla_deadline ? new Date(row.sla_deadline).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
         year: 'numeric',
         hour: 'numeric',
         minute: '2-digit',
         hour12: true
       }) : 'N/A',
+      slaDeadlineAt: row.sla_deadline,
       startDate: row.start_date,
       endDate: row.end_date,
       startTime: row.start_time,

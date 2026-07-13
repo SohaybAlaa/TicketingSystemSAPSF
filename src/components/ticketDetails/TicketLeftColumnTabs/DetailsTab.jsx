@@ -117,7 +117,7 @@ export default function DetailsTab({ ticket, statusHistory }) {
           <label className="block text-md font-semibold text-gray-700 mb-2">
             {t("ticketDetails.details.channel")}
           </label>
-          <p className="!text-gray-900 !font-medium">{ticket.employee.email}</p>
+          <p className="!text-gray-900 !font-medium">ChatBot via HCM  / Chatbot via WhatsApp / Etc.</p>
         </div>
       </div>
 

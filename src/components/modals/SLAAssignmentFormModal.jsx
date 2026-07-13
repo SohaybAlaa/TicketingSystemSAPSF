@@ -4,10 +4,13 @@ import Modal from './Modal'
 import { Settings, AlertCircle } from 'lucide-react'
 import DaisySelect from '@components/ui/DaisySelect'
 import Tag, { getValueColor } from '@components/ui/Tag'
-import { ENTITY_OPTIONS, CATEGORY_OPTIONS, SUBCATEGORY_OPTIONS, EMPLOYEE_CLASS_OPTIONS, SLA_ID_OPTIONS } from '@data/mockData'
+import { EMPLOYEE_CLASS_OPTIONS } from '@data/mockData'
 
-// Modal for creating or editing an SLA assignment rule
-export default function SLAAssignmentFormModal({ isOpen, onClose, onSave, initial = null, existingConfigs = [], slaIdOptions = SLA_ID_OPTIONS }) {
+// Modal for creating or editing an SLA assignment rule.
+// entityOptions/categories are live DB data fetched by the parent tab — the form must only
+// offer combinations that actually exist in entities/support_categories/subcategories,
+// since the backend resolves these by exact name match.
+export default function SLAAssignmentFormModal({ isOpen, onClose, onSave, initial = null, existingConfigs = [], slaIdOptions = [], entityOptions = [], categories = [] }) {
   const { t, i18n } = useTranslation()
   const isRTL = i18n.language === 'ar'
   // If `initial` is provided, we're editing an existing record
@@ -36,9 +39,17 @@ export default function SLAAssignmentFormModal({ isOpen, onClose, onSave, initia
     }
   }, [isOpen, initial])
 
+  // Subcategory list depends on the selected category — keeps the two fields in sync with the DB hierarchy
+  const subcategoryOptions = categories.find(c => c.name === form.supportCategory)?.subcategories.map(s => s.name) ?? []
+
   // Update a single form field and clear its error
   const set = (key, val) => {
-    setForm(f => ({ ...f, [key]: val }))
+    setForm(f => {
+      const next = { ...f, [key]: val }
+      // Changing category invalidates a subcategory that no longer belongs to it
+      if (key === 'supportCategory' && val !== f.supportCategory) next.subcategory = ''
+      return next
+    })
     if (errors[key]) setErrors(e => ({ ...e, [key]: undefined }))
     if (errors.duplicate) setErrors(e => ({ ...e, duplicate: undefined }))
   }
@@ -84,7 +95,7 @@ export default function SLAAssignmentFormModal({ isOpen, onClose, onSave, initia
   )
 
   // Helper to render a DaisySelect bound to a form key
-  const sel = (key, options, hasError, translationPrefix = null) => (
+  const sel = (key, options, hasError, translationPrefix = null, extra = {}) => (
     <DaisySelect
       value={form[key]}
       options={options}
@@ -93,6 +104,7 @@ export default function SLAAssignmentFormModal({ isOpen, onClose, onSave, initia
       translationPrefix={translationPrefix}
       t={t}
       isRTL={isRTL}
+      {...extra}
     />
   )
 
@@ -130,7 +142,7 @@ export default function SLAAssignmentFormModal({ isOpen, onClose, onSave, initia
           <label className={labelStyle}>
             {t('modals.slaAssignmentForm.entity', 'Entity')} <span className="text-red-400">*</span>
           </label>
-          {sel('entity', ENTITY_OPTIONS, !!errors.entity || !!errors.duplicate)}
+          {sel('entity', entityOptions, !!errors.entity || !!errors.duplicate)}
           {errors.entity && <ErrMsg msg={errors.entity} />}
         </div>
 
@@ -141,14 +153,19 @@ export default function SLAAssignmentFormModal({ isOpen, onClose, onSave, initia
               <label className={labelStyle}>
                 {t('modals.slaAssignmentForm.supportCategory', 'Support Category')} <span className="text-red-400">*</span>
               </label>
-              {sel('supportCategory', CATEGORY_OPTIONS, !!errors.supportCategory || !!errors.duplicate)}
+              {sel('supportCategory', categories.map(c => c.name), !!errors.supportCategory || !!errors.duplicate)}
               {errors.supportCategory && <ErrMsg msg={errors.supportCategory} />}
             </div>
             <div>
               <label className={labelStyle}>
                 {t('modals.slaAssignmentForm.subcategory', 'Subcategory')} <span className="text-red-400">*</span>
               </label>
-              {sel('subcategory', SUBCATEGORY_OPTIONS, !!errors.subcategory || !!errors.duplicate)}
+              {sel('subcategory', subcategoryOptions, !!errors.subcategory || !!errors.duplicate, null, {
+                disabled: !form.supportCategory,
+                placeholder: !form.supportCategory
+                  ? t('modals.slaAssignmentForm.selectCategoryFirst', 'Select category first')
+                  : undefined,
+              })}
               {errors.subcategory && <ErrMsg msg={errors.subcategory} />}
             </div>
           </div>

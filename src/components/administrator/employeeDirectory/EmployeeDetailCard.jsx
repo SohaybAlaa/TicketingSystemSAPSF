@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { UserSearch, Mail, Building2, Hash, Copy, TicketCheck, Building, BriefcaseBusiness, ReceiptText, Code, Phone } from 'lucide-react'
+import { UserSearch, Mail, Building2, Hash, Building, BriefcaseBusiness, ReceiptText, Code, Phone } from 'lucide-react'
 import Tag from '@components/ui/Tag'
+import CopyButton from '@components/ui/CopyButton'
 import DetailCardShell, { DetailCardPlaceholder } from '@components/ui/DetailCard/DetailCardShell'
 
 // Defines the 8 detail fields displayed in the card grid.
@@ -31,9 +31,6 @@ const FIELD_CONFIG = [
 //   onCopy   - callback when a field value is copied to clipboard
 //   t        - i18n translation function
 export default function EmployeeDetailCard({ employee, onEdit, onDelete, onCopy, t }) {
-  // Tracks which field was just copied so we can show a checkmark icon briefly
-  const [copiedField, setCopiedField] = useState(null)
-
   // No employee selected — show the placeholder skeleton
   if (!employee) {
     return (
@@ -56,15 +53,6 @@ export default function EmployeeDetailCard({ employee, onEdit, onDelete, onCopy,
     .join('')
     .toUpperCase()
 
-  // Copy a field's value to the clipboard, show a checkmark for 2 seconds,
-  // and notify the parent via onCopy so it can show an alert toast.
-  const handleCopyField = (fieldName, value) => {
-    navigator.clipboard.writeText(value || '')
-    setCopiedField(fieldName)
-    if (onCopy) onCopy(fieldName, value)
-    setTimeout(() => setCopiedField(null), 2000)
-  }
-
   // Map FIELD_CONFIG to translated labels + actual employee values + copy button per tile
   const fields = FIELD_CONFIG.map(({ key, labelKey, fallback, icon, color, isEmail, isTag }) => {
     const label = t(`administratorMenu.tabs.employeeDirectory.columns.${labelKey}`, fallback)
@@ -77,16 +65,11 @@ export default function EmployeeDetailCard({ employee, onEdit, onDelete, onCopy,
       isEmail,
       customRender: isTag && value ? <Tag type="employeeClass" value={value} showIcon t={t} /> : null,
       copyButton: (
-        <button
-          onClick={() => handleCopyField(label, value)}
-          className="p-1.5 hover:bg-green-100 rounded-lg transition-all duration-200 flex-shrink-0 opacity-0 group-hover:opacity-100"
+        <CopyButton
+          value={value}
           title={`Copy ${label}`}
-        >
-          {copiedField === label
-            ? <TicketCheck size={14} className="text-green-600" />
-            : <Copy size={14} className="text-green-600 hover:text-green-700 hover-effect" />
-          }
-        </button>
+          onCopy={(v) => onCopy?.(label, v)}
+        />
       ),
     }
   })

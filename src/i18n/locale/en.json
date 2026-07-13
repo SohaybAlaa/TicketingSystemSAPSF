@@ -294,6 +294,9 @@
       "subcategory": "Subcategory",
       "selectCategoryFirst": "Select category first",
       "priority": "Priority",
+      "priorityNotReady": "Fill in Employee, Title, Category, and Subcategory first",
+      "priorityAutoLocked": "Auto-selected based on ticketing rules",
+      "priorityAuto": "Auto-filled when a ticketing rule matches — otherwise pick one manually",
       "reason": "Reason",
       "reasonPlaceholder": "Additional details or reason for this request...",
       "cancel": "Cancel",
@@ -413,6 +416,7 @@
       "entity": "Entity",
       "supportCategory": "Support Category",
       "subcategory": "Subcategory",
+      "selectCategoryFirst": "Select category first",
       "employeeClass": "Employee Class",
       "cancel": "Cancel",
       "create": "Create Assignment",
@@ -793,6 +797,7 @@
         "categories": "Categories",
         "groups": "Groups",
         "agents": "Agents",
+        "missingSlaAssignment": "Missing SLA Assignment",
         "columns": {
           "entity": "Entity",
           "supportCategory": "Category",
@@ -1364,7 +1369,9 @@
     "email": "Email",
     "department": "Department",
     "position": "Position",
-    "location": "Location"
+    "location": "Location",
+    "mobileNumber": "Mobile Number",
+    "copy": "Copy"
   },
   "details": {
     "description": "Description",

@@ -199,13 +199,6 @@ export const PLACEHOLDERS = [
   },
 ]
 
-// ─── Dropdown options ──────────────────────────────────────────────────────────
-
-export const GROUP_OPTS = ['IT Support', 'HR Team', 'Finance', 'Operations', 'Legal', 'Customer Success']
-export const AGENT_OPTS = ['Ahmed Hassan', 'Sara Ali', 'Mohammed Khalid', 'Layla Omar', 'Yusuf Nasser']
-export const EMPLOYEE_OPTS = ['Fatima Al-Zahra', 'Khalid Mansour', 'Nour Ibrahim', 'Rania Saad', 'Tariq Hani']
-export const MANAGER_OPTS = ['Hassan Al-Mansour', 'Maryam Salim', 'Omar Farouk', 'Zainab Karim', 'Bilal Rashid']
-
 // ─── Sample data ───────────────────────────────────────────────────────────────
 
 export const INITIAL_NOTIFICATIONS = [

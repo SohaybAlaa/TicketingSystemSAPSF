@@ -1,31 +1,53 @@
 // Step 3 of the notification form — recipients.
 // The user picks who receives the notification via PersonaCard tiles (e.g. Employee, Assigned Agent).
 // Some personas (Other employee, Other agent, etc.) reveal a MultiSelectChips dropdown for specific people.
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Users, AlertCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import {
-  PERSONAS, PERSONA_EXTRA,
-  GROUP_OPTS, AGENT_OPTS, EMPLOYEE_OPTS, MANAGER_OPTS,
-} from '@data/notificationRules'
+import { PERSONAS, PERSONA_EXTRA } from '@data/notificationRules'
+import { TEAMS } from '@data/mockData'
 import CardHeader from './CardHeader'
 import FieldLabel from '@components/ui/FieldLabel'
 import Pill from '@components/ui/Pill'
 import MultiSelectChips from '@components/ui/MultiSelectChips'
 import PersonaCard from './PersonaCard'
 
-const EXTRA_OPTIONS = {
-  [PERSONA_EXTRA.GROUP]: GROUP_OPTS,
-  [PERSONA_EXTRA.AGENT]: AGENT_OPTS,
-  [PERSONA_EXTRA.MANAGER]: MANAGER_OPTS,
-  [PERSONA_EXTRA.EMPLOYEE]: EMPLOYEE_OPTS,
-}
-
 // f = form state/handlers from useNotificationForm.js
 // stepRef = DOM ref so the parent can track scroll position for the StepBar
 // setActiveStep = highlights this step in the StepBar when the section is focused
 export default function Section3Recipients({ f, stepRef, setActiveStep }) {
   const { t } = useTranslation()
+
+  // "Other employee" / "Other assigned agent" / "Other manager" all pick from the same
+  // Employee Directory — there's no separate agent/manager role list in this schema, just
+  // employee records, so all three personas share this fetch (same source AddTicketModal
+  // and MemberFormModal use for their employee pickers).
+  const [employeeNames, setEmployeeNames] = useState([])
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch('/api/public/administrator/employees')
+        if (!res.ok) return
+        const data = await res.json()
+        if (!cancelled && data.success && data.employees) {
+          setEmployeeNames(data.employees.map(emp => emp.name))
+        }
+      } catch (err) {
+        console.error('[Section3Recipients] Failed to fetch employees:', err)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [])
+
+  // "Other assigned team" picks from the real support teams (same source AssignToOtherModal uses).
+  const EXTRA_OPTIONS = {
+    [PERSONA_EXTRA.GROUP]: TEAMS.map(team => team.teamName),
+    [PERSONA_EXTRA.AGENT]: employeeNames,
+    [PERSONA_EXTRA.MANAGER]: employeeNames,
+    [PERSONA_EXTRA.EMPLOYEE]: employeeNames,
+  }
 
   return (
     <div
@@ -74,7 +96,7 @@ export default function Section3Recipients({ f, stepRef, setActiveStep }) {
             <FieldLabel size="sm" className="mb-3">{t('administratorMenu.tabs.notificationRules.recipients.title')}</FieldLabel>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-2xl bg-gradient-to-br from-amber-50/60 via-yellow-50/40 to-transparent border border-amber-100">
               {f.extraPersonas.map(p => {
-                const opts = EXTRA_OPTIONS[p.extra] ?? EMPLOYEE_OPTS // fallback to employee options
+                const opts = EXTRA_OPTIONS[p.extra] ?? employeeNames // fallback to employee options
                 const selectedValues = f.extraSelections[p.extra] || []
                 const kindKey = p.extra === PERSONA_EXTRA.GROUP ? 'team' : p.extra
                 const kindLabel = t(`administratorMenu.tabs.notificationRules.recipients.kinds.${kindKey}`)

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import Modal from "./Modal";
 import { UserPlus, UserCog } from "lucide-react";
 import DaisySelect from '@components/ui/DaisySelect';
+import EmployeeSearchPicker from '@components/ui/EmployeeSearchPicker';
 
 const USER_TYPES = ["Agent", "Manager", "Supervisor"];
 
@@ -21,7 +22,6 @@ export default function MemberFormModal({ isOpen, onClose, onSave, initial = nul
 
   const emptyForm = {
     employeeId: "",
-    name:       "",
     userType:   "Agent",
     from:       "",
     to:         "",
@@ -29,6 +29,7 @@ export default function MemberFormModal({ isOpen, onClose, onSave, initial = nul
 
   const [form,   setForm]   = useState(emptyForm);
   const [errors, setErrors] = useState({});
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -36,13 +37,13 @@ export default function MemberFormModal({ isOpen, onClose, onSave, initial = nul
         initial
           ? {
               employeeId: initial.employeeId ?? "",
-              name:       initial.name       ?? "",
               userType:   initial.userType   ?? "Agent",
               from:       initial.from       ?? "",
               to:         initial.to         ?? "",
             }
           : emptyForm
       );
+      setSelectedEmployee(initial ? { id: initial.employeeId, name: initial.name } : null);
       setErrors({});
     }
   }, [isOpen, initial]);
@@ -54,26 +55,11 @@ export default function MemberFormModal({ isOpen, onClose, onSave, initial = nul
 
   const validate = () => {
     const next = {};
-    
-    const trimmedEmployeeId = form.employeeId.toString().trim();
-    const trimmedName = form.name.trim();
-    
-    if (!trimmedEmployeeId) {
+
+    if (!form.employeeId.toString().trim()) {
       next.employeeId = t("modals.memberForm.errors.employeeIdRequired", "Employee ID is required");
-    } else if (!/^[A-Z0-9-]+$/i.test(trimmedEmployeeId)) {
-      next.employeeId = t("modals.memberForm.errors.employeeIdInvalid", "Employee ID must contain only letters, numbers, and hyphens");
-    } else if (trimmedEmployeeId.length > 20) {
-      next.employeeId = t("modals.memberForm.errors.employeeIdTooLong", "Employee ID must not exceed 20 characters");
     }
-    
-    if (!trimmedName) {
-      next.name = t("modals.memberForm.errors.nameRequired", "Employee name is required");
-    } else if (trimmedName.length < 2) {
-      next.name = t("modals.memberForm.errors.nameTooShort", "Name must be at least 2 characters");
-    } else if (trimmedName.length > 100) {
-      next.name = t("modals.memberForm.errors.nameTooLong", "Name must not exceed 100 characters");
-    }
-    
+
     if (form.from && form.to && form.from > form.to) {
       next.to = t("modals.memberForm.errors.dateOrder", "'To' date must be after 'From' date");
     }
@@ -170,52 +156,38 @@ export default function MemberFormModal({ isOpen, onClose, onSave, initial = nul
     >
       <div dir={isRTL ? "rtl" : "ltr"} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
 
-        {/* Employee ID + User Type */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-          <div>
-            <label style={labelStyle}>
-              {t("modals.memberForm.employeeId", "Employee ID")}
-              <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
-            </label>
-            <input
-              value={form.employeeId}
-              onChange={(e) => set("employeeId", e.target.value)}
-              placeholder="e.g. 12345"
-              style={inputStyle(!!errors.employeeId)}
-              {...focusHandlers("employeeId")}
-            />
-            {errors.employeeId && <p style={errorStyle}>{errors.employeeId}</p>}
-          </div>
-
-          <div>
-            <label style={labelStyle}>{t("modals.memberForm.userType", "User Type")}</label>
-            <DaisySelect
-              value={form.userType}
-              options={USER_TYPES}
-              onChange={(val) => set("userType", val)}
-              hasError={!!errors.userType}
-              translationPrefix="modals.memberForm.userTypes"
-              t={t}
-              isRTL={isRTL}
-            />
-            {errors.userType && <p style={errorStyle}>{errors.userType}</p>}
-          </div>
-        </div>
-
-        {/* Employee Name */}
+        {/* Employee */}
         <div>
           <label style={labelStyle}>
-            {t("modals.memberForm.name", "Employee Name")}
+            {t("modals.memberForm.employeeId", "Employee ID")}
             <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
-          <input
-            value={form.name}
-            onChange={(e) => set("name", e.target.value)}
-            placeholder={t("modals.memberForm.namePlaceholder", "Full name")}
-            style={inputStyle(!!errors.name)}
-            {...focusHandlers("name")}
+          <EmployeeSearchPicker
+            active={isOpen}
+            selected={selectedEmployee}
+            onSelect={(emp) => { setSelectedEmployee(emp); set("employeeId", emp.id); }}
+            onClear={() => { setSelectedEmployee(null); set("employeeId", ""); }}
+            hasError={!!errors.employeeId}
+            isRTL={isRTL}
+            t={t}
+            placeholder={t("modals.memberForm.employeeSearchPlaceholder", "Search by name or ID...")}
           />
-          {errors.name && <p style={errorStyle}>{errors.name}</p>}
+          {errors.employeeId && <p style={errorStyle}>{errors.employeeId}</p>}
+        </div>
+
+        {/* User Type */}
+        <div>
+          <label style={labelStyle}>{t("modals.memberForm.userType", "User Type")}</label>
+          <DaisySelect
+            value={form.userType}
+            options={USER_TYPES}
+            onChange={(val) => set("userType", val)}
+            hasError={!!errors.userType}
+            translationPrefix="modals.memberForm.userTypes"
+            t={t}
+            isRTL={isRTL}
+          />
+          {errors.userType && <p style={errorStyle}>{errors.userType}</p>}
         </div>
 
         {/* Valid From / To */}

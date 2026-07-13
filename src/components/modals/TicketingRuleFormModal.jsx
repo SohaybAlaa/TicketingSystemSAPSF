@@ -3,18 +3,20 @@ import { useTranslation } from 'react-i18next'
 import Modal from './Modal'                                  
 import { ClipboardList, AlertCircle } from 'lucide-react'    
 import Tag, { getValueColor } from '@components/ui/Tag'     
-import { ENTITY_OPTIONS, CATEGORY_OPTIONS, SUBCATEGORY_OPTIONS, 
-    EMPLOYEE_CLASS_OPTIONS, PRIORITY_OPTIONS, GROUP_OPTIONS } from '@data/mockData' 
-import DaisySelect from '@components/ui/DaisySelect'      
+import { EMPLOYEE_CLASS_OPTIONS, PRIORITY_OPTIONS } from '@data/mockData'
+import DaisySelect from '@components/ui/DaisySelect'
 
 // TicketingRuleFormModal: Modal for creating/editing ticketing rules with validation and duplicate detection
-export default function TicketingRuleFormModal({ isOpen, onClose, onSave, initial = null, existingRules = [] }) {
+// entityOptions/categories/groupOptions are live DB data fetched by the parent tab — the form must only
+// offer combinations that actually exist in support_categories/subcategories/entities/support_groups,
+// since the backend resolves these by exact name match.
+export default function TicketingRuleFormModal({ isOpen, onClose, onSave, initial = null, existingRules = [], entityOptions = [], categories = [], groupOptions = [] }) {
   const { t, i18n } = useTranslation()   // t = translate function, i18n = language instance
   const isRTL = i18n.language === 'ar'   // true when Arabic is active → flips layout to right-to-left
   const isEdit = !!initial               // if initial data is passed → we're editing, otherwise creating
 
   // Empty form state template
-  const empty = { entity: '', supportCategory: '', subcategory: '', employeeClass: '', priority: '', group: '', agent: '' } // blank form template
+  const empty = { entity: '', supportCategory: '', subcategory: '', employeeClass: '', priority: '', group: '' } // blank form template
 
   // Form state and validation errors
   const [form,   setForm]   = useState(empty)  // current form values
@@ -24,16 +26,24 @@ export default function TicketingRuleFormModal({ isOpen, onClose, onSave, initia
   useEffect(() => {
     if (isOpen) {
       setForm(initial
-        ? { entity: initial.entity ?? '', supportCategory: initial.supportCategory ?? '', subcategory: initial.subcategory ?? '', employeeClass: initial.employeeClass ?? '', priority: initial.priority ?? '', group: initial.group ?? '', agent: initial.agent ?? '' } // populate from existing rule
+        ? { entity: initial.entity ?? '', supportCategory: initial.supportCategory ?? '', subcategory: initial.subcategory ?? '', employeeClass: initial.employeeClass ?? '', priority: initial.priority ?? '', group: initial.group ?? '' } // populate from existing rule
         : empty          // reset to blank for new rule
       )
       setErrors({})      // clear any previous validation errors
     }
   }, [isOpen, initial])  // re-run when modal opens or initial data changes
 
+  // Subcategory list depends on the selected category — keeps the two fields in sync with the DB hierarchy
+  const subcategoryOptions = categories.find(c => c.name === form.supportCategory)?.subcategories.map(s => s.name) ?? []
+
   // Update form field and clear its error if present
   const set = (key, val) => {
-    setForm(f => ({ ...f, [key]: val }))                        // update only the changed field, keep others
+    setForm(f => {
+      const next = { ...f, [key]: val }
+      // Changing category invalidates a subcategory that no longer belongs to it
+      if (key === 'supportCategory' && val !== f.supportCategory) next.subcategory = ''
+      return next
+    })
     if (errors[key]) setErrors(e => ({ ...e, [key]: undefined })) // clear error for this field as user fixes it
   }
 
@@ -43,16 +53,20 @@ export default function TicketingRuleFormModal({ isOpen, onClose, onSave, initia
     if (!form.entity)          next.entity          = 'Entity is required'           // required field check
     if (!form.supportCategory) next.supportCategory = 'Support category is required' // required field check
     if (!form.subcategory)     next.subcategory     = 'Subcategory is required'      // required field check
+    if (!form.employeeClass)   next.employeeClass   = 'Employee class is required'   // required field check (NOT NULL in DB)
+    if (!form.group)           next.group           = 'Group is required'           // required field check (NOT NULL in DB)
     if (!form.priority)        next.priority        = 'Priority is required'         // required field check
 
-    // Check for duplicate rule (same Entity + Support Category + Subcategory)
+    // Check for duplicate rule (same Entity + Employee Class + Support Category + Subcategory,
+    // matching the DB's UNIQUE(entity_id, employee_class, category_id, subcategory_id) constraint)
     const isDuplicate = existingRules.some(r =>
       r.id !== initial?.id &&                    // skip the rule being edited (so it doesn't match itself)
       r.entity === form.entity &&                // same entity
+      r.employeeClass === form.employeeClass &&   // same employee class
       r.supportCategory === form.supportCategory && // same category
       r.subcategory === form.subcategory         // same subcategory → duplicate
     )
-    if (isDuplicate) next.duplicateRule = 'A rule with this Entity + Support Category + Subcategory already exists'
+    if (isDuplicate) next.duplicateRule = 'A rule with this Entity + Employee Class + Support Category + Subcategory already exists'
 
     setErrors(next)                              // store errors in state → triggers re-render with error UI
     return Object.keys(next).length === 0        // return true if no errors (form is valid)
@@ -105,7 +119,7 @@ export default function TicketingRuleFormModal({ isOpen, onClose, onSave, initia
         {/* Entity field - required, shows duplicate error */}
         <div>
           <label className={labelStyle}>{t('modals.ticketingRuleForm.entity', 'Entity')} <span className="text-red-400">*</span></label>
-          {sel('entity', ENTITY_OPTIONS, !!errors.entity || !!errors.duplicateRule)}  {/* show error state if entity missing OR duplicate rule */}
+          {sel('entity', entityOptions, !!errors.entity || !!errors.duplicateRule)}  {/* show error state if entity missing OR duplicate rule */}
           {errors.entity && <ErrMsg msg={errors.entity} />}
         </div>
 
@@ -114,34 +128,23 @@ export default function TicketingRuleFormModal({ isOpen, onClose, onSave, initia
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className={labelStyle}>{t('modals.ticketingRuleForm.supportCategory', 'Support Category')} <span className="text-red-400">*</span></label>
-              {sel('supportCategory', CATEGORY_OPTIONS, !!errors.supportCategory || !!errors.duplicateRule)}
+              {sel('supportCategory', categories.map(c => c.name), !!errors.supportCategory || !!errors.duplicateRule)}
               {errors.supportCategory && <ErrMsg msg={errors.supportCategory} />}
             </div>
             <div>
               <label className={labelStyle}>{t('modals.ticketingRuleForm.subcategory', 'Subcategory')} <span className="text-red-400">*</span></label>
-              {sel('subcategory', SUBCATEGORY_OPTIONS, !!errors.subcategory || !!errors.duplicateRule)}
+              {sel('subcategory', subcategoryOptions, !!errors.subcategory || !!errors.duplicateRule)}
               {errors.subcategory && <ErrMsg msg={errors.subcategory} />}
             </div>
           </div>
           {errors.duplicateRule && <ErrMsg msg={errors.duplicateRule} />}  {/* duplicate error shown below both fields */}
         </div>
 
-        {/* Group field - optional */}
+        {/* Group field - required (NOT NULL in DB) */}
         <div>
-          <label className={labelStyle}>{t('modals.ticketingRuleForm.group', 'Group')}</label>
-          {sel('group', GROUP_OPTIONS, !!errors.group)}
+          <label className={labelStyle}>{t('modals.ticketingRuleForm.group', 'Group')} <span className="text-red-400">*</span></label>
+          {sel('group', groupOptions, !!errors.group)}
           {errors.group && <ErrMsg msg={errors.group} />}
-        </div>
-
-        {/* Agent field - optional text input */}
-        <div>
-          <label className={labelStyle}>{t('modals.ticketingRuleForm.agent', 'Agent')}</label>
-          <input
-            value={form.agent}
-            onChange={e => set('agent', e.target.value)}
-            placeholder={t('modals.ticketingRuleForm.agentPlaceholder', 'Agent name (optional)')}
-            className={`w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 transition-all ${isRTL ? 'text-right' : 'text-left'}`} // styled text input with yellow focus ring
-          />
         </div>
 
         {/* Priority field - required, button-based selector with colored tags */}
@@ -173,9 +176,9 @@ export default function TicketingRuleFormModal({ isOpen, onClose, onSave, initia
           {errors.priority && <ErrMsg msg={errors.priority} />}
         </div>
 
-        {/* Employee Class field - optional, tag button selector */}
+        {/* Employee Class field - required (NOT NULL in DB), tag button selector */}
         <div>
-          <label className={labelStyle}>{t('modals.ticketingRuleForm.employeeClass', 'Employee Class')}</label>
+          <label className={labelStyle}>{t('modals.ticketingRuleForm.employeeClass', 'Employee Class')} <span className="text-red-400">*</span></label>
           <div className={`flex flex-wrap gap-2 mt-1 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
             {EMPLOYEE_CLASS_OPTIONS.map(opt => {
               const selected = form.employeeClass === opt

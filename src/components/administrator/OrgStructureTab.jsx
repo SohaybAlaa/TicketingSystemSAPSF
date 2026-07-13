@@ -11,11 +11,10 @@ import AlertNotification from '@components/ui/AlertNotification'
 import DeleteConfirmModal from '@components/modals/DeleteConfirmModal'
 import GroupFormModal from '@components/modals/GroupFormModal'
 import MemberFormModal from '@components/modals/MemberFormModal'
-import { MOCK_GROUPS } from '@data/mockData'
 import { Plus, UserPlus, Users, Boxes } from 'lucide-react'
 import { resolveRowStatus } from '@utils/dateUtils'
 import { buildGridOverlay, defaultColDef, getRowStyle, getScrollParent } from '@utils/agGridUtils.jsx'
-import { makeSkeletonRows } from '@components/ui/GridSkeleton'
+import { SKELETON_ROWS, makeSkeletonRows } from '@components/ui/GridSkeleton'
 import {
   StatusCellRenderer,
   UserTypeCellRenderer,
@@ -98,9 +97,11 @@ export default function OrgStructureTab() {
   }), [t])
 
   // Data state: Groups and selected group
-  const [groups,        setGroups]        = useState(MOCK_GROUPS) // All support groups
+  const [groups,        setGroups]        = useState([]) // All support groups
   const [selectedGroup, setSelectedGroup] = useState(null) // Currently selected group (for members table)
   const [loadingMembers, setLoadingMembers] = useState(false) // Loading state when fetching members
+  const [isLoading,     setIsLoading]     = useState(true) // Initial groups fetch state
+  const [isProcessing,  setIsProcessing]  = useState(false) // Mutation in-flight guard
 
   // Modal state: Controls which modal is open and what data it contains
   const [groupModal,        setGroupModal]        = useState(null) // null | 'new' | groupObject (for edit)
@@ -126,6 +127,43 @@ export default function OrgStructureTab() {
   const removeAlert = useCallback((id) => {
     setAlerts(prev => prev.filter(a => a.id !== id))
   }, [])
+
+  // Generic POST helper for create/update/delete — throws on failure
+  const apiRequest = useCallback(async (url, body) => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || `HTTP ${res.status}`)
+    }
+    return data
+  }, [])
+
+  // Fetch the support groups list from the API on first mount
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        setIsLoading(true)
+        const res = await fetch('/api/public/administrator/groups')
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const data = await res.json()
+        if (!data.success) throw new Error(data.error || 'Failed to load groups')
+        if (!cancelled) setGroups(data.groups || [])
+      } catch (err) {
+        console.error('[OrgStructure] Failed to fetch groups:', err)
+        if (!cancelled) {
+          pushAlert('error', t('administratorMenu.tabs.orgStructure.alerts.groupsLoadFailed', 'Failed to load groups'), err.message)
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [pushAlert, t])
 
   // Search and filter state
   const [groupSearch,  setGroupSearch]  = useState('') // Quick search text for groups table
@@ -171,23 +209,27 @@ export default function OrgStructureTab() {
 
   // Handler: When a group row is clicked, select it and load its members
   // Shows loading state, then scrolls to members section
-  const handleGroupRowClick = useCallback((params) => {
+  const handleGroupRowClick = useCallback(async (params) => {
     // Skip if clicking skeleton row or already selected group
     if (params.data?._skeleton || selectedGroup?.id === params.data.id) return
-    
+
+    const group = params.data
     setLoadingMembers(true)
-    setSelectedGroup(null) // Clear selection to trigger loading state
-    
-    // Store the group to select after loading delay
-    const groupToSelect = params.data
-    
-    // Delay before showing members (for loading animation)
-    setTimeout(() => {
-      setSelectedGroup(groupToSelect) // Set new selection
+    setSelectedGroup(group)
+
+    try {
+      const res = await fetch(`/api/public/administrator/members?groupId=${group.id}`)
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.success) throw new Error(data.error || `HTTP ${res.status}`)
+      setGroups(prev => prev.map(g => (g.id === group.id ? { ...g, members: data.members } : g)))
+    } catch (err) {
+      console.error('[OrgStructure] Failed to load members:', err)
+      setGroups(prev => prev.map(g => (g.id === group.id ? { ...g, members: [] } : g)))
+      pushAlert('error', t('administratorMenu.tabs.orgStructure.alerts.membersLoadFailed', 'Failed to load members'), err.message)
+    } finally {
       setLoadingMembers(false)
-    }, CONFIG.MEMBER_LOADING_DELAY_MS)
-    
-  }, [selectedGroup])
+    }
+  }, [selectedGroup, pushAlert, t])
 
   useEffect(() => {
     let timer = null;
@@ -203,69 +245,117 @@ export default function OrgStructureTab() {
     }
   }, [selectedGroup, loadingMembers])
 
-  // Handler: Save a new or edited group
-  const handleSaveGroup = useCallback((form) => {
+  // Handler: Save a new or edited group via the API
+  const handleSaveGroup = useCallback(async (form) => {
+    if (isProcessing) return
     const isNew = groupModal === 'new' // Check if creating new or editing existing
-    const updated = isNew
-      ? [...groups, { ...form, id: Date.now(), members: [] }] // Add new group with unique ID
-      : groups.map(g => g.id === groupModal.id ? { ...g, ...form } : g) // Update existing group
-    
-    setGroups(updated)
-    syncSelected(updated) // Keep selected group in sync
-    setGroupModal(null) // Close modal
-    
-    // Show success alert
-    pushAlert(
-      'success',
-      isNew ? t('administratorMenu.tabs.orgStructure.alerts.groupCreated') : t('administratorMenu.tabs.orgStructure.alerts.groupUpdated'),
-      isNew ? t('administratorMenu.tabs.orgStructure.alerts.groupCreatedMsg', { name: form.name }) : t('administratorMenu.tabs.orgStructure.alerts.groupUpdatedMsg', { name: form.name }),
-    )
-  }, [groupModal, groups, syncSelected, pushAlert, t])
+    setIsProcessing(true)
+    try {
+      let updated
+      if (isNew) {
+        const data = await apiRequest('/api/public/administrator/groups/create', form)
+        updated = [...groups, { ...data.group, members: [] }]
+      } else {
+        const data = await apiRequest('/api/public/administrator/groups/update', { id: groupModal.id, ...form })
+        // Preserve any already-loaded members on the edited group
+        updated = groups.map(g => (g.id === groupModal.id ? { ...data.group, members: g.members } : g))
+      }
+      setGroups(updated)
+      syncSelected(updated) // Keep selected group in sync
+      setGroupModal(null) // Close modal
+      pushAlert(
+        'success',
+        isNew ? t('administratorMenu.tabs.orgStructure.alerts.groupCreated') : t('administratorMenu.tabs.orgStructure.alerts.groupUpdated'),
+        isNew ? t('administratorMenu.tabs.orgStructure.alerts.groupCreatedMsg', { name: form.name }) : t('administratorMenu.tabs.orgStructure.alerts.groupUpdatedMsg', { name: form.name }),
+      )
+    } catch (err) {
+      console.error('[OrgStructure] Save group failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.orgStructure.alerts.groupSaveFailed', 'Save failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [groupModal, groups, syncSelected, pushAlert, t, apiRequest, isProcessing])
 
-  // Handler: Delete a group
-  const handleDeleteGroup = useCallback(() => {
-    const name = deleteGroupTarget.name
-    const updated = groups.filter(g => g.id !== deleteGroupTarget.id) // Remove group from list
-    
-    // Clear selection if deleted group was selected
-    if (selectedGroup?.id === deleteGroupTarget.id) setSelectedGroup(null)
-    
-    setGroups(updated)
-    setDeleteGroupTarget(null) // Close delete confirmation modal
-    
-    // Show success alert
-    pushAlert('success', t('administratorMenu.tabs.orgStructure.alerts.groupDeleted'), t('administratorMenu.tabs.orgStructure.alerts.groupDeletedMsg', { name }))
-  }, [groups, deleteGroupTarget, selectedGroup, pushAlert, t])
+  // Handler: Delete a group via the API
+  const handleDeleteGroup = useCallback(async () => {
+    if (isProcessing) return
+    const { id, name } = deleteGroupTarget
+    setIsProcessing(true)
+    try {
+      await apiRequest('/api/public/administrator/groups/delete', { id })
+      const updated = groups.filter(g => g.id !== id) // Remove group from list
+      if (selectedGroup?.id === id) setSelectedGroup(null) // Clear selection if deleted
+      setGroups(updated)
+      setDeleteGroupTarget(null) // Close delete confirmation modal
+      pushAlert('success', t('administratorMenu.tabs.orgStructure.alerts.groupDeleted'), t('administratorMenu.tabs.orgStructure.alerts.groupDeletedMsg', { name }))
+    } catch (err) {
+      console.error('[OrgStructure] Delete group failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.orgStructure.alerts.groupDeleteFailed', 'Delete failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [groups, deleteGroupTarget, selectedGroup, pushAlert, t, apiRequest, isProcessing])
 
   // Handler: Update members of a specific group
   // fn is a function that takes current members array and returns updated array
   const updateGroupMembers = useCallback((groupId, fn) => {
-    const updated = groups.map(g => g.id === groupId ? { ...g, members: fn(g.members) } : g)
+    const updated = groups.map(g => g.id === groupId ? { ...g, members: fn(g.members ?? []) } : g)
     setGroups(updated)
     syncSelected(updated) // Keep selected group in sync
   }, [groups, syncSelected])
 
-  // Handler: Add a new member to the selected group
-  const handleAddMember = useCallback((form) => {
-    updateGroupMembers(selectedGroup.id, ms => [...ms, { ...form, id: Date.now() }]) // Add with unique ID
-    setMemberTarget(null) // Close modal
-    pushAlert('success', t('administratorMenu.tabs.orgStructure.alerts.memberAdded'), t('administratorMenu.tabs.orgStructure.alerts.memberAddedMsg', { name: form.name }))
-  }, [selectedGroup, updateGroupMembers, pushAlert, t])
+  // Handler: Add a new member to the selected group via the API
+  const handleAddMember = useCallback(async (form) => {
+    if (isProcessing || !selectedGroup) return
+    setIsProcessing(true)
+    try {
+      const data = await apiRequest('/api/public/administrator/members/create', { groupId: selectedGroup.id, ...form })
+      updateGroupMembers(selectedGroup.id, ms => [...ms, data.member])
+      setMemberTarget(null) // Close modal
+      pushAlert('success', t('administratorMenu.tabs.orgStructure.alerts.memberAdded'), t('administratorMenu.tabs.orgStructure.alerts.memberAddedMsg', { name: data.member.name }))
+    } catch (err) {
+      console.error('[OrgStructure] Add member failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.orgStructure.alerts.memberSaveFailed', 'Save failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [selectedGroup, updateGroupMembers, pushAlert, t, apiRequest, isProcessing])
 
-  // Handler: Save changes to an existing member
-  const handleSaveEditMember = useCallback((form) => {
-    updateGroupMembers(editMemberTarget.groupId, ms => ms.map(m => m.id === editMemberTarget.member.id ? { ...m, ...form } : m))
-    setEditMemberTarget(null) // Close modal
-    pushAlert('success', t('administratorMenu.tabs.orgStructure.alerts.memberUpdated'), t('administratorMenu.tabs.orgStructure.alerts.memberUpdatedMsg', { name: form.name }))
-  }, [editMemberTarget, updateGroupMembers, pushAlert, t])
+  // Handler: Save changes to an existing member via the API
+  const handleSaveEditMember = useCallback(async (form) => {
+    if (isProcessing) return
+    const { groupId, member } = editMemberTarget
+    setIsProcessing(true)
+    try {
+      const data = await apiRequest('/api/public/administrator/members/update', { id: member.id, ...form })
+      updateGroupMembers(groupId, ms => ms.map(m => m.id === member.id ? data.member : m))
+      setEditMemberTarget(null) // Close modal
+      pushAlert('success', t('administratorMenu.tabs.orgStructure.alerts.memberUpdated'), t('administratorMenu.tabs.orgStructure.alerts.memberUpdatedMsg', { name: data.member.name }))
+    } catch (err) {
+      console.error('[OrgStructure] Update member failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.orgStructure.alerts.memberSaveFailed', 'Save failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [editMemberTarget, updateGroupMembers, pushAlert, t, apiRequest, isProcessing])
 
-  // Handler: Delete a member from a group
-  const handleDeleteMember = useCallback(() => {
-    const name = deleteMemberTarget.member.name
-    updateGroupMembers(deleteMemberTarget.groupId, ms => ms.filter(m => m.id !== deleteMemberTarget.member.id)) // Remove member
-    setDeleteMemberTarget(null) // Close delete confirmation modal
-    pushAlert('success', t('administratorMenu.tabs.orgStructure.alerts.memberRemoved'), t('administratorMenu.tabs.orgStructure.alerts.memberRemovedMsg', { name }))
-  }, [deleteMemberTarget, updateGroupMembers, pushAlert, t])
+  // Handler: Delete a member from a group via the API
+  const handleDeleteMember = useCallback(async () => {
+    if (isProcessing) return
+    const { groupId, member } = deleteMemberTarget
+    setIsProcessing(true)
+    try {
+      await apiRequest('/api/public/administrator/members/delete', { id: member.id })
+      updateGroupMembers(groupId, ms => ms.filter(m => m.id !== member.id)) // Remove member
+      setDeleteMemberTarget(null) // Close delete confirmation modal
+      pushAlert('success', t('administratorMenu.tabs.orgStructure.alerts.memberRemoved'), t('administratorMenu.tabs.orgStructure.alerts.memberRemovedMsg', { name: member.name }))
+    } catch (err) {
+      console.error('[OrgStructure] Delete member failed:', err)
+      pushAlert('error', t('administratorMenu.tabs.orgStructure.alerts.memberDeleteFailed', 'Delete failed'), err.message)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [deleteMemberTarget, updateGroupMembers, pushAlert, t, apiRequest, isProcessing])
 
   // Data for members table: Show skeleton rows while loading, empty if no group selected
   const memberRows = useMemo(() => {
@@ -307,6 +397,7 @@ export default function OrgStructureTab() {
         onClose={() => setGroupModal(null)}
         onSave={handleSaveGroup}
         initial={groupModal === 'new' ? null : groupModal}
+        groups={groups}
       />
       <MemberFormModal
         isOpen={!!memberTarget || !!editMemberTarget}
@@ -371,8 +462,8 @@ export default function OrgStructureTab() {
             key={`group-grid-${i18n.language}`}
             ref={groupGridRef}
             domLayout="autoHeight"
-            rowData={groups}
-            quickFilterText={groupSearch}
+            rowData={isLoading ? SKELETON_ROWS : groups}
+            quickFilterText={isLoading ? '' : groupSearch}
             columnDefs={groupColumns}
             defaultColDef={defaultColDef}
             getRowStyle={getRowStyle}
@@ -381,7 +472,7 @@ export default function OrgStructureTab() {
             rowHeight={48}
             headerHeight={52}
             suppressCellFocus
-            pagination
+            pagination={!isLoading}
             paginationPageSize={CONFIG.GROUP_PAGINATION.DEFAULT}
             paginationPageSizeSelector={CONFIG.GROUP_PAGINATION.OPTIONS}
             isExternalFilterPresent={isGroupExternalFilterPresent}

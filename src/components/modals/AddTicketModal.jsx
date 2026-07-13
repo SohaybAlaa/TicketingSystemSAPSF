@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import Modal from './Modal'
-import { TicketPlus, AlertCircle, Paperclip, X, FileText, FileImage, File } from 'lucide-react'
+import { TicketPlus, AlertCircle, Paperclip, X, FileText, FileImage, File, Lock } from 'lucide-react'
 import Tag, { getValueColor } from '@components/ui/Tag'
 import DaisySelect from '@components/ui/DaisySelect'
+import EmployeeSearchPicker from '@components/ui/EmployeeSearchPicker'
 
 // Map MIME types to file extensions for validation
 const ACCEPTED_TYPES = {
@@ -52,6 +53,10 @@ export default function AddTicketModal({ isOpen, onClose, onSave, isProcessing, 
     employeeName: '',
     employeeId: '',
     employeeEmail: '',
+    employeeEntity: '',
+    employeeClass: '',
+    employeeDepartment: '',
+    employeeLocation: '',
     category: '',
     subcategory: '',
     priority: '',
@@ -61,17 +66,58 @@ export default function AddTicketModal({ isOpen, onClose, onSave, isProcessing, 
 
   const [form, setForm] = useState(empty)
   const [errors, setErrors] = useState({})
-  // Stores file objects: { file, name, size, type, base64, preview? }
   const [attachments, setAttachments] = useState([])
-  const fileInputRef = useRef(null) // Reference to hidden file input element
+  const [ticketingRules, setTicketingRules] = useState([])
+  // True once a ticketing rule has auto-set the priority for the current Employee + Category +
+  // Subcategory combo — locks the priority picker so it can't be overridden by hand while a rule
+  // is driving it. Only combos with no matching rule leave priority open for manual selection.
+  const [priorityLocked, setPriorityLocked] = useState(false)
+  const fileInputRef = useRef(null)
 
+  // Reset form on modal open
   useEffect(() => {
     if (isOpen) {
       setForm(empty)
       setErrors({})
       setAttachments([])
+      setPriorityLocked(false)
+      fetchTicketingRules()
     }
   }, [isOpen])
+
+  // Fetch ticketing rules (Entity + Category + Subcategory + Employee Class -> Priority)
+  const fetchTicketingRules = async () => {
+    try {
+      const res = await fetch('/api/public/administrator/ticketing-rules')
+      if (res.ok) {
+        const data = await res.json()
+        if (data.success && data.rules) setTicketingRules(data.rules)
+      }
+    } catch (err) {
+      console.error('Failed to fetch ticketing rules:', err)
+    }
+  }
+
+  // Handle employee selection and auto-populate fields
+  const handleSelectEmployee = (emp) => {
+    setForm(f => ({
+      ...f,
+      employeeName: emp.name,
+      employeeId: emp.id,
+      employeeEmail: emp.email || '',
+      employeeEntity: emp.entity || '',
+      employeeClass: emp.employeeClass || '',
+      employeeDepartment: emp.department || '',
+      employeeLocation: emp.location || '',
+    }))
+    if (errors.employeeName) setErrors(e => ({ ...e, employeeName: undefined }))
+    if (errors.employeeId) setErrors(e => ({ ...e, employeeId: undefined }))
+  }
+
+  // Clear the currently selected employee
+  const clearEmployee = () => {
+    setForm(f => ({ ...f, employeeName: '', employeeId: '', employeeEmail: '', employeeEntity: '', employeeClass: '', employeeDepartment: '', employeeLocation: '' }))
+  }
 
   // Helper to update form field and clear its error
   const set = (key, val) => {
@@ -104,6 +150,10 @@ export default function AddTicketModal({ isOpen, onClose, onSave, isProcessing, 
       employeeName: form.employeeName.trim(),
       employeeId: form.employeeId.trim(),
       employeeEmail: form.employeeEmail.trim() || null,
+      employeeDepartment: form.employeeDepartment || null,
+      employeeLocation: form.employeeLocation || null,
+      employeeEntity: form.employeeEntity || null,
+      employeeClass: form.employeeClass || null,
       category: form.category,
       subcategory: form.subcategory,
       priority: form.priority,
@@ -161,6 +211,39 @@ export default function AddTicketModal({ isOpen, onClose, onSave, isProcessing, 
 
   const subcategoryOptions = form.category ? (subcategoryMap[form.category] || []) : []
 
+  // Step-by-step gating: Priority can't be touched until everything before it is filled in.
+  const readyForPriority = !!(form.employeeId && form.title.trim() && form.category && form.subcategory)
+  // Once a rule has auto-set the priority, it's locked — only combos with no matching rule
+  // leave it open for manual selection.
+  const priorityInteractive = readyForPriority && !priorityLocked
+
+  // Auto-select priority from the matching Ticketing Rule (Entity + Category + Subcategory + Employee Class -> Priority)
+  useEffect(() => {
+    if (!form.employeeEntity || !form.employeeClass || !form.category || !form.subcategory) {
+      setPriorityLocked(false)
+      return
+    }
+    const norm = (s) => (s || '').trim().toLowerCase()
+    const match = ticketingRules.find(r =>
+      norm(r.entity) === norm(form.employeeEntity) &&
+      norm(r.employeeClass) === norm(form.employeeClass) &&
+      norm(r.supportCategory) === norm(form.category) &&
+      norm(r.subcategory) === norm(form.subcategory)
+    )
+    if (match?.priority) {
+      set('priority', match.priority)
+      setPriorityLocked(true)
+    } else {
+      setPriorityLocked(false)
+      console.warn('[AddTicketModal] No ticketing rule matched for', {
+        entity: form.employeeEntity,
+        employeeClass: form.employeeClass,
+        category: form.category,
+        subcategory: form.subcategory,
+      })
+    }
+  }, [form.employeeEntity, form.employeeClass, form.category, form.subcategory, ticketingRules])
+
   // Reusable label styling with RTL support
   const labelStyle = `block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 ${isRTL ? 'text-right' : 'text-left'}`
 
@@ -190,28 +273,20 @@ export default function AddTicketModal({ isOpen, onClose, onSave, isProcessing, 
     >
       <div dir={isRTL ? 'rtl' : 'ltr'} className="flex flex-col gap-4">
 
-        {/* Employee Name + Employee ID side by side */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className={labelStyle}>{t('modals.addTicket.employeeName', 'Employee Name')} <span className="text-red-400">*</span></label>
-            <input
-              value={form.employeeName}
-              onChange={e => set('employeeName', e.target.value)}
-              placeholder={t('modals.addTicket.employeeNamePlaceholder', 'e.g. John Smith')}
-              className={inputClass(!!errors.employeeName)}
-            />
-            {errors.employeeName && <ErrMsg msg={errors.employeeName} />}
-          </div>
-          <div>
-            <label className={labelStyle}>{t('modals.addTicket.employeeId', 'Employee ID')} <span className="text-red-400">*</span></label>
-            <input
-              value={form.employeeId}
-              onChange={e => set('employeeId', e.target.value)}
-              placeholder={t('modals.addTicket.employeeIdPlaceholder', 'e.g. EMP001')}
-              className={inputClass(!!errors.employeeId)}
-            />
-            {errors.employeeId && <ErrMsg msg={errors.employeeId} />}
-          </div>
+        {/* Employee picker — unified search (by name or ID) with a rich selected card */}
+        <div>
+          <label className={labelStyle}>{t('modals.addTicket.employee', 'Employee')} <span className="text-red-400">*</span></label>
+          <EmployeeSearchPicker
+            active={isOpen}
+            selected={form.employeeName && form.employeeId ? { id: form.employeeId, name: form.employeeName, email: form.employeeEmail } : null}
+            onSelect={handleSelectEmployee}
+            onClear={clearEmployee}
+            hasError={!!errors.employeeName}
+            isRTL={isRTL}
+            t={t}
+            placeholder={t('modals.addTicket.employeePlaceholder', 'Search by name or ID...')}
+          />
+          {errors.employeeName && <ErrMsg msg={errors.employeeName} />}
         </div>
 
         {/* Title */}
@@ -256,10 +331,13 @@ export default function AddTicketModal({ isOpen, onClose, onSave, isProcessing, 
           </div>
         </div>
 
-        {/* Priority - button based selector with colored tags */}
+        {/* Priority - locked out until Employee + Title + Category + Subcategory are filled in
+            (step-by-step). Once a Ticketing Rule auto-sets it, it's locked from manual changes;
+            only combos with no matching rule leave it open, since otherwise nothing would ever
+            set it and the ticket could never be created. */}
         <div>
           <label className={labelStyle}>{t('modals.addTicket.priority', 'Priority')} <span className="text-red-400">*</span></label>
-          <div className={`flex flex-wrap gap-2 mt-1 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
+          <div className={`flex flex-wrap gap-2 mt-1 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'} ${!priorityInteractive ? 'opacity-50 pointer-events-none' : ''}`}>
             {PRIORITY_OPTIONS.map(p => {
               const selected = form.priority === p
               const color = getValueColor(p)
@@ -267,6 +345,7 @@ export default function AddTicketModal({ isOpen, onClose, onSave, isProcessing, 
                 <button
                   key={p}
                   type="button"
+                  disabled={!priorityInteractive}
                   onClick={() => set('priority', p)}
                   className="rounded-full transition-all duration-150 focus:outline-none hover:scale-110"
                   style={selected ? { boxShadow: `0 0 0 2px #fff, 0 0 0 4px ${color}` } : { opacity: 0.5 }}
@@ -282,6 +361,20 @@ export default function AddTicketModal({ isOpen, onClose, onSave, isProcessing, 
               )
             })}
           </div>
+          {!readyForPriority ? (
+            <p className={`!text-sm mt-1.5 italic ${isRTL ? 'text-right' : 'text-left'}`} style={{ color: '#a16207' }}>
+              {t('modals.addTicket.priorityNotReady', 'Fill in Employee, Title, Category, and Subcategory first')}
+            </p>
+          ) : priorityLocked ? (
+            <p className={`!text-sm mt-1.5 italic flex items-center gap-1 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`} style={{ color: '#a16207' }}>
+              <Lock size={11} />
+              {t('modals.addTicket.priorityAutoLocked', 'Auto-selected based on ticketing rules')}
+            </p>
+          ) : !form.priority ? (
+            <p className={`!text-sm mt-1.5 italic ${isRTL ? 'text-right' : 'text-left'}`} style={{ color: '#a16207' }}>
+              {t('modals.addTicket.priorityAuto', 'Auto-filled when a ticketing rule matches — otherwise pick one manually')}
+            </p>
+          ) : null}
           {errors.priority && <ErrMsg msg={errors.priority} />}
         </div>
 
